@@ -23,10 +23,10 @@ const Sidebar = () => {
 
   return (
     <aside 
-      className="w-60 h-screen bg-white border-r border-gray-200 fixed left-0 top-0 overflow-y-auto overflow-x-hidden z-[100] flex flex-col shadow-none md:-translate-x-0 md:translate-x-0 transition-transform duration-300"
+      className="w-60 h-screen bg-white border-r border-slate-200 fixed left-0 top-0 overflow-y-auto overflow-x-hidden z-[100] flex flex-col transition-transform duration-300"
       aria-label="Main navigation"
     >
-      <div className="p-6 px-5 border-b border-gray-200 bg-white sticky top-0 z-10">
+      <div className="p-6 px-5 border-b border-slate-200 bg-white sticky top-0 z-10">
         <Logo size="md" />
       </div>
       <nav 
@@ -47,21 +47,21 @@ const Sidebar = () => {
                   aria-current={isActive ? 'page' : undefined}
                   aria-label={`Navigate to ${item.label}${isActive ? ' (current page)' : ''}`}
                   className={`
-                    flex items-center w-full px-4 py-3 bg-transparent border-none rounded-[10px] cursor-pointer
+                    flex items-center w-full px-4 py-3 bg-transparent border-none rounded-[12px] cursor-pointer
                     text-[0.9375rem] transition-all duration-200 text-left min-h-[44px] outline-none relative
-                    focus:outline-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2
+                    focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white
                     ${isActive 
                       ? 'bg-primary-light text-primary' 
-                      : 'text-gray-800 hover:bg-primary-light/60'
+                      : 'text-slate-900 hover:bg-primary-light/60'
                     }
                   `.trim().replace(/\s+/g, ' ')}
                 >
                   <Icon 
                     size={20} 
                     aria-hidden="true"
-                    className={`mr-4 flex-shrink-0 ${isActive ? 'text-primary' : 'text-gray-600'}`}
+                    className={`mr-4 flex-shrink-0 ${isActive ? 'text-primary' : 'text-slate-600'}`}
                   />
-                  <span className={`text-[0.9375rem] leading-tight tracking-tight ${isActive ? 'text-primary font-semibold' : 'text-gray-800 font-medium'}`}>
+                  <span className={`text-[0.9375rem] leading-tight tracking-tight ${isActive ? 'text-primary font-semibold' : 'text-slate-900 font-medium'}`}>
                     {item.label}
                   </span>
                 </button>

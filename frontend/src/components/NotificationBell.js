@@ -138,7 +138,7 @@ const NotificationBell = () => {
         aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
         aria-expanded={showDropdown}
         aria-haspopup="true"
-        className="relative bg-transparent border border-gray-300 rounded-full cursor-pointer p-2 w-10 h-10 min-w-10 min-h-10 flex items-center justify-center text-gray-600 transition-all duration-200 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        className="relative bg-transparent border border-slate-200 rounded-full cursor-pointer p-2 w-10 h-10 min-w-10 min-h-10 flex items-center justify-center text-slate-600 transition-all duration-200 hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
       >
         <Bell size={18} aria-hidden="true" />
         {unreadCount > 0 && (
@@ -155,11 +155,11 @@ const NotificationBell = () => {
         <div
           role="menu"
           aria-label="Notifications"
-          className="absolute top-[calc(100%+0.75rem)] right-0 w-[22rem] max-w-[90vw] bg-white rounded-xl shadow-xl border border-gray-200 z-[1100] flex flex-col max-h-[28rem] overflow-hidden"
+          className="absolute top-[calc(100%+0.75rem)] right-0 w-[22rem] max-w-[90vw] bg-white rounded-xl shadow-xl border border-slate-200 z-[1100] flex flex-col max-h-[28rem] overflow-hidden"
         >
           {/* Header - Fixed */}
-          <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200 bg-white flex-shrink-0 sticky top-0 z-10">
-            <h3 className="m-0 text-base font-semibold text-gray-800 flex items-center gap-2 tracking-tight">
+          <div className="flex justify-between items-center px-5 py-4 border-b border-slate-200 bg-white flex-shrink-0 sticky top-0 z-10">
+            <h3 className="m-0 text-base font-semibold text-slate-900 flex items-center gap-2 tracking-tight">
               Notifications
               {unreadCount > 0 && (
                 <span className="inline-flex items-center justify-center min-w-5 h-5 px-1.5 bg-red-600 text-white rounded-[10px] text-xs font-semibold leading-none" aria-label={`${unreadCount} unread`}>
@@ -172,12 +172,12 @@ const NotificationBell = () => {
                 onClick={handleManualRefresh}
                 aria-label="Refresh notifications"
                 disabled={loading}
-                className="bg-transparent border-0 cursor-pointer p-2 rounded-lg flex items-center justify-center min-w-9 min-h-9 text-gray-600 transition-all duration-200 outline-none hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
+                className="bg-transparent border-0 cursor-pointer p-2 rounded-lg flex items-center justify-center min-w-9 min-h-9 text-slate-600 transition-all duration-200 outline-none hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-50"
               >
                 <RefreshCw 
                   size={16} 
                   aria-hidden="true"
-                  className={loading ? 'animate-spin text-gray-400' : 'text-gray-600'}
+                  className={loading ? 'animate-spin text-slate-500' : 'text-slate-600'}
                 />
               </button>
               {notifications.length > 0 && (
@@ -196,7 +196,7 @@ const NotificationBell = () => {
           <div 
             role="group" 
             aria-label="Notification list"
-            className="flex-1 overflow-y-auto overflow-x-hidden max-h-[calc(28rem-73px)] min-h-0 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400"
+            className="flex-1 overflow-y-auto overflow-x-hidden max-h-[calc(28rem-73px)] min-h-0 scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-slate-400"
             data-notification-list
           >
             {loading ? (
@@ -204,15 +204,15 @@ const NotificationBell = () => {
                 <RefreshCw 
                   size={24} 
                   aria-hidden="true"
-                  className="animate-spin text-gray-400 mb-2"
+                  className="animate-spin text-slate-500 mb-2"
                 />
-                <p className="text-[0.9375rem] font-medium text-gray-600 m-0 mb-1">Loading notifications...</p>
+                <p className="text-[0.9375rem] font-medium text-slate-600 m-0 mb-1">Loading notifications...</p>
               </div>
             ) : notifications.length === 0 ? (
               <div className="py-10 px-6 text-center flex flex-col items-center justify-center">
                 <Bell size={32} aria-hidden="true" className="text-gray-300 mb-3" />
-                <p className="text-[0.9375rem] font-medium text-gray-600 m-0 mb-1">No notifications</p>
-                <p className="text-[0.8125rem] text-gray-400 m-0">You're all caught up!</p>
+                <p className="text-[0.9375rem] font-medium text-slate-600 m-0 mb-1">No notifications</p>
+                <p className="text-[0.8125rem] text-slate-600 m-0">You're all caught up!</p>
               </div>
             ) : (
               notifications.map((notification, index) => (
@@ -220,7 +220,7 @@ const NotificationBell = () => {
                   key={notification._id}
                   role="menuitem"
                   onClick={() => handleNotificationClick(notification)}
-                  className={`w-full px-5 py-4 border-0 border-b border-gray-200 cursor-pointer text-left transition-colors duration-150 outline-none flex items-start gap-3 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset ${
+                  className={`w-full px-5 py-4 border-0 border-b border-slate-200 cursor-pointer text-left transition-colors duration-150 outline-none flex items-start gap-3 hover:bg-blue-50/40 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-inset ${
                     notification.isRead 
                       ? 'bg-white' 
                       : 'bg-blue-50/40 border-l-[3px] border-l-primary'
@@ -237,21 +237,21 @@ const NotificationBell = () => {
                       <FileText 
                         size={18} 
                         aria-hidden="true"
-                        className={notification.isRead ? 'text-gray-400' : 'text-primary'}
+                        className={notification.isRead ? 'text-slate-500' : 'text-primary'}
                       />
                       {!notification.isRead && (
                         <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-red-600 border-2 border-white shadow-sm" aria-hidden="true" />
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-gray-800 mb-1 leading-snug break-words">
+                      <div className="text-sm font-semibold text-slate-900 mb-1 leading-snug break-words">
                         {notification.title}
                       </div>
-                      <div className="text-[0.8125rem] text-gray-600 leading-relaxed mb-1.5 break-words">
+                      <div className="text-[0.8125rem] text-slate-600 leading-relaxed mb-1.5 break-words">
                         {notification.message}
                       </div>
                       {notification.createdAt && (
-                        <div className="text-xs text-gray-400 leading-snug">
+                        <div className="text-xs text-slate-600 leading-snug">
                           {new Date(notification.createdAt).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',

@@ -45,9 +45,9 @@ const AccessibleInput = React.forwardRef(({
   const computedType = type === 'password' && showPasswordToggle ? (isPasswordVisible ? 'text' : 'password') : type;
 
   const inputClasses = `
-    w-full text-[0.9375rem] leading-normal text-gray-800
-    ${disabled ? 'bg-gray-50' : 'bg-white'}
-    ${error ? 'border-2 border-red-600' : 'border border-gray-300'}
+    w-full text-[0.9375rem] leading-normal text-slate-900
+    ${disabled ? 'bg-slate-100' : 'bg-white'}
+    ${error ? 'border-2 border-red-600' : 'border border-gray-200'}
     rounded-[10px]
     ${showPasswordToggle && type === 'password' ? 'pr-11' : ''}
     px-4 py-3.5
@@ -64,7 +64,7 @@ const AccessibleInput = React.forwardRef(({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-semibold text-gray-800 mb-2 leading-tight"
+          className="block text-sm font-semibold text-slate-900 mb-2 leading-tight"
         >
           {label}
           {required && (
@@ -99,7 +99,7 @@ const AccessibleInput = React.forwardRef(({
             aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
             aria-pressed={isPasswordVisible}
             onClick={() => setIsPasswordVisible((v) => !v)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent border-none p-1 rounded-lg cursor-pointer text-gray-600 hover:text-gray-800 focus:outline-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 min-w-8 min-h-8 flex items-center justify-center"
+            className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent border-none p-1 rounded-lg cursor-pointer text-slate-600 hover:text-slate-800 focus:outline-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 min-w-8 min-h-8 flex items-center justify-center"
           >
             {isPasswordVisible ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
           </button>
@@ -107,7 +107,7 @@ const AccessibleInput = React.forwardRef(({
       </div>
       
       {helperText && !error && (
-        <span id={helperId} className="block text-[0.8125rem] text-gray-600 mt-2 leading-tight">
+        <span id={helperId} className="block text-[0.8125rem] text-slate-600 mt-2 leading-tight">
           {helperText}
         </span>
       )}

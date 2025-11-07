@@ -15,8 +15,12 @@ const Logo = ({ size = 'md', showText = true }) => {
   const { icon, text, gap, circle } = sizeClasses[size];
 
   return (
-    <div className={`flex items-center ${gap} cursor-pointer select-none transition-transform duration-300 hover:scale-105`}>
-      <div className="relative flex items-center justify-center">
+    <div
+      className={`flex items-center ${gap} cursor-pointer select-none transition-transform duration-300 hover:scale-105`}
+      role={!showText ? 'img' : undefined}
+      aria-label={!showText ? 'ClientDoc logo' : undefined}
+    >
+      <div className="relative flex items-center justify-center" aria-hidden="true">
         {/* Background circle with enhanced gradient and shadow */}
         <div 
           className={`flex items-center justify-center rounded-full bg-gradient-to-br from-blue-600 via-primary to-green-600 shadow-xl shadow-blue-500/30 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/40`}
@@ -42,6 +46,9 @@ const Logo = ({ size = 'md', showText = true }) => {
         >
           ClientDoc
         </span>
+      )}
+      {!showText && (
+        <span className="sr-only">ClientDoc</span>
       )}
     </div>
   );

@@ -72,13 +72,23 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 p-6 bg-gradient-to-br from-blue-50/30 to-green-50/30">
-      <div className="bg-white p-10 rounded-2xl shadow-xl border border-gray-200 w-full max-w-[420px] relative overflow-hidden">
-        <div className="flex justify-center mb-6">
+    <div className="relative flex min-h-screen items-center justify-center px-6 py-16 sm:px-8">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+      >
+        <div className="absolute -top-32 -left-24 h-80 w-80 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="absolute -bottom-28 right-[-80px] h-72 w-72 rounded-full bg-emerald-400/20 blur-3xl" />
+      </div>
+
+      <div className="relative w-full max-w-[440px] overflow-hidden rounded-3xl border border-white/70 bg-white/95 p-10 shadow-soft-glow backdrop-blur-xl">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-emerald-400/10" />
+
+        <div className="relative z-10 flex justify-center mb-6">
           <Logo size="lg" />
         </div>
-        <h1 className="text-center text-[1.75rem] font-bold mb-2 text-gray-800 tracking-tight leading-tight">Welcome back</h1>
-        <p className="text-center text-[0.9375rem] text-gray-600 mb-8 leading-relaxed">Sign in to your account to continue</p>
+        <h1 className="relative z-10 text-center text-[1.75rem] font-bold mb-2 text-slate-900 tracking-tight leading-tight">Welcome back</h1>
+        <p className="relative z-10 text-center text-[0.9375rem] text-slate-600 mb-8 leading-relaxed">Sign in to your account to continue</p>
 
         {errors.root && (
           <div 
@@ -86,7 +96,7 @@ const Login = () => {
             role="alert"
             aria-live="assertive"
             tabIndex={-1}
-            className="bg-red-50 text-red-700 py-3.5 px-4 rounded-[10px] mb-4 border border-red-600 text-sm outline-none leading-normal"
+            className="relative z-10 bg-red-50 text-red-700 py-3.5 px-4 rounded-[12px] mb-4 border border-red-600 text-sm outline-none leading-normal shadow-ambient-glow"
           >
             {errors.root.message}
           </div>
@@ -95,7 +105,7 @@ const Login = () => {
         <form 
           ref={formRef}
           onSubmit={handleSubmit(onSubmit)} 
-          className="flex flex-col gap-5"
+          className="relative z-10 flex flex-col gap-5"
           aria-label="Login form"
           noValidate
         >
@@ -142,7 +152,7 @@ const Login = () => {
           </AccessibleButton>
         </form>
 
-        <p className="text-center mt-6 text-sm text-gray-600 leading-relaxed">
+        <p className="relative z-10 text-center mt-6 text-sm text-slate-600 leading-relaxed">
           Don't have an account?{' '}
           <Link 
             to="/register" 

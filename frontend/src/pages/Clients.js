@@ -162,9 +162,9 @@ const Clients = () => {
       {/* Content */}
       <section className="max-w-[1400px] mx-auto" aria-label="Clients management">
         <header className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-3xl font-semibold text-gray-800 m-0 mb-2 tracking-tight">Clients</h1>
-            <p className="text-base text-gray-600 m-0">Manage your client relationships and information</p>
+    <div>
+            <h1 className="text-3xl font-semibold text-slate-900 m-0 mb-2 tracking-tight">Clients</h1>
+            <p className="text-base text-slate-600 m-0">Manage your client relationships and information</p>
           </div>
           <AccessibleButton
             onClick={() => handleOpenModal()}
@@ -199,17 +199,17 @@ const Clients = () => {
 
         {/* Clients List */}
         {loading ? (
-          <div className="text-center py-16 px-8 text-gray-600 text-base flex flex-col items-center gap-4" role="status" aria-live="polite" aria-label="Loading clients">
-            <div className="w-10 h-10 border-[3px] border-gray-300 border-t-primary rounded-full animate-spin" aria-hidden="true"></div>
+          <div className="text-center py-16 px-8 text-slate-600 text-base flex flex-col items-center gap-4" role="status" aria-live="polite" aria-label="Loading clients">
+            <div className="w-10 h-10 border-[3px] border-slate-200 border-t-primary rounded-full animate-spin" aria-hidden="true"></div>
             <p>Loading clients...</p>
           </div>
         ) : clients.length === 0 ? (
-          <div className="text-center py-16 px-8 bg-white rounded-lg border border-gray-300 shadow-sm" role="status" aria-live="polite">
+          <div className="text-center py-16 px-8 bg-gradient-to-br from-white via-white to-blue-50/25 rounded-2xl border border-white/70 shadow-soft-glow" role="status" aria-live="polite">
             <div className="mb-6 flex justify-center" aria-hidden="true">
               <Users size={64} color="#d1d5db" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">No clients yet</h2>
-            <p className="text-[0.9375rem] text-gray-600 mb-6">Create your first client to get started!</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">No clients yet</h2>
+            <p className="text-[0.9375rem] text-slate-600 mb-6">Create your first client to get started!</p>
             <AccessibleButton
               onClick={() => handleOpenModal()}
               variant="primary"
@@ -226,14 +226,15 @@ const Clients = () => {
               <article 
                 key={client._id}
                 role="listitem"
-                className="bg-white rounded-lg p-6 border border-gray-300 shadow-md transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg"
+                className="relative overflow-hidden rounded-2xl border border-white/70 bg-gradient-to-br from-white via-white to-blue-50/25 p-6 shadow-soft-glow transition-all duration-300 hover:-translate-y-1 hover:shadow-ambient-glow"
               >
-                <div className="flex items-center gap-3 mb-5 pb-5 border-b border-gray-300 min-w-0">
-                  <div className="w-12 h-12 rounded-md bg-primary-light flex items-center justify-center flex-shrink-0" aria-hidden="true">
+                <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-blue-500/8 via-transparent to-transparent" aria-hidden="true" />
+                <div className="relative flex items-center gap-3 mb-5 pb-5 border-b border-white/60 min-w-0">
+                  <div className="w-12 h-12 rounded-xl bg-primary-light flex items-center justify-center flex-shrink-0 shadow-inner" aria-hidden="true">
                     <Users size={20} color="#1A73E8" />
                   </div>
                   <h3 
-                    className="text-lg font-semibold text-gray-800 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis whitespace-nowrap leading-tight"
+                    className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis whitespace-nowrap leading-tight"
                     title={client.name}
                     aria-label={`Client: ${client.name}`}
                   >
@@ -256,47 +257,47 @@ const Clients = () => {
                     />
                   </div>
                 </div>
-                <dl className="flex flex-col gap-3">
+                <dl className="relative flex flex-col gap-3">
                   {client.email && (
-                    <div className="flex items-center text-[0.9375rem] text-gray-800 min-w-0">
+                    <div className="flex items-center text-[0.9375rem] text-slate-900 min-w-0">
                       <dt className="sr-only">Email</dt>
-                      <dd className="text-gray-800 flex-1 flex items-center min-w-0" title={client.email}>
-                        <Mail size={16} className="text-gray-600 mr-4 flex-shrink-0" aria-hidden="true" />
+                      <dd className="text-slate-900 flex-1 flex items-center min-w-0" title={client.email}>
+                        <Mail size={16} className="text-slate-600 mr-4 flex-shrink-0" aria-hidden="true" />
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">{client.email}</span>
                       </dd>
                     </div>
                   )}
                   {client.phone && (
-                    <div className="flex items-center text-[0.9375rem] text-gray-800 min-w-0">
+                    <div className="flex items-center text-[0.9375rem] text-slate-900 min-w-0">
                       <dt className="sr-only">Phone</dt>
-                      <dd className="text-gray-800 flex-1 flex items-center min-w-0" title={client.phone}>
-                        <Phone size={16} className="text-gray-600 mr-4 flex-shrink-0" aria-hidden="true" />
+                      <dd className="text-slate-900 flex-1 flex items-center min-w-0" title={client.phone}>
+                        <Phone size={16} className="text-slate-600 mr-4 flex-shrink-0" aria-hidden="true" />
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">{client.phone}</span>
                       </dd>
                     </div>
                   )}
                   {client.company && (
-                    <div className="flex items-center text-[0.9375rem] text-gray-800 min-w-0">
+                    <div className="flex items-center text-[0.9375rem] text-slate-900 min-w-0">
                       <dt className="sr-only">Company</dt>
-                      <dd className="text-gray-800 flex-1 flex items-center min-w-0" title={client.company}>
-                        <Building2 size={16} className="text-gray-600 mr-4 flex-shrink-0" aria-hidden="true" />
+                      <dd className="text-slate-900 flex-1 flex items-center min-w-0" title={client.company}>
+                        <Building2 size={16} className="text-slate-600 mr-4 flex-shrink-0" aria-hidden="true" />
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">{client.company}</span>
                       </dd>
                     </div>
                   )}
                   {client.address && (
-                    <div className="flex items-center text-[0.9375rem] text-gray-800 min-w-0">
+                    <div className="flex items-center text-[0.9375rem] text-slate-900 min-w-0">
                       <dt className="sr-only">Address</dt>
-                      <dd className="text-gray-800 flex-1 flex items-center min-w-0" title={client.address}>
-                        <MapPin size={16} className="text-gray-600 mr-4 flex-shrink-0" aria-hidden="true" />
+                      <dd className="text-slate-900 flex-1 flex items-center min-w-0" title={client.address}>
+                        <MapPin size={16} className="text-slate-600 mr-4 flex-shrink-0" aria-hidden="true" />
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">{client.address}</span>
                       </dd>
                     </div>
                   )}
-                  <div className="flex items-center text-[0.9375rem] text-gray-800 min-w-0">
+                  <div className="flex items-center text-[0.9375rem] text-slate-900 min-w-0">
                     <dt className="sr-only">Date added</dt>
-                    <dd className="text-gray-800 flex-1 flex items-center min-w-0">
-                      <Calendar size={16} className="text-gray-600 mr-4 flex-shrink-0" aria-hidden="true" />
+                    <dd className="text-slate-900 flex-1 flex items-center min-w-0">
+                      <Calendar size={16} className="text-slate-600 mr-4 flex-shrink-0" aria-hidden="true" />
                       Added {new Date(client.createdAt).toLocaleDateString()}
                     </dd>
                   </div>
@@ -359,14 +360,16 @@ const Clients = () => {
           />
 
           <div className="mb-4">
-            <label htmlFor="client-address" className="text-sm font-medium text-gray-800 mb-1 block leading-normal">
+        <label htmlFor="client-address" className="text-sm font-medium text-slate-900 mb-1 block leading-normal">
               Address
             </label>
             <textarea
               id="client-address"
               {...register('address')}
-              className={`py-3.5 px-4 border rounded-md text-[0.9375rem] font-sans text-gray-800 bg-white transition-colors duration-200 min-h-[100px] w-full resize-y ${
-                formErrors.address ? 'border-red-600' : 'border-gray-300'
+              className={`py-3.5 px-4 border rounded-md text-[0.9375rem] font-sans text-slate-900 bg-white transition-colors duration-200 min-h-[100px] w-full resize-y ${
+                formErrors.address
+                  ? 'border-red-600 focus:border-red-600 focus:ring-2 focus:ring-red-500/40'
+                  : 'border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary focus:ring-opacity-30'
               }`}
               placeholder="Full address"
               rows="3"
@@ -423,7 +426,7 @@ const Clients = () => {
           <div className="flex justify-center mb-2" aria-hidden="true">
             <AlertTriangle size={48} className="text-red-600" />
           </div>
-          <p className="text-[0.9375rem] text-gray-600 leading-relaxed m-0 max-w-[36ch]">
+          <p className="text-[0.9375rem] text-slate-600 leading-relaxed m-0 max-w-[36ch]">
             Are you sure you want to delete <strong>{clientToDelete?.name}</strong>? This action cannot be undone.
           </p>
         </div>
