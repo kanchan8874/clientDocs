@@ -2,9 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ============================================
+/* 
    WCAG 2.2 Level AA Accessible Base Styles
-   ============================================ */
+ */
 
 @layer base {
   * {

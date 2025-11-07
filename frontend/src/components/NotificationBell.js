@@ -3,16 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Bell, RefreshCw, FileText } from 'lucide-react';
 import { getNotifications, getUnreadCount, markAsRead, markAllAsRead } from '../api/notifications.js';
 
-/**
- * Accessible Notification Bell Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - ARIA labels and live regions
- * - Keyboard navigation
- * - Focus management
- * - Screen reader announcements
- */
+
 const NotificationBell = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);

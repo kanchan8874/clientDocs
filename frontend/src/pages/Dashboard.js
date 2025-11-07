@@ -7,11 +7,7 @@ import { getDocuments } from '../api/documents.js';
 import Layout from '../components/Layout.js';
 import CategoryBadge from '../components/CategoryBadge.js';
 
-/**
- * Dashboard Page - Premium Design
- * Main dashboard after user login.
- * Shows overview of clients and documents.
- */
+
 
 const Dashboard = () => {
   const { user } = useAuth();

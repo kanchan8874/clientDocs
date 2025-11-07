@@ -1,16 +1,3 @@
-/**
- * MAIN.JS - React App ka Entry Point
- * 
- * Yeh file React application ko start karti hai.
- * 
- * Flow:
- * 1. HTML file me 'root' element find karta hai
- * 2. Usme React app render karta hai
- * 3. App.js component load hota hai (jo routing handle karta hai)
- * 
- * Entry Point = Application ka starting point - yaha se sab kuch start hota hai
- */
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.js';      // Main App component - routing aur layout handle karta hai

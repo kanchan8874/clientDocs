@@ -1,12 +1,7 @@
 import { z } from 'zod';
 
-/**
- * Frontend Validation Schemas using Zod
- * 
- * These schemas match the backend validation rules for consistency.
- * Used with React Hook Form for form validation.
- */
 
+//Frontend Validation Schemas using Zod
 // User Registration Schema
 export const registerSchema = z.object({
   name: z.string()

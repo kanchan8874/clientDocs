@@ -1,12 +1,5 @@
 import { z } from 'zod';
 
-/**
- * Input Validation Schemas using Zod
- * 
- * All validation schemas for request body validation.
- * Prevents unvalidated input from hitting MongoDB queries.
- */
-
 // User Registration Schema
 export const registerSchema = z.object({
   name: z.string()

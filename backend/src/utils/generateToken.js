@@ -2,10 +2,8 @@ import jwt from 'jsonwebtoken';
 
 /**
  * Generate JWT Token
- * 
  * Creates a JWT token for user authentication.
  * Token includes user ID and expires based on JWT_EXPIRY env variable.
- * 
  * @param {string} userId - MongoDB user ID
  * @returns {string} JWT token
  */

@@ -1,14 +1,8 @@
 import mongoose from 'mongoose';
 
-/**
- * Notification Model Schema
- * 
- * Stores in-app notifications for users.
- * Created when documents are shared with a user.
- */
 
 const notificationSchema = new mongoose.Schema({
-  // User who will receive this notification
+  
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',

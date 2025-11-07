@@ -8,16 +8,7 @@ import Logo from '../components/Logo.js';
 import AccessibleInput from '../components/AccessibleInput.js';
 import AccessibleButton from '../components/AccessibleButton.js';
 
-/**
- * Register Page
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - Semantic HTML structure
- * - ARIA labels and error announcements
- * - Keyboard navigation
- * - Focus management
- */
+
 const Register = () => {
   const { register: registerUser } = useAuth();
   const navigate = useNavigate();

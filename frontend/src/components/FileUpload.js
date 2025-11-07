@@ -1,16 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, File, X } from 'lucide-react';
 
-/**
- * Accessible File Upload Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - Keyboard accessible
- * - ARIA labels and error announcements
- * - Drag-and-drop with keyboard alternative
- * - Minimum touch target sizes
- */
 const FileUpload = ({ 
   onFileSelect, 
   accept = '.pdf,.png,.docx', 

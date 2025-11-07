@@ -15,29 +15,10 @@ const router = express.Router();
 // All routes require authentication
 router.use(authGuard);
 
-// @route   GET /api/clients
-// @desc    Get all clients for authenticated user
-// @access  Private
-router.get('/', getClients);
-
-// @route   GET /api/clients/:id
-// @desc    Get single client by ID
-// @access  Private
-router.get('/:id', getClient);
-
-// @route   POST /api/clients
-// @desc    Create new client
-// @access  Private
-router.post('/', validate(clientSchema), createClient);
-
-// @route   PUT /api/clients/:id
-// @desc    Update client
-// @access  Private
-router.put('/:id', validate(clientSchema), updateClient);
-
-// @route   DELETE /api/clients/:id
-// @desc    Delete client
-// @access  Private
-router.delete('/:id', deleteClient);
+router.get('/', getClients); // Get all clients for the authenticated user
+router.get('/:id', getClient);  // Get a specific client by ID
+router.post('/', validate(clientSchema), createClient);  // Create a new client
+router.put('/:id', validate(clientSchema), updateClient);  // Update an existing client
+router.delete('/:id', deleteClient);  // Delete a client by ID
 
 export default router;

@@ -3,17 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Mail, Calendar, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
 
-/**
- * Accessible Profile Card Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - ARIA labels and roles
- * - Keyboard navigation
- * - Focus management
- * - Escape key to close
- * - Premium design with smooth animations
- */
 const ProfileCard = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const cardRef = useRef(null);

@@ -1,54 +1,21 @@
-/**
- * CLIENT.JS - Axios API Client Setup
- * 
- * Yeh file centralized axios instance create karti hai jo sabhi API calls ke liye use hoti hai.
- * 
- * Features:
- * - Base URL setup (backend API URL)
- * - Automatic token injection (har request me token add hota hai)
- * - Error handling (401 errors pe automatic logout)
- * - Request/Response interceptors
- * 
- * Flow:
- * 1. Axios instance create karta hai with base URL
- * 2. Request interceptor - Har request me token add karta hai
- * 3. Response interceptor - Errors handle karta hai (401 pe logout)
- */
+import axios from 'axios'; //Axios API Client Setup sabhi API calls ke liye use hoti 
 
-import axios from 'axios';
 
-// Backend API URL - .env file se ya default localhost
-// VITE_API_URL - Vite environment variable (frontend/.env me define hota hai)
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-
-// ============================================
-// AXIOS INSTANCE CREATE KARO
-// ============================================
-
-// Axios instance create karo - base configuration ke saath
-// Ye instance sabhi API calls ke liye use hogi
 const apiClient = axios.create({
   baseURL: API_URL,  // Base URL - har request me ye automatically add hoga
   headers: {
     'Content-Type': 'application/json'  // Default header - JSON data bhejenge
   }
 });
-
-// ============================================
-// REQUEST INTERCEPTOR (Token Injection)
-// ============================================
-
 /**
  * Request Interceptor - Har request se pehle execute hota hai
- * 
  * Ye interceptor automatically har request me JWT token add karta hai
- * 
- * Flow:
  * 1. localStorage se token fetch karo
  * 2. Agar token hai, to Authorization header me add karo
  * 3. Request forward karo
  */
-apiClient.interceptors.request.use(
+apiClient.interceptors.request.use(  
   (config) => {
     // localStorage se token get karo (login ke time save hua tha)
     const token = localStorage.getItem('token');
@@ -68,18 +35,11 @@ apiClient.interceptors.request.use(
   }
 );
 
-// ============================================
-// RESPONSE INTERCEPTOR (Error Handling)
-// ============================================
-
 /**
  * Response Interceptor - Har response ke baad execute hota hai
- * 
  * Ye interceptor errors handle karta hai:
  * - 401 errors (unauthorized) - automatic logout
  * - Other errors - error message preserve karta hai
- * 
- * Flow:
  * 1. Response receive karo
  * 2. Success case: response.data return karo (data extract karke)
  * 3. Error case: Check karo status code

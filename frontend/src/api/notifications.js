@@ -1,14 +1,6 @@
 import apiClient from './client.js';
 
-/**
- * Notifications API Service
- * 
- * Functions for notification management:
- * - Get all notifications
- * - Get unread notification count
- * - Mark notification as read
- * - Mark all notifications as read
- */
+
 
 export const getNotifications = async (unreadOnly = false) => {
   const params = unreadOnly ? '?unreadOnly=true' : '';

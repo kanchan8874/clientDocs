@@ -1,17 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
-/**
- * Accessible Modal Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - Focus trap
- * - ARIA attributes
- * - Escape key to close
- * - Focus management
- * - Screen reader announcements
- */
+
 const AccessibleModal = ({
   isOpen,
   onClose,

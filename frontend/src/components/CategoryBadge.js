@@ -1,9 +1,6 @@
 import React from 'react';
 
-/**
- * Category Badge Component
- * Displays document categories with color coding
- */
+
 const CategoryBadge = ({ category }) => {
   const categoryClasses = {
     Proposal: 'bg-blue-50 text-primary border-blue-200',

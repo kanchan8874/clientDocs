@@ -1,10 +1,6 @@
 import React from 'react';
 
-/**
- * Skip to Content Link Component
- * WCAG 2.2 Level AA Requirement
- * Allows keyboard users to skip navigation and go directly to main content
- */
+
 const SkipToContent = () => {
 
   const handleClick = (e) => {

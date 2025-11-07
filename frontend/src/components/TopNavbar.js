@@ -5,15 +5,7 @@ import NotificationBell from './NotificationBell.js';
 import ProfileCard from './ProfileCard.js';
 import { useAuth } from '../contexts/AuthContext.js';
 
-/**
- * Accessible Top Navbar Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - Semantic header element
- * - ARIA labels
- * - Keyboard navigation
- */
+
 const TopNavbar = () => {
   const { user } = useAuth();
   const navigate = useNavigate();

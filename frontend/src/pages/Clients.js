@@ -10,12 +10,6 @@ import AccessibleModal from '../components/AccessibleModal.js';
 import AccessibleInput from '../components/AccessibleInput.js';
 import AccessibleButton from '../components/AccessibleButton.js';
 
-/**
- * Clients Page
- * 
- * Manage clients - create, view, update, delete.
- * Full CRUD functionality with modal form.
- */
 
 const Clients = () => {
   const { user } = useAuth();

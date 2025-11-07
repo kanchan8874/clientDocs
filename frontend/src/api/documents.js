@@ -1,17 +1,6 @@
 import apiClient from './client.js';
 
-/**
- * Documents API Service
- * 
- * Functions for document management:
- * - Get all documents (with filters)
- * - Get single document
- * - Upload document
- * - Update document
- * - Delete document
- * - Share document
- * - Download document
- */
+
 
 export const getDocuments = async (filters = {}) => {
   const params = new URLSearchParams();

@@ -1,21 +1,16 @@
 import multer from 'multer';
 
-// Allowed file types
-const ALLOWED_MIME_TYPES = [
+
+const ALLOWED_MIME_TYPES = [        // Allowed file types
   'application/pdf',
   'image/png',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 ];
 
-// Max file size: 5 MB
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-
-// Use memory storage; files will be streamed to Cloudinary in the controller
+const MAX_FILE_SIZE = 5 * 1024 * 1024;             // Max file size: 5 MB
 const storage = multer.memoryStorage();
-
 // File filter function
 const fileFilter = (req, file, cb) => {
-  // Check if file type is allowed
   if (ALLOWED_MIME_TYPES.includes(file.mimetype)) {
     cb(null, true);
   } else {

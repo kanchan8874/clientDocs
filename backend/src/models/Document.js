@@ -1,25 +1,12 @@
 import mongoose from 'mongoose';
 
-/**
- * Document Model Schema
- * 
- * Represents a document/file uploaded by a user for a client.
- * Stores metadata only - actual files stored locally or on Cloudinary.
- * 
- * Key Features:
- * - File metadata (not raw file data)
- * - Access control (private, shared, public)
- * - Sharing with specific users
- * - Category classification
- * - Owner-based access control
- */
 
 const documentSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, 'Document title is required'],
     trim: true,
-    maxlength: [200, 'Title cannot exceed 200 characters']
+    maxlength: [100, 'Title cannot exceed 100 characters']
   },
   description: {
     type: String,
@@ -110,7 +97,7 @@ const documentSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Compound indexes for efficient queries
+
 // Find documents by client
 documentSchema.index({ clientId: 1, uploadDate: -1 });
 

@@ -3,16 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Users, FileText } from 'lucide-react';
 import Logo from './Logo.js';
 
-/**
- * Accessible Sidebar Navigation Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - Semantic nav element
- * - ARIA labels and current page indication
- * - Keyboard navigation support
- * - Minimum touch target sizes
- */
+
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();

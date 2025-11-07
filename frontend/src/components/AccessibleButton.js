@@ -1,16 +1,6 @@
 import React from 'react';
 
-/**
- * Accessible Button Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - Minimum touch target size (44x44px)
- * - Proper ARIA attributes
- * - Keyboard navigation support
- * - Focus visible indicators
- * - Loading and disabled states
- */
+
 const AccessibleButton = ({
   children,
   onClick,

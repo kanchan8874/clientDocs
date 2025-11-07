@@ -2,19 +2,7 @@ import Notification from '../models/Notification.js';
 import Document from '../models/Document.js';
 import User from '../models/User.js';
 
-/**
- * Notification Controller
- * 
- * Handles notification-related operations:
- * - Get all notifications for user
- * - Get unread notification count
- * - Mark notification as read
- * - Mark all notifications as read
- */
 
-// @desc    Get all notifications for authenticated user
-// @route   GET /api/notifications
-// @access  Private
 export const getNotifications = async (req, res, next) => {
   try {
     const { unreadOnly } = req.query;
@@ -42,9 +30,6 @@ export const getNotifications = async (req, res, next) => {
   }
 };
 
-// @desc    Get unread notification count
-// @route   GET /api/notifications/unread/count
-// @access  Private
 export const getUnreadCount = async (req, res, next) => {
   try {
     const count = await Notification.countDocuments({
@@ -61,9 +46,7 @@ export const getUnreadCount = async (req, res, next) => {
   }
 };
 
-// @desc    Mark notification as read
-// @route   PUT /api/notifications/:id/read
-// @access  Private
+
 export const markAsRead = async (req, res, next) => {
   try {
     const notification = await Notification.findById(req.params.id);
@@ -96,9 +79,7 @@ export const markAsRead = async (req, res, next) => {
   }
 };
 
-// @desc    Mark all notifications as read
-// @route   PUT /api/notifications/read-all
-// @access  Private
+
 export const markAllAsRead = async (req, res, next) => {
   try {
     const result = await Notification.updateMany(

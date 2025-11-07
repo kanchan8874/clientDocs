@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-/**
- * Accessible Input Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Features:
- * - Proper label association
- * - ARIA attributes for errors
- * - Minimum touch target size
- * - Visible focus indicators
- * - Error state handling
- */
+
 const AccessibleInput = React.forwardRef(({
   id,
   label,

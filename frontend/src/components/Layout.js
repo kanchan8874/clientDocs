@@ -2,12 +2,7 @@ import React from 'react';
 import Sidebar from './Sidebar.js';
 import TopNavbar from './TopNavbar.js';
 
-/**
- * Main Layout Component
- * WCAG 2.2 Level AA Compliant
- * 
- * Uses semantic HTML structure with proper ARIA landmarks
- */
+
 const Layout = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-gray-50">
