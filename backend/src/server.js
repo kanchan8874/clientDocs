@@ -14,14 +14,14 @@ connectDB();  // MongoDB database se connect karo
 
 // Express server start karo - port pe listen karna shuru karo
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV}`);
-  console.log(`🔗 API URL: http://localhost:${PORT}/api`);
+  console.log(` Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV}`);
+  console.log(`API URL: http://localhost:${PORT}/api`);
 });
 
 // Agar koi promise reject ho jaye aur catch nahi hua, to ye error handle karega
 process.on('unhandledRejection', (err) => {
-  console.error('❌ Unhandled Rejection:', err);
+  console.error('Unhandled Rejection:', err);
   // Server safely close karo aur process exit karo
   app.close(() => {
     process.exit(1);

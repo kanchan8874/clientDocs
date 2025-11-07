@@ -11,13 +11,13 @@ const connectDB = async () => {
     });
 
  
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
-    console.log(`📊 Database: ${conn.connection.name}`);
+    console.log(` MongoDB Connected: ${conn.connection.host}`);
+    console.log(`Database: ${conn.connection.name}`);
     
   
     // Error event - Agar connection me koi error aaye
     mongoose.connection.on('error', (err) => {
-      console.error('❌ MongoDB connection error:', err);
+      console.error(' MongoDB connection error:', err);
     });
 
     // Disconnected event - Agar connection disconnect ho jaye
@@ -35,7 +35,7 @@ const connectDB = async () => {
 
   } catch (error) {
     // Connection failed - Error message dikhao aur process exit karo
-    console.error('❌ MongoDB connection failed:', error.message);
+    console.error('MongoDB connection failed:', error.message);
     process.exit(1); // Exit code 1 = error
   }
 };
