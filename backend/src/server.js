@@ -1,18 +1,12 @@
 //SERVER.JS - Backend ka Entry Point
 //Yeh file backend server start karti hai aur database se connect karti hai.
 import dotenv from 'dotenv';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import app from './app.js';
 import connectDB from './config/db.js';
 
 // Environment variables load karo (.env file se)
 // Ye important hai kyunki PORT, database URL, etc. yaha se aate hain
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-dotenv.config({
-  path: path.resolve(__dirname, '../.env')
-});
+dotenv.config();
 
 // Server ka port number (.env se ya default 5000)
 const PORT = process.env.PORT || 5000;

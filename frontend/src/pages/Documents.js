@@ -334,11 +334,11 @@ const Documents = () => {
 
   return (
     <Layout>
-      <section className="mx-auto max-w-[1400px]" aria-label="Documents management">
-        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-2">
-            <h1 className="m-0 text-2xl font-semibold tracking-tight text-text sm:text-3xl">Documents</h1>
-            <p className="m-0 text-sm text-text-muted sm:text-base">Manage and organize your client documents</p>
+      <section className="max-w-[1400px] mx-auto" aria-label="Documents management">
+        <header className="flex justify-between items-start mb-8">
+          <div>
+            <h1 className="text-3xl font-semibold text-slate-900 m-0 mb-2 tracking-tight">Documents</h1>
+            <p className="text-base text-slate-600 m-0">Manage and organize your client documents</p>
           </div>
           <AccessibleButton
             onClick={handleOpenUploadModal}
@@ -352,34 +352,34 @@ const Documents = () => {
         </header>
 
         {error && (
-          <div role="alert" aria-live="assertive" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-[0.9375rem] text-red-700">
+          <div role="alert" aria-live="assertive" className="bg-red-50 text-red-700 py-3.5 px-4 rounded-md mb-4 border border-red-200 text-[0.9375rem]">
             {error}
           </div>
         )}
         {success && (
-          <div role="status" aria-live="polite" className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3.5 text-[0.9375rem] text-green-700">
+          <div role="status" aria-live="polite" className="bg-green-50 text-green-700 py-3.5 px-4 rounded-md mb-4 border border-green-200 text-[0.9375rem]">
             {success}
           </div>
         )}
 
         {/* Filters */}
-        <div className="surface-card mb-8 bg-white/90 p-6 shadow-md backdrop-blur-sm">
+        <div className="surface-card p-6 mb-8">
           <div className="relative mb-4">
-            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 transform text-text-subtle" />
+            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 transform text-slate-500" />
             <input 
               type="text" 
               placeholder="Search documents..." 
               value={filters.search} 
               onChange={(e) => setFilters({...filters, search: e.target.value})} 
-              className="w-full rounded-2xl border border-border bg-white pl-12 pr-4 py-3.5 text-[0.9375rem] font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className="w-full rounded-md border border-slate-200 bg-white pl-12 pr-4 py-3.5 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-          <div className="flex flex-wrap items-center gap-4">
+          <div className="flex gap-4 flex-wrap items-center">
             <select 
               name="category" 
               value={filters.category} 
               onChange={handleFilterChange} 
-              className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-[0.9375rem] font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent sm:min-w-[150px]"
+              className="min-w-[150px] rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="">All Categories</option>
               <option value="Proposal">Proposal</option>
@@ -391,7 +391,7 @@ const Documents = () => {
               name="accessLevel" 
               value={filters.accessLevel} 
               onChange={handleFilterChange} 
-              className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-[0.9375rem] font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent sm:min-w-[150px]"
+              className="min-w-[150px] rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="">All Access</option>
               <option value="private">My Documents</option>
@@ -402,7 +402,7 @@ const Documents = () => {
               name="clientId" 
               value={filters.clientId} 
               onChange={handleFilterChange} 
-              className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-[0.9375rem] font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent sm:min-w-[150px]"
+              className="min-w-[150px] rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               <option value="">All Clients</option>
               {clients.map(c => (
@@ -416,7 +416,7 @@ const Documents = () => {
               name="startDate" 
               value={filters.startDate} 
               onChange={handleFilterChange} 
-              className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-[0.9375rem] font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent sm:w-auto"
+              className="rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Start Date"
             />
             <input 
@@ -424,12 +424,12 @@ const Documents = () => {
               name="endDate" 
               value={filters.endDate} 
               onChange={handleFilterChange} 
-              className="w-full rounded-2xl border border-border bg-white px-4 py-3 text-[0.9375rem] font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent sm:w-auto"
+              className="rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="End Date"
             />
             <button 
               onClick={() => setFilters({ category: '', accessLevel: '', clientId: '', startDate: '', endDate: '', search: '' })} 
-              className="w-full rounded-2xl border border-border bg-white px-6 py-3 text-[0.9375rem] font-medium text-text-muted transition-all duration-200 hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent sm:w-auto"
+              className="rounded-md border border-slate-200 bg-white px-6 py-3 text-[0.9375rem] font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               Clear Filters
             </button>
@@ -437,17 +437,17 @@ const Documents = () => {
         </div>
 
         {loading ? (
-          <div className="flex flex-col items-center gap-4 px-8 py-16 text-base text-text-muted" role="status" aria-live="polite" aria-label="Loading documents">
-            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-neutral-300 border-t-accent" aria-hidden="true"></div>
+          <div className="flex flex-col items-center gap-4 py-16 px-8 text-base text-slate-600" role="status" aria-live="polite" aria-label="Loading documents">
+            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-slate-300 border-t-primary" aria-hidden="true"></div>
             <p>Loading documents...</p>
           </div>
         ) : documents.length === 0 ? (
-          <div className="glass-card py-16 px-8 text-center" role="status" aria-live="polite">
-            <div className="mb-6 flex justify-center text-neutral-300" aria-hidden="true">
-              <FileText size={64} />
+          <div className="surface-card text-center py-16 px-8" role="status" aria-live="polite">
+            <div className="mb-6 flex justify-center" aria-hidden="true">
+              <FileText size={64} className="text-slate-300" />
             </div>
-            <h2 className="mb-2 text-xl font-semibold text-text">No documents yet</h2>
-            <p className="mb-6 text-[0.9375rem] text-text-muted">Upload your first document to get started!</p>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">No documents yet</h2>
+            <p className="mb-6 text-[0.9375rem] text-slate-600">Upload your first document to get started!</p>
             <AccessibleButton
               onClick={handleOpenUploadModal}
               variant="primary"
@@ -462,26 +462,26 @@ const Documents = () => {
           <>
             {ownedDocs.length > 0 && (
               <section className="mb-8" aria-label="My documents" role="region">
-                <h2 className="mb-5 text-xl font-semibold tracking-tight text-text">My Documents ({ownedDocs.length})</h2>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3" role="list" aria-label="My documents list">
+                <h2 className="text-xl font-semibold text-slate-900 mb-5 tracking-tight">My Documents ({ownedDocs.length})</h2>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6" role="list" aria-label="My documents list">
                   {ownedDocs.map(doc => (
                     <article 
                       key={doc._id}
                       role="listitem"
-                      className="surface-card rounded-3xl bg-white/90 p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-surface backdrop-blur-sm"
+                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5"
                     >
-                      <div className="mb-5 flex min-w-0 items-center gap-3 border-b border-border pb-5">
-                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-primary-50 text-accent" aria-hidden="true">
-                          <FileText size={24} />
+                      <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-primary" aria-hidden="true">
+                          <FileText size={24} className="text-primary" />
                         </div>
                         <h3 
-                          className="m-0 max-h-[3.2em] flex-1 min-w-0 overflow-hidden text-ellipsis break-words text-lg font-semibold leading-snug tracking-tight text-text line-clamp-2"
+                          className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
                           title={doc.title}
                           aria-label={`Document: ${doc.title}`}
                         >
                           {doc.title}
                         </h3>
-                        <div className="flex flex-shrink-0 gap-2" role="group" aria-label={`Actions for ${doc.title}`}>
+                        <div className="flex gap-2 flex-shrink-0" role="group" aria-label={`Actions for ${doc.title}`}>
                           <AccessibleButton
                             onClick={() => handleOpenShareModal(doc)}
                             variant="ghost"
@@ -505,15 +505,15 @@ const Documents = () => {
                           />
                         </div>
                       </div>
-                      <div className="mb-4 flex flex-col gap-3">
-                        <div className="flex min-w-0 items-center gap-2 text-[0.9375rem]">
-                          <span className="flex-shrink-0 font-medium text-text-muted">Category:</span>
+                      <div className="flex flex-col gap-3 mb-4">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Category:</span>
                           <CategoryBadge category={doc.category} />
                         </div>
-                        <div className="flex min-w-0 items-center gap-2 text-[0.9375rem]">
-                          <span className="flex-shrink-0 font-medium text-text-muted">Client:</span>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Client:</span>
                           <span 
-                            className="min-w-0 max-w-[60%] overflow-hidden text-ellipsis whitespace-nowrap text-right font-medium text-text"
+                            className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]"
                             title={doc.clientId?.name || 'N/A'}
                             aria-label={`Client: ${doc.clientId?.name || 'N/A'}`}
                           >
@@ -522,13 +522,13 @@ const Documents = () => {
                               : 'N/A'}
                           </span>
                         </div>
-                        <div className="flex min-w-0 items-center gap-2 text-[0.9375rem]">
-                          <span className="flex-shrink-0 font-medium text-text-muted">Access:</span>
-                          <span className="min-w-0 max-w-[60%] overflow-hidden text-ellipsis whitespace-nowrap text-right font-medium capitalize text-text">{doc.accessLevel}</span>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Access:</span>
+                          <span className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">{doc.accessLevel}</span>
                         </div>
-                        <div className="flex min-w-0 items-center gap-2 text-[0.9375rem]">
-                          <span className="flex-shrink-0 font-medium text-text-muted">Date:</span>
-                          <span className="min-w-0 max-w-[60%] overflow-hidden text-ellipsis whitespace-nowrap text-right font-medium text-text">{new Date(doc.uploadDate).toLocaleDateString()}</span>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Date:</span>
+                          <span className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">{new Date(doc.uploadDate).toLocaleDateString()}</span>
                         </div>
                       </div>
                     </article>
@@ -538,37 +538,37 @@ const Documents = () => {
             )}
             {sharedDocs.length > 0 && (
               <section className="mb-8" aria-label="Shared documents" role="region">
-                <h2 className="mb-5 text-xl font-semibold tracking-tight text-text">Shared With Me ({sharedDocs.length})</h2>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3" role="list" aria-label="Shared documents list">
+                <h2 className="text-xl font-semibold text-slate-900 mb-5 tracking-tight">Shared With Me ({sharedDocs.length})</h2>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6" role="list" aria-label="Shared documents list">
                   {sharedDocs.map(doc => (
                     <article 
                       key={doc._id}
                       role="listitem"
-                      className="surface-card rounded-3xl bg-white/90 p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-surface backdrop-blur-sm"
+                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5"
                     >
-                      <div className="mb-5 flex min-w-0 items-center gap-3 border-b border-border pb-5">
-                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-success-light text-success" aria-hidden="true">
-                          <FileText size={24} />
+                      <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
+                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-green-50 text-green-600" aria-hidden="true">
+                          <FileText size={24} className="text-green-600" />
                         </div>
                         <h3 
-                          className="m-0 max-h-[3.2em] flex-1 min-w-0 overflow-hidden text-ellipsis break-words text-lg font-semibold leading-snug tracking-tight text-text line-clamp-2"
+                          className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
                           title={doc.title}
                           aria-label={`Document: ${doc.title}`}
                         >
                           {doc.title}
                         </h3>
                       </div>
-                      <dl className="mb-4 flex flex-col gap-3">
-                        <div className="flex min-w-0 items-center gap-2 text-[0.9375rem]">
+                      <dl className="flex flex-col gap-3 mb-4">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
                           <dt className="sr-only">Category</dt>
-                          <dd className="min-w-0 max-w-[60%] overflow-hidden text-ellipsis whitespace-nowrap text-right font-medium text-text">
+                          <dd className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">
                             <CategoryBadge category={doc.category} />
                           </dd>
                         </div>
-                        <div className="flex min-w-0 items-center gap-2 text-[0.9375rem]">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
                           <dt className="sr-only">Owner</dt>
                           <dd 
-                            className="min-w-0 max-w-[60%] overflow-hidden text-ellipsis whitespace-nowrap text-right font-medium text-text"
+                            className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]"
                             title={doc.createdBy?.name || 'Unknown'}
                             aria-label={`Owner: ${doc.createdBy?.name || 'Unknown'}`}
                           >
@@ -603,29 +603,27 @@ const Documents = () => {
         ariaLabel="Upload document form"
         size="lg"
       >
-        <form onSubmit={handleUploadSubmit(onUploadSubmit)} className="grid gap-5 md:grid-cols-2" noValidate>
-          <div className="md:col-span-2">
-            <AccessibleInput
-              id="doc-title"
-              label="Title"
-              type="text"
-              {...registerUpload('title')}
-              error={uploadErrors.title?.message}
-              required
-              placeholder="Enter document title"
-              ariaLabel="Document title"
-              helperText="Minimum 3 characters, maximum 100 characters"
-            />
-          </div>
+        <form onSubmit={handleUploadSubmit(onUploadSubmit)} className="flex flex-col gap-6" noValidate>
+          <AccessibleInput
+            id="doc-title"
+            label="Title"
+            type="text"
+            {...registerUpload('title')}
+            error={uploadErrors.title?.message}
+            required
+            placeholder="Enter document title"
+            ariaLabel="Document title"
+            helperText="Minimum 3 characters, maximum 100 characters"
+          />
 
-          <div>
-            <label htmlFor="doc-category" className="mb-1 block text-sm font-medium text-text">
+          <div className="mb-4">
+            <label htmlFor="doc-category" className="text-sm font-medium text-slate-900 mb-1 block">
               Category *
             </label>
             <select
               id="doc-category"
               {...registerUpload('category')}
-              className={`w-full cursor-pointer rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.category ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
+              className={`px-4 py-3.5 border rounded-md text-sm font-sans text-slate-900 bg-white transition-colors cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${uploadErrors.category ? 'border-red-500' : 'border-slate-200'}`}
               aria-label="Document category"
               aria-invalid={uploadErrors.category ? 'true' : 'false'}
               aria-describedby={uploadErrors.category ? 'category-error' : undefined}
@@ -637,20 +635,20 @@ const Documents = () => {
               <option value="Contract">Contract</option>
             </select>
             {uploadErrors.category && (
-              <span id="category-error" role="alert" className="mt-1 block text-xs text-red-600">
+              <span id="category-error" role="alert" className="text-xs text-red-600 mt-1 block">
                 {uploadErrors.category.message}
               </span>
             )}
           </div>
 
-          <div>
-            <label htmlFor="doc-client" className="mb-1 block text-sm font-medium text-text">
+          <div className="mb-4">
+            <label htmlFor="doc-client" className="text-sm font-medium text-slate-900 mb-1 block">
               Client *
             </label>
             <select
               id="doc-client"
               {...registerUpload('clientId')}
-              className={`w-full cursor-pointer rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.clientId ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
+              className={`px-4 py-3.5 border rounded-md text-sm font-sans text-slate-900 bg-white transition-colors cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${uploadErrors.clientId ? 'border-red-500' : 'border-slate-200'}`}
               aria-label="Select client"
               aria-invalid={uploadErrors.clientId ? 'true' : 'false'}
               aria-describedby={uploadErrors.clientId ? 'client-error' : undefined}
@@ -659,20 +657,20 @@ const Documents = () => {
               {clients.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
             </select>
             {uploadErrors.clientId && (
-              <span id="client-error" role="alert" className="mt-1 block text-xs text-red-600">
+              <span id="client-error" role="alert" className="text-xs text-red-600 mt-1 block">
                 {uploadErrors.clientId.message}
               </span>
             )}
           </div>
 
-          <div className="md:col-span-2">
-            <label htmlFor="doc-description" className="mb-1 block text-sm font-medium text-text">
+          <div className="mb-4">
+            <label htmlFor="doc-description" className="text-sm font-medium text-slate-900 mb-1 block">
               Description
             </label>
             <textarea
               id="doc-description"
               {...registerUpload('description')}
-              className={`min-h-[100px] w-full resize-y rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.description ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
+              className={`px-4 py-3.5 border rounded-md text-sm font-sans resize-y text-slate-900 bg-white transition-colors min-h-[100px] w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${uploadErrors.description ? 'border-red-500' : 'border-slate-200'}`}
               placeholder="Enter document description (optional, max 300 chars)"
               rows="3"
               aria-label="Document description"
@@ -680,61 +678,61 @@ const Documents = () => {
               aria-describedby={uploadErrors.description ? 'description-error' : undefined}
             />
             {uploadErrors.description && (
-              <span id="description-error" role="alert" className="mt-1 block text-xs text-red-600">
+              <span id="description-error" role="alert" className="text-xs text-red-600 mt-1 block">
                 {uploadErrors.description.message}
               </span>
             )}
           </div>
 
-          <fieldset className="md:col-span-2 m-0 border-0 p-0">
-            <legend className="mb-1 text-sm font-medium text-text">Access Level *</legend>
-            <div className="mt-2 flex flex-wrap gap-4" role="radiogroup" aria-label="Document access level">
-              <label className="flex cursor-pointer items-center gap-2 text-sm text-text">
+          <fieldset className="border-0 p-0 m-0 mb-4">
+            <legend className="text-sm font-medium text-slate-900 mb-1">Access Level *</legend>
+            <div className="flex gap-6 mt-2" role="radiogroup" aria-label="Document access level">
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-900">
                 <input
                   type="radio"
                   {...registerUpload('accessLevel')}
                   value="private"
-                  className="h-[18px] w-[18px] cursor-pointer accent-accent"
+                  className="w-[18px] h-[18px] cursor-pointer accent-primary"
                   aria-label="Private access"
                 />
                 <span>Private</span>
               </label>
-              <label className="flex cursor-pointer items-center gap-2 text-sm text-text">
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-900">
                 <input
                   type="radio"
                   {...registerUpload('accessLevel')}
                   value="shared"
-                  className="h-[18px] w-[18px] cursor-pointer accent-accent"
+                  className="w-[18px] h-[18px] cursor-pointer accent-primary"
                   aria-label="Shared access"
                 />
                 <span>Shared</span>
               </label>
-              <label className="flex cursor-pointer items-center gap-2 text-sm text-text">
+              <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-900">
                 <input
                   type="radio"
                   {...registerUpload('accessLevel')}
                   value="public"
-                  className="h-[18px] w-[18px] cursor-pointer accent-accent"
+                  className="w-[18px] h-[18px] cursor-pointer accent-primary"
                   aria-label="Public access"
                 />
                 <span>Public</span>
               </label>
             </div>
             {uploadErrors.accessLevel && (
-              <span role="alert" className="mt-1 block text-xs text-red-600">
+              <span role="alert" className="text-xs text-red-600 mt-1 block">
                 {uploadErrors.accessLevel.message}
               </span>
             )}
           </fieldset>
 
-          <div className="md:col-span-2">
-            <label htmlFor="doc-file" className="mb-1 block text-sm font-medium text-text">
+          <div className="mb-4">
+            <label htmlFor="doc-file" className="text-sm font-medium text-slate-900 mb-1 block">
               File *
             </label>
             <Controller
               name="file"
               control={uploadControl}
-              render={({ field: { onChange } }) => (
+              render={({ field: { onChange, value } }) => (
                 <FileUpload
                   id="doc-file"
                   onFileSelect={(file) => onChange(file)}
@@ -746,17 +744,17 @@ const Documents = () => {
               )}
             />
             {!uploadErrors.file && (
-              <p className="mt-2 mb-0 text-[13px] text-text-muted">PDF, PNG, or DOCX files only. Maximum size: 5MB</p>
+              <p className="text-[13px] text-slate-600 mt-2 mb-0">PDF, PNG, or DOCX files only. Maximum size: 5MB</p>
             )}
           </div>
 
           {error && (
-            <div role="alert" aria-live="assertive" className="md:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-[0.9375rem] text-red-700">
+            <div role="alert" aria-live="assertive" className="bg-red-50 text-red-700 py-3.5 px-4 rounded-md border border-red-200 text-[0.9375rem]">
               {error}
             </div>
           )}
 
-          <div className="md:col-span-2 mt-2 flex flex-col justify-end gap-3 border-t border-border pt-6 sm:flex-row">
+          <div className="flex justify-end gap-4 mt-2 pt-6 border-t border-slate-200">
             <AccessibleButton
               type="button"
               onClick={handleCloseUploadModal}
@@ -791,8 +789,8 @@ const Documents = () => {
       >
         {sharingDocument && (
           <>
-            <div className="mb-6 rounded-2xl border border-border bg-primary-50 p-4" role="region" aria-label="Document information">
-              <p className="m-0 text-sm font-medium text-text">
+            <div className="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200" role="region" aria-label="Document information">
+              <p className="text-sm text-slate-900 m-0 font-medium">
                 <strong>Document:</strong> {sharingDocument.title}
               </p>
             </div>
@@ -812,8 +810,8 @@ const Documents = () => {
               />
 
               {sharingDocument.sharedWith && sharingDocument.sharedWith.length > 0 && (
-                <div className="mb-6 rounded-2xl border border-border bg-primary-50 p-4" role="region" aria-label="Already shared with">
-                  <p className="m-0 mb-3 text-sm font-semibold text-text">Already shared with:</p>
+                <div className="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200" role="region" aria-label="Already shared with">
+                  <p className="text-sm font-semibold text-slate-900 mb-3 m-0">Already shared with:</p>
                   <ul className="flex flex-col gap-2" role="list">
                     {sharingDocument.sharedWith.map((sharedUser, index) => {
                       let displayName = 'Unknown User';
@@ -829,8 +827,8 @@ const Documents = () => {
                       }
                       
                       return (
-                        <li key={sharedUser?._id || sharedUser || index} className="flex items-center rounded-xl border border-border bg-white p-2 text-sm text-text shadow-xs" role="listitem">
-                          <Users size={16} className="mr-2 text-text-subtle" aria-hidden="true" />
+                        <li key={sharedUser?._id || sharedUser || index} className="flex items-center text-sm text-slate-900 p-2 bg-white rounded-sm border border-slate-200" role="listitem">
+                          <Users size={16} className="text-slate-600 mr-2" aria-hidden="true" />
                           <span>{displayName}</span>
                         </li>
                       );
@@ -845,7 +843,7 @@ const Documents = () => {
                 </div>
               )}
 
-              <div className="mt-2 flex justify-end gap-4 border-t border-border pt-6">
+              <div className="flex justify-end gap-4 mt-2 pt-6 border-t border-slate-200">
                 <AccessibleButton
                   type="button"
                   onClick={handleCloseShareModal}
@@ -886,11 +884,11 @@ const Documents = () => {
               <div className="flex justify-center mb-4" aria-hidden="true">
                 <AlertTriangle size={48} className="text-red-600" />
               </div>
-              <p className="m-0 text-center text-sm leading-relaxed text-text-muted">
+              <p className="text-sm text-slate-600 leading-relaxed m-0 text-center">
                 Are you sure you want to delete <strong>{documentToDelete.title}</strong>? This action cannot be undone.
               </p>
             </div>
-            <div className="mt-6 flex justify-end gap-4 border-t border-border pt-6">
+            <div className="flex gap-4 justify-end mt-6 pt-6 border-t border-slate-200">
               <AccessibleButton
                 type="button"
                 onClick={handleDeleteCancel}
@@ -923,20 +921,20 @@ const Documents = () => {
         {viewingDocument && (
           <div className="flex flex-col gap-5 max-h-[calc(90vh-120px)] overflow-hidden">
             {/* Document Header */}
-            <div className="flex flex-shrink-0 items-start gap-4 border-b border-border pb-5">
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl border border-primary-200/60 bg-gradient-to-br from-primary-50 to-white shadow-sm">
-                <FileText size={36} className="text-accent" strokeWidth={2} />
+            <div className="flex items-start gap-4 pb-5 border-b border-slate-200 flex-shrink-0">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 flex items-center justify-center flex-shrink-0 shadow-sm border border-blue-200/30">
+                <FileText size={36} className="text-primary" strokeWidth={2} />
               </div>
               <div className="flex-1 min-w-0 flex flex-col gap-2">
                 <h2 
-                  className="m-0 max-h-[3.85em] overflow-hidden text-ellipsis break-words text-[1.375rem] font-bold leading-snug tracking-tight text-text line-clamp-2" 
+                  className="text-[1.375rem] font-bold text-slate-900 m-0 tracking-tight leading-snug overflow-hidden text-ellipsis line-clamp-2 max-h-[3.85em] break-words" 
                   title={viewingDocument.title}
                 >
                   {viewingDocument.title}
                 </h2>
                 {viewingDocument.description && (
                   <p 
-                    className="m-0 max-h-[2.625em] overflow-hidden text-ellipsis break-words text-sm leading-relaxed text-text-muted line-clamp-2" 
+                    className="text-sm text-slate-600 m-0 leading-relaxed overflow-hidden text-ellipsis line-clamp-2 max-h-[2.625em] break-words" 
                     title={viewingDocument.description}
                   >
                     {viewingDocument.description}
@@ -946,17 +944,17 @@ const Documents = () => {
             </div>
 
             {/* Document Details Grid */}
-            <dl className="m-0 grid flex-shrink-0 grid-cols-3 gap-4 rounded-2xl border border-border bg-primary-50 p-5 list-none" role="list">
+            <dl className="grid grid-cols-3 gap-4 p-5 bg-slate-50 rounded-xl border border-slate-200 flex-shrink-0 list-none m-0" role="list">
               <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="m-0 text-xs font-semibold uppercase leading-snug tracking-wider text-text-subtle">Category</dt>
-                <dd className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9375rem] font-medium leading-relaxed text-text">
+                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Category</dt>
+                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
                   <CategoryBadge category={viewingDocument.category} />
                 </dd>
               </div>
               <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="m-0 text-xs font-semibold uppercase leading-snug tracking-wider text-text-subtle">Client</dt>
+                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Client</dt>
                 <dd 
-                  className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9375rem] font-medium leading-relaxed text-text"
+                  className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap"
                   title={viewingDocument.clientId?.name || 'N/A'}
                   aria-label={`Client: ${viewingDocument.clientId?.name || 'N/A'}`}
                 >
@@ -966,22 +964,22 @@ const Documents = () => {
                 </dd>
               </div>
               <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="m-0 text-xs font-semibold uppercase leading-snug tracking-wider text-text-subtle">Access Level</dt>
-                <dd className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9375rem] font-medium leading-relaxed text-text">
+                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Access Level</dt>
+                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
                   <span className={`inline-block px-3 py-1.5 rounded-md text-[0.8125rem] font-semibold capitalize leading-snug whitespace-nowrap ${
                     viewingDocument.accessLevel === 'public' 
                       ? 'bg-green-50 text-green-700 border border-green-200' 
                       : viewingDocument.accessLevel === 'shared'
                       ? 'bg-yellow-50 text-yellow-800 border border-yellow-300'
-                      : 'bg-primary-50 text-text border border-border'
+                      : 'bg-slate-100 text-slate-700 border border-slate-200'
                   }`}>
                     {viewingDocument.accessLevel}
                   </span>
                 </dd>
               </div>
               <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="m-0 text-xs font-semibold uppercase leading-snug tracking-wider text-text-subtle">Upload Date</dt>
-                <dd className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9375rem] font-medium leading-relaxed text-text">
+                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Upload Date</dt>
+                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
                   {new Date(viewingDocument.uploadDate).toLocaleDateString('en-US', {
                     year: 'numeric',
                     month: 'long',
@@ -990,14 +988,14 @@ const Documents = () => {
                 </dd>
               </div>
               <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="m-0 text-xs font-semibold uppercase leading-snug tracking-wider text-text-subtle">File Type</dt>
-                <dd className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9375rem] font-medium leading-relaxed text-text">
+                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">File Type</dt>
+                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
                   {viewingDocument.file?.fileType?.split('/')[1]?.toUpperCase() || 'N/A'}
                 </dd>
               </div>
               <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="m-0 text-xs font-semibold uppercase leading-snug tracking-wider text-text-subtle">File Size</dt>
-                <dd className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-[0.9375rem] font-medium leading-relaxed text-text">
+                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">File Size</dt>
+                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
                   {viewingDocument.file?.fileSize 
                     ? `${(viewingDocument.file.fileSize / 1024 / 1024).toFixed(2)} MB`
                     : 'N/A'}
@@ -1007,13 +1005,13 @@ const Documents = () => {
 
             {/* Shared With Section */}
             {viewingDocument.accessLevel === 'shared' && viewingDocument.sharedWith && viewingDocument.sharedWith.length > 0 && (
-              <div className="flex flex-col gap-2.5 flex-shrink-0 rounded-2xl border border-border bg-primary-50 p-4" role="region" aria-label="Shared with users">
-                <dt className="m-0 text-xs font-semibold uppercase leading-snug tracking-wider text-text-subtle">Shared With</dt>
-                <dd className="m-0 flex flex-wrap gap-2">
+              <div className="flex flex-col gap-2.5 p-4 bg-slate-50 rounded-lg border border-slate-200 flex-shrink-0" role="region" aria-label="Shared with users">
+                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Shared With</dt>
+                <dd className="flex flex-wrap gap-2 m-0">
                   {viewingDocument.sharedWith.map((sharedUser, index) => (
                     <span 
                       key={sharedUser?._id || index} 
-                      className="inline-block whitespace-nowrap rounded-xl border border-border bg-white px-3 py-1.5 text-sm font-medium leading-snug text-text shadow-xs"
+                      className="inline-block px-3 py-1.5 bg-white rounded-md text-sm font-medium text-slate-900 border border-slate-200 shadow-sm leading-snug whitespace-nowrap"
                     >
                       {sharedUser?.name || sharedUser?.email || 'Unknown User'}
                     </span>
@@ -1023,7 +1021,7 @@ const Documents = () => {
             )}
 
             {/* Action Buttons */}
-            <div className="flex flex-shrink-0 gap-3 border-t border-border pt-5" role="group" aria-label="Document actions">
+            <div className="flex gap-3 pt-5 border-t border-slate-200 flex-shrink-0" role="group" aria-label="Document actions">
               <AccessibleButton
                 onClick={() => {
                   handleDownload(viewingDocument._id);

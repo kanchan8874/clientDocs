@@ -10,10 +10,10 @@ const PrivateRoute = ({ children }) => {
   // Agar abhi loading ho rahi hai (initial check), to loading spinner dikhao
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-surface-tint font-sans text-text">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 font-sans text-slate-800">
         <div className="text-center flex flex-col items-center gap-4">
           {/* Loading spinner */}
-          <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-neutral-300 border-t-accent"></div>
+          <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-slate-300 border-t-primary"></div>
           <p>Loading...</p>
         </div>
       </div>
