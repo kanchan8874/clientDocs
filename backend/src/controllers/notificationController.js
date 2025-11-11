@@ -1,8 +1,4 @@
 import Notification from '../models/Notification.js';
-import Document from '../models/Document.js';
-import User from '../models/User.js';
-
-
 export const getNotifications = async (req, res, next) => {
   try {
     const { unreadOnly } = req.query;

@@ -1,15 +1,12 @@
-import React from 'react';
-
-
 const CategoryBadge = ({ category }) => {
   const categoryClasses = {
-    Proposal: 'bg-blue-50 text-primary border-blue-200',
-    Invoice: 'bg-green-50 text-green-600 border-green-200',
-    Contract: 'bg-yellow-50 text-accent border-yellow-200',
-    Report: 'bg-red-50 text-red-600 border-red-200'
+    Proposal: 'bg-primary/12 text-primary border-primary/20',
+    Invoice: 'bg-emerald-50 text-emerald-600 border-emerald-200/80',
+    Contract: 'bg-amber-50 text-amber-600 border-amber-200/80',
+    Report: 'bg-rose-50 text-rose-600 border-rose-200/80'
   };
 
-  const defaultClasses = 'bg-gray-50 text-gray-600 border-gray-200';
+  const defaultClasses = 'bg-slate-100 text-slate-700 border-slate-200/80';
   const classes = categoryClasses[category] || defaultClasses;
 
   return (

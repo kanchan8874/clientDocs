@@ -6,9 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-    "seed": "node src/scripts/seed.js",
-    "test": "node src/scripts/test.js"
+    "dev": "nodemon src/server.js"
   },
   "keywords": [
     "mern",
@@ -29,9 +27,7 @@
     "helmet": "^7.1.0",
     "cors": "^2.8.5",
     "express-rate-limit": "^7.1.5",
-    "dotenv": "^16.3.1",
-    "path": "^0.12.7",
-    "fs": "^0.0.1-security"
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"

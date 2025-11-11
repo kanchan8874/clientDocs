@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { Upload, File, X } from 'lucide-react';
 
 const FileUpload = ({ 
@@ -108,15 +108,13 @@ const FileUpload = ({
 
   const uploadZoneClasses = `
     flex flex-col items-center justify-center
-    p-8
-    border-2 border-dashed rounded-md
-    bg-gray-50
-    cursor-pointer text-center
-    transition-all duration-200
+    rounded-xl border-2 border-dashed border-slate-200 bg-white/90
+    p-8 text-center shadow-sm
+    transition-all duration-200 ease-out
     min-h-[10rem]
-    outline-none
-    focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2
-    ${isDragging ? 'border-primary bg-primary-light scale-[1.02]' : 'border-gray-300'}
+    cursor-pointer outline-none
+    focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:ring-offset-2
+    ${isDragging ? 'border-primary bg-primary/12 scale-[1.01]' : ''}
     ${displayError ? 'border-red-600 bg-red-50' : ''}
   `.trim().replace(/\s+/g, ' ');
 
@@ -149,26 +147,26 @@ const FileUpload = ({
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          <Upload size={36} className={isDragging ? 'text-primary' : 'text-gray-600'} aria-hidden="true" />
-          <p className="text-base text-gray-800 my-4 mt-2 leading-normal">
-            Drag & drop your file here, or <span className="text-primary font-semibold underline underline-offset-2">browse</span>
+          <Upload size={36} className={isDragging ? 'text-primary' : 'text-slate-500'} aria-hidden="true" />
+          <p className="my-4 mt-2 text-base leading-normal text-slate-900">
+            Drag &amp; drop your file here, or <span className="font-semibold text-primary underline underline-offset-2">browse</span>
           </p>
-          <p className="text-sm text-gray-600 m-0 leading-normal">
+          <p className="m-0 text-sm leading-normal text-slate-600">
             Accepted: {accept.replace(/\./g, '').toUpperCase()} • Max size: {maxSize / (1024 * 1024)}MB
           </p>
         </div>
       ) : (
-        <div className="flex items-center gap-4 bg-white p-4 rounded-md border border-gray-300 shadow-sm">
+        <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-md">
           <File size={24} className="text-primary" aria-hidden="true" />
-          <div className="flex-1 flex flex-col gap-1">
-            <span className="text-base text-gray-800 font-medium leading-normal">{selectedFile.name}</span>
-            <span className="text-sm text-gray-600 leading-normal">{formatFileSize(selectedFile.size)}</span>
+          <div className="flex flex-1 flex-col gap-1">
+            <span className="text-base font-medium leading-normal text-slate-900">{selectedFile.name}</span>
+            <span className="text-sm leading-normal text-slate-600">{formatFileSize(selectedFile.size)}</span>
           </div>
           <button
             type="button"
             onClick={handleRemoveFile}
             aria-label={`Remove ${selectedFile.name}`}
-            className="bg-transparent border-none cursor-pointer p-2 rounded-md flex items-center justify-center min-w-[44px] min-h-[44px] text-red-600 transition-colors duration-200 hover:bg-red-50 hover:text-red-700 focus:outline-none focus-visible:outline-2 focus-visible:outline-red-600 focus-visible:outline-offset-2"
+            className="flex min-w-[44px] min-h-[44px] items-center justify-center rounded-lg border border-transparent bg-transparent p-2 text-red-600 transition-colors duration-200 hover:bg-red-50 hover:text-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
           >
             <X size={18} aria-hidden="true" />
           </button>

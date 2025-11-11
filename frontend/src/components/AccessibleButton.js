@@ -1,6 +1,3 @@
-import React from 'react';
-
-
 const AccessibleButton = ({
   children,
   onClick,
@@ -24,13 +21,17 @@ const AccessibleButton = ({
 
   const variantClasses = {
     primary: disabled || loading
-      ? 'bg-gray-400 text-white shadow-none'
-      : 'bg-primary text-white shadow-md hover:bg-primary-dark hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0',
-    secondary: 'bg-transparent text-primary border-2 border-primary hover:bg-primary-light',
+      ? 'bg-slate-300 text-white shadow-none'
+      : 'bg-primary text-white shadow-md hover:bg-primary-dark hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-4 focus-visible:ring-primary/25 focus-visible:ring-offset-2',
+    secondary: disabled || loading
+      ? 'bg-slate-200 text-slate-500 border border-slate-200 shadow-none'
+      : 'bg-white text-primary border border-primary/40 shadow-sm hover:bg-primary/10 hover:text-primary-dark',
     danger: disabled || loading
-      ? 'bg-gray-400 text-white shadow-none'
-      : 'bg-red-600 text-white shadow-md hover:bg-red-700 hover:shadow-lg',
-    ghost: 'bg-transparent text-gray-800 border border-gray-300 hover:bg-gray-50'
+      ? 'bg-rose-300 text-white shadow-none'
+      : 'bg-danger text-white shadow-md hover:bg-danger-dark hover:shadow-lg',
+    ghost: disabled || loading
+      ? 'bg-transparent text-slate-400 border border-slate-200 shadow-none'
+      : 'bg-transparent text-slate-800 border border-slate-200 hover:bg-slate-100'
   };
 
   const baseClasses = `
@@ -39,7 +40,7 @@ const AccessibleButton = ({
     rounded-[10px]
     transition-all duration-200 ease-in-out
     inline-flex items-center justify-center gap-2
-    focus:outline-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2
+    focus:outline-none focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-2
     disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
     ${sizeClasses[size]}
     ${variantClasses[variant]}

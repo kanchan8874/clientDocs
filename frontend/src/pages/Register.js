@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -78,13 +78,13 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 p-6 bg-gradient-to-br from-blue-50/30 to-green-50/30">
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-200 w-full max-w-[420px] max-h-[90vh] overflow-y-auto relative">
-        <div className="flex justify-center mb-5">
+    <div className="flex min-h-screen w-full items-center justify-center bg-transparent px-4 py-12">
+      <div className="glass-card relative w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-3xl p-10">
+        <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
-        <h1 className="text-center text-[1.75rem] font-bold mb-2 text-gray-800 tracking-tight leading-tight">Create your account</h1>
-        <p className="text-center text-[0.9375rem] text-gray-600 mb-6 leading-relaxed">Get started with ClientDocs today</p>
+        <h1 className="text-center text-[1.75rem] font-bold mb-2 text-slate-900 tracking-tight leading-tight">Create your account</h1>
+        <p className="text-center text-[0.9375rem] text-slate-600 mb-6 leading-relaxed">Get started with ClientDocs today</p>
 
         {errors.root && (
           <div 
@@ -181,11 +181,11 @@ const Register = () => {
           )}
         </form>
 
-        <p className="text-center mt-5 text-sm text-gray-600 leading-relaxed">
+        <p className="text-center mt-5 text-sm text-slate-600 leading-relaxed">
           Already have an account?{' '}
           <Link 
             to="/login" 
-            className="text-primary no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-primary-dark focus:outline-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 focus-visible:rounded"
+            className="text-primary no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-primary-dark focus:outline-none focus-visible:ring-3 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:rounded"
             aria-label="Navigate to login page"
           >
             Login here

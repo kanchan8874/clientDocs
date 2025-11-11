@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { X } from 'lucide-react';
 
 
@@ -131,14 +131,14 @@ const AccessibleModal = ({
         relative bg-white rounded-2xl
         ${title ? 'p-8' : 'p-6'}
         w-full max-h-[85vh] overflow-y-auto overflow-x-hidden
-        shadow-xl border border-gray-300
+        shadow-soft-glow border border-slate-200
         outline-none flex flex-col
         ${sizeClasses[size] || sizeClasses.md}
       `.trim().replace(/\s+/g, ' ')}>
         {(title || onClose) && (
-          <div className="flex justify-between items-start mb-6 pb-4 border-b border-gray-300">
+          <div className="mb-6 flex items-start justify-between border-b border-slate-200 pb-4">
             {title && (
-              <h2 id="modal-title" className="text-2xl font-semibold text-gray-800 m-0 leading-tight">
+              <h2 id="modal-title" className="m-0 text-2xl font-semibold leading-tight text-slate-900">
                 {title}
               </h2>
             )}
@@ -147,7 +147,7 @@ const AccessibleModal = ({
                 type="button"
                 onClick={onClose}
                 aria-label="Close dialog"
-                className="bg-transparent border-none cursor-pointer text-gray-600 p-2 rounded-md flex items-center justify-center min-w-[44px] min-h-[44px] transition-colors duration-200 hover:bg-gray-50 focus:outline-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-transparent bg-transparent p-2 text-slate-500 transition-colors duration-200 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
               >
                 <X size={20} aria-hidden="true" />
               </button>

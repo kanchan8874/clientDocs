@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Calendar, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
@@ -76,16 +76,16 @@ const ProfileCard = ({ user }) => {
         aria-label={`User menu for ${user?.name || 'User'}`}
         aria-expanded={isOpen}
         aria-haspopup="true"
-        className="flex items-center gap-3 px-4 py-2 bg-transparent border border-gray-300 rounded-lg cursor-pointer transition-all duration-200 font-sans text-gray-800 min-h-11 text-[0.9375rem] font-medium outline-none shadow-none hover:bg-blue-50/50 hover:border-blue-300/20 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+        className="flex min-h-11 items-center gap-3 rounded-xl border border-slate-200/80 bg-white px-4 py-2 text-[0.9375rem] font-medium text-slate-800 transition-all duration-200 hover:border-primary hover:bg-primary/10 focus:outline-none focus-visible:ring-3 focus-visible:ring-primary/35 focus-visible:ring-offset-2"
       >
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center text-white font-semibold text-sm flex-shrink-0 shadow-md border-2 border-white/90" aria-hidden="true">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-white/90 bg-gradient-to-br from-primary to-blue-500 text-sm font-semibold text-white shadow-soft-glow" aria-hidden="true">
           <span className="leading-none tracking-wide">{getInitials(user?.name)}</span>
         </div>
-        <span className="text-[0.9375rem] font-medium text-gray-800 leading-snug">{user?.name || 'User'}</span>
+        <span className="text-[0.9375rem] font-medium leading-snug text-slate-900">{user?.name || 'User'}</span>
         <ChevronDown 
           size={16} 
           aria-hidden="true"
-          className={`text-gray-600 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`}
+          className={`flex-shrink-0 text-slate-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'}`}
         />
       </button>
 
@@ -93,48 +93,48 @@ const ProfileCard = ({ user }) => {
         <div
           role="menu"
           aria-label="User profile menu"
-          className="absolute top-[calc(100%+12px)] right-0 bg-white rounded-2xl shadow-2xl border border-gray-200 w-80 overflow-hidden z-[1100] animate-[slide-down-fade_0.2s_cubic-bezier(0.4,0,0.2,1)] backdrop-blur-sm"
+          className="absolute top-[calc(100%+12px)] right-0 z-[1100] w-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-surface animate-[slide-down-fade_0.2s_cubic-bezier(0.4,0,0.2,1)] backdrop-blur-sm"
         >
           {/* Header */}
-          <div className="flex items-center p-6 bg-gradient-to-br from-gray-50 to-white border-b border-gray-200">
-            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center text-white font-bold text-2xl mr-4 shadow-lg border-[3px] border-white/90 flex-shrink-0" aria-hidden="true">
+          <div className="flex items-center border-b border-slate-200 bg-gradient-to-br from-slate-50 to-white p-6">
+            <div className="mr-4 flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full border-[3px] border-white/90 bg-gradient-to-br from-primary to-blue-500 text-2xl font-bold text-white shadow-soft-glow" aria-hidden="true">
               <span className="leading-none tracking-wide">{getInitials(user?.name)}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-semibold text-gray-800 m-0 mb-1 leading-tight tracking-tight overflow-hidden text-ellipsis whitespace-nowrap">{user?.name || 'User'}</h3>
-              <p className="text-sm text-gray-600 m-0 leading-snug overflow-hidden text-ellipsis whitespace-nowrap">{user?.email || 'No email'}</p>
+              <h3 className="m-0 mb-1 overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold leading-tight tracking-tight text-slate-900">{user?.name || 'User'}</h3>
+              <p className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-sm leading-snug text-slate-600">{user?.email || 'No email'}</p>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-gray-200 m-0" role="separator" aria-orientation="horizontal"></div>
+          <div className="m-0 h-px bg-slate-200" role="separator" aria-orientation="horizontal"></div>
 
           {/* Profile Info */}
-          <div className="px-6 py-5 bg-white" role="group" aria-label="Profile information">
-            <div className="flex items-start gap-3 mb-4">
-              <Mail size={16} className="text-gray-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <div className="flex flex-col gap-1 flex-1 min-w-0">
-                <span className="text-xs text-gray-600 font-medium leading-snug uppercase tracking-wider">Email</span>
-                <span className="text-[0.9375rem] text-gray-800 leading-relaxed font-normal break-words">{user?.email || 'Not provided'}</span>
+          <div className="bg-white px-6 py-5" role="group" aria-label="Profile information">
+            <div className="mb-4 flex items-start gap-3">
+              <Mail size={16} className="mt-0.5 flex-shrink-0 text-slate-500" aria-hidden="true" />
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <span className="text-xs font-medium uppercase tracking-wider text-slate-500">Email</span>
+                <span className="break-words text-[0.9375rem] font-normal leading-relaxed text-slate-800">{user?.email || 'Not provided'}</span>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Calendar size={16} className="text-gray-600 flex-shrink-0 mt-0.5" aria-hidden="true" />
-              <div className="flex flex-col gap-1 flex-1 min-w-0">
-                <span className="text-xs text-gray-600 font-medium leading-snug uppercase tracking-wider">Member since</span>
-                <span className="text-[0.9375rem] text-gray-800 leading-relaxed font-normal break-words">{getJoinedDate()}</span>
+              <Calendar size={16} className="mt-0.5 flex-shrink-0 text-slate-500" aria-hidden="true" />
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
+                <span className="text-xs font-medium uppercase tracking-wider text-slate-500">Member since</span>
+                <span className="break-words text-[0.9375rem] font-normal leading-relaxed text-slate-800">{getJoinedDate()}</span>
               </div>
             </div>
           </div>
 
           {/* Divider */}
-          <div className="h-px bg-gray-200 m-0" role="separator" aria-orientation="horizontal"></div>
+          <div className="m-0 h-px bg-slate-200" role="separator" aria-orientation="horizontal"></div>
 
           {/* Actions */}
-          <div className="flex flex-col p-3 gap-1 bg-gray-50 border-t border-gray-200" role="group" aria-label="User actions">
+          <div className="flex flex-col gap-1 border-t border-slate-200 bg-slate-50 p-3" role="group" aria-label="User actions">
             <button
               role="menuitem"
-              className="flex items-center w-full px-4 py-3.5 bg-transparent border-0 rounded-lg text-red-600 text-[0.9375rem] font-medium cursor-pointer transition-all duration-200 font-sans justify-start min-h-11 text-left outline-none hover:bg-red-50 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
+              className="flex min-h-11 w-full items-center justify-start rounded-lg border border-transparent bg-transparent px-4 py-3.5 text-[0.9375rem] font-medium text-red-600 transition-all duration-200 hover:bg-red-50 hover:text-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-600 focus-visible:ring-offset-2"
               onClick={handleLogout}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext.js';  // Authentication context
 import PrivateRoute from './components/PrivateRoute.js';    // Protected routes component

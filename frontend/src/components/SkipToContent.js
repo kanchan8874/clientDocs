@@ -1,6 +1,3 @@
-import React from 'react';
-
-
 const SkipToContent = () => {
 
   const handleClick = (e) => {
