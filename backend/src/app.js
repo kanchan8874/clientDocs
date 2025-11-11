@@ -54,7 +54,7 @@ const limiter = rateLimit({
   legacyHeaders: false,
   skip: (req) => {
     // Health check route pe rate limiting skip karo
-    return req.path === '/health';
+    return ['/health', '/healthz', '/api/health'].includes(req.path);
   }
 });
 app.use('/api/', limiter); 
@@ -70,6 +70,15 @@ app.get('/health', (req, res) => {
   res.json({ 
     status: 'OK', 
     message: 'ClientDocs API is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Render default health check path support
+app.get('/healthz', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'ClientDocs API is healthy',
     timestamp: new Date().toISOString()
   });
 });
