@@ -74,6 +74,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// Root Route - Render jese platforms ke health check ke liye 200 response
+app.get('/', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'ClientDocs API root endpoint',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API Routes - Different features ke liye routes
 // Ye routes controllers ko map karte hain
 app.use('/api/auth', authRoutes);           

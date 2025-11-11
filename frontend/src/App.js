@@ -19,12 +19,20 @@ function App() {
 
     <AuthProvider>
       {/* Router - URL routing handle karta hai */}
-      <Router>
+      <Router
+        future={{
+          v7_startTransition: true
+        }}
+      >
         {/* SkipToContent - Accessibility feature (keyboard users ke liye) */}
         <SkipToContent />
         
         {/* Routes - Different URLs ke liye components define karte hain */}
-        <Routes>
+        <Routes
+          future={{
+            v7_relativeSplatPath: true
+          }}
+        >
           
           {/* Login Page - /login URL pe Login component render hoga */}
           <Route path="/login" element={<Login />} />
