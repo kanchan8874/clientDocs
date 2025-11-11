@@ -34,7 +34,7 @@ const authGuard = async (req, res, next) => {
       // jwt.verify() - token ko verify karta hai aur decode karta hai
       // process.env.JWT_SECRET - token encrypt karne ke liye use hua secret key
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
+    
       // decoded object me user ID hai (jab token generate kiya tha tab user ID use hui thi)
       // Token se user ID nikal kar database se user fetch karo
       req.user = await User.findById(decoded.id).select('-password');
@@ -68,3 +68,4 @@ const authGuard = async (req, res, next) => {
 };
 // Middleware export karo - routes me use hoga
 export default authGuard;
+
