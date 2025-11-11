@@ -46,7 +46,7 @@ export const shareDocument = async (documentId, userIds) => {
 export const downloadDocument = async (documentId) => {
   const token = localStorage.getItem('token');
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/documents/${documentId}/download`,
+    `${import.meta.env.VITE_API_URL || 'https://clientdocs.onrender.com'}/documents/${documentId}/download`,
     {
       headers: {
         Authorization: `Bearer ${token}`

@@ -26,8 +26,20 @@ app.use(helmet());
 
 // CORS (Cross-Origin Resource Sharing) Configuration
 // Frontend (React app) ko backend se data access karne ki permission deta hai
+const defaultOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+const envOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map(origin => origin.trim()).filter(Boolean)
+  : [];
+const allowedOrigins = [...new Set([...defaultOrigins, ...envOrigins])];
+
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // origin null hona possible hai (Postman/Server-side requests) - allow karo
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error(`Not allowed by CORS: ${origin}`));
+  },
   credentials: true,  // Cookies/credentials allow karta hai
   optionsSuccessStatus: 200
 };

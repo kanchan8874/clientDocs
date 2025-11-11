@@ -124,21 +124,21 @@ const AccessibleModal = ({
       aria-label={ariaLabel}
       ref={modalRef}
       tabIndex={-1}
-      className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-start md:items-center justify-center z-[1040] p-4 pt-20 md:pt-4"
+      className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-[1040] p-4"
       onClick={handleOverlayClick}
     >
       <div className={`
-        relative bg-white/95 rounded-3xl
+        relative bg-white rounded-2xl
         ${title ? 'p-8' : 'p-6'}
-        w-full max-h-[85vh] overflow-y-auto overflow-x-hidden scrollbar-hidden
-        shadow-soft-glow border border-white/70 backdrop-blur-xl
+        w-full max-h-[85vh] overflow-y-auto overflow-x-hidden
+        shadow-xl border border-gray-300
         outline-none flex flex-col
         ${sizeClasses[size] || sizeClasses.md}
       `.trim().replace(/\s+/g, ' ')}>
         {(title || onClose) && (
-          <div className="flex justify-between items-start mb-6 pb-4 border-b border-white/60">
+          <div className="flex justify-between items-start mb-6 pb-4 border-b border-gray-300">
             {title && (
-              <h2 id="modal-title" className="text-2xl font-semibold text-slate-900 m-0 leading-tight">
+              <h2 id="modal-title" className="text-2xl font-semibold text-gray-800 m-0 leading-tight">
                 {title}
               </h2>
             )}
@@ -147,7 +147,7 @@ const AccessibleModal = ({
                 type="button"
                 onClick={onClose}
                 aria-label="Close dialog"
-                className="bg-transparent border-none cursor-pointer text-slate-600 p-2 rounded-lg flex items-center justify-center min-w-[44px] min-h-[44px] transition-colors duration-200 hover:bg-blue-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                className="bg-transparent border-none cursor-pointer text-gray-600 p-2 rounded-md flex items-center justify-center min-w-[44px] min-h-[44px] transition-colors duration-200 hover:bg-gray-50 focus:outline-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2"
               >
                 <X size={20} aria-hidden="true" />
               </button>

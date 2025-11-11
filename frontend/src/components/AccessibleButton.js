@@ -26,11 +26,11 @@ const AccessibleButton = ({
     primary: disabled || loading
       ? 'bg-gray-400 text-white shadow-none'
       : 'bg-primary text-white shadow-md hover:bg-primary-dark hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0',
-    secondary: 'bg-white/90 text-primary border border-primary hover:bg-primary-light hover:text-primary-dark shadow-soft-glow',
+    secondary: 'bg-transparent text-primary border-2 border-primary hover:bg-primary-light',
     danger: disabled || loading
       ? 'bg-gray-400 text-white shadow-none'
       : 'bg-red-600 text-white shadow-md hover:bg-red-700 hover:shadow-lg',
-    ghost: 'bg-transparent text-slate-900 border border-slate-200 hover:bg-blue-50/50 hover:text-primary'
+    ghost: 'bg-transparent text-gray-800 border border-gray-300 hover:bg-gray-50'
   };
 
   const baseClasses = `

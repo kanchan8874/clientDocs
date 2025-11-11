@@ -9,7 +9,7 @@ const CategoryBadge = ({ category }) => {
     Report: 'bg-red-50 text-red-600 border-red-200'
   };
 
-  const defaultClasses = 'bg-slate-100 text-slate-700 border-slate-200';
+  const defaultClasses = 'bg-gray-50 text-gray-600 border-gray-200';
   const classes = categoryClasses[category] || defaultClasses;
 
   return (

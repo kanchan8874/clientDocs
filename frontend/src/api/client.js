@@ -1,7 +1,7 @@
 import axios from 'axios'; //Axios API Client Setup sabhi API calls ke liye use hoti 
 
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'https://clientdocs.onrender.com/api';
 const apiClient = axios.create({
   baseURL: API_URL,  // Base URL - har request me ye automatically add hoga
   headers: {

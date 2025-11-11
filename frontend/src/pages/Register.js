@@ -78,23 +78,13 @@ const Register = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen items-center justify-center px-6 py-16 sm:px-8">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
-      >
-        <div className="absolute -top-36 left-1/2 h-80 w-80 -translate-x-1/2 rounded-full bg-blue-500/18 blur-3xl" />
-        <div className="absolute -bottom-32 right-[-60px] h-72 w-72 rounded-full bg-emerald-400/18 blur-3xl" />
-      </div>
-
-      <div className="relative w-full max-w-[440px] max-h-[90vh] overflow-y-auto rounded-3xl border border-white/70 bg-white/95 p-9 shadow-soft-glow backdrop-blur-xl">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-br from-blue-500/10 via-transparent to-emerald-400/10" />
-
-        <div className="relative z-10 flex justify-center mb-5">
+    <div className="min-h-screen flex justify-center items-center bg-gray-50 p-6 bg-gradient-to-br from-blue-50/30 to-green-50/30">
+      <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-200 w-full max-w-[420px] max-h-[90vh] overflow-y-auto relative">
+        <div className="flex justify-center mb-5">
           <Logo size="lg" />
         </div>
-        <h1 className="relative z-10 text-center text-[1.75rem] font-bold mb-2 text-slate-900 tracking-tight leading-tight">Create your account</h1>
-        <p className="relative z-10 text-center text-[0.9375rem] text-slate-600 mb-6 leading-relaxed">Get started with ClientDocs today</p>
+        <h1 className="text-center text-[1.75rem] font-bold mb-2 text-gray-800 tracking-tight leading-tight">Create your account</h1>
+        <p className="text-center text-[0.9375rem] text-gray-600 mb-6 leading-relaxed">Get started with ClientDocs today</p>
 
         {errors.root && (
           <div 
@@ -102,7 +92,7 @@ const Register = () => {
             role="alert"
             aria-live="assertive"
             tabIndex={-1}
-            className="relative z-10 bg-red-50 text-red-700 py-3.5 px-4 rounded-[12px] mb-4 border border-red-600 text-sm outline-none leading-normal shadow-ambient-glow"
+            className="bg-red-50 text-red-700 py-3.5 px-4 rounded-[10px] mb-4 border border-red-600 text-sm outline-none leading-normal"
           >
             {errors.root.message}
           </div>
@@ -111,7 +101,7 @@ const Register = () => {
         <form 
           ref={formRef}
           onSubmit={handleSubmit(onSubmit)} 
-          className="relative z-10 flex flex-col gap-4"
+          className="flex flex-col gap-4"
           aria-label="Registration form"
           noValidate
         >
@@ -191,7 +181,7 @@ const Register = () => {
           )}
         </form>
 
-        <p className="relative z-10 text-center mt-5 text-sm text-slate-600 leading-relaxed">
+        <p className="text-center mt-5 text-sm text-gray-600 leading-relaxed">
           Already have an account?{' '}
           <Link 
             to="/login" 

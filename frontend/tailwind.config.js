@@ -51,9 +51,6 @@ export default {
         'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
         'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
         'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        'soft-glow': '0 24px 60px -25px rgba(30, 64, 175, 0.45), 0 18px 40px -30px rgba(15, 23, 42, 0.6)',
-        'ambient-glow': '0 20px 45px -25px rgba(14, 116, 144, 0.45), 0 12px 30px -20px rgba(15, 23, 42, 0.45)',
-        'focus-soft': '0 0 0 4px rgba(26, 115, 232, 0.25)'
       },
       keyframes: {
         slideDownFade: {
