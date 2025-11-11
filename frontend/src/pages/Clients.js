@@ -161,10 +161,10 @@ const Clients = () => {
     <Layout>
       {/* Content */}
       <section className="max-w-[1400px] mx-auto" aria-label="Clients management">
-        <header className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-3xl font-semibold text-slate-900 m-0 mb-2 tracking-tight">Clients</h1>
-            <p className="text-base text-slate-600 m-0">Manage your client relationships and information</p>
+        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-2">
+            <h1 className="m-0 text-2xl font-semibold tracking-tight text-text sm:text-3xl">Clients</h1>
+            <p className="m-0 text-sm text-text-muted sm:text-base">Manage your client relationships and information</p>
           </div>
           <AccessibleButton
             onClick={() => handleOpenModal()}
@@ -182,7 +182,7 @@ const Clients = () => {
           <div 
             role="alert" 
             aria-live="assertive" 
-            className="bg-red-50 text-red-700 py-3.5 px-4 rounded-md mb-4 border border-red-200 text-[0.9375rem]"
+            className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-[0.9375rem] text-red-700"
           >
             {error}
           </div>
@@ -191,7 +191,7 @@ const Clients = () => {
           <div 
             role="status" 
             aria-live="polite" 
-            className="bg-green-50 text-green-700 py-3.5 px-4 rounded-md mb-4 border border-green-200 text-[0.9375rem]"
+            className="mb-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3.5 text-[0.9375rem] text-green-700"
           >
             {success}
           </div>
@@ -199,17 +199,17 @@ const Clients = () => {
 
         {/* Clients List */}
         {loading ? (
-          <div className="text-center py-16 px-8 text-slate-600 text-base flex flex-col items-center gap-4" role="status" aria-live="polite" aria-label="Loading clients">
-            <div className="w-10 h-10 border-[3px] border-slate-300 border-t-primary rounded-full animate-spin" aria-hidden="true"></div>
+          <div className="flex flex-col items-center gap-4 px-8 py-16 text-center text-base text-text-muted" role="status" aria-live="polite" aria-label="Loading clients">
+            <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-neutral-300 border-t-accent" aria-hidden="true"></div>
             <p>Loading clients...</p>
           </div>
         ) : clients.length === 0 ? (
-          <div className="surface-card text-center py-16 px-8" role="status" aria-live="polite">
-            <div className="mb-6 flex justify-center" aria-hidden="true">
-              <Users size={64} color="#d1d5db" />
+          <div className="glass-card text-center py-16 px-8" role="status" aria-live="polite">
+            <div className="mb-6 flex justify-center text-neutral-300" aria-hidden="true">
+              <Users size={64} />
             </div>
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">No clients yet</h2>
-            <p className="text-[0.9375rem] text-slate-600 mb-6">Create your first client to get started!</p>
+            <h2 className="mb-2 text-xl font-semibold text-text">No clients yet</h2>
+            <p className="mb-6 text-[0.9375rem] text-text-muted">Create your first client to get started!</p>
             <AccessibleButton
               onClick={() => handleOpenModal()}
               variant="primary"
@@ -221,19 +221,19 @@ const Clients = () => {
             </AccessibleButton>
           </div>
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-6" role="list" aria-label="Client list">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3" role="list" aria-label="Client list">
             {clients.map((client) => (
               <article 
                 key={client._id}
                 role="listitem"
-                className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5"
+                className="surface-card rounded-3xl bg-white/90 p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-surface backdrop-blur-sm"
               >
-                <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-primary/12 text-primary" aria-hidden="true">
-                    <Users size={20} color="#1A73E8" />
+                <div className="mb-5 flex min-w-0 items-center gap-3 border-b border-border pb-5">
+                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/12 text-accent" aria-hidden="true">
+                    <Users size={20} />
                   </div>
                   <h3 
-                    className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis whitespace-nowrap leading-tight"
+                    className="m-0 flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold leading-tight tracking-tight text-text"
                     title={client.name}
                     aria-label={`Client: ${client.name}`}
                   >
@@ -258,45 +258,45 @@ const Clients = () => {
                 </div>
                 <dl className="flex flex-col gap-3">
                   {client.email && (
-                    <div className="flex items-center text-[0.9375rem] text-slate-800 min-w-0">
+                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
                       <dt className="sr-only">Email</dt>
-                      <dd className="flex min-w-0 flex-1 items-center text-slate-800" title={client.email}>
-                        <Mail size={16} className="mr-4 flex-shrink-0 text-slate-500" aria-hidden="true" />
+                      <dd className="flex min-w-0 flex-1 items-center text-text" title={client.email}>
+                        <Mail size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">{client.email}</span>
                       </dd>
                     </div>
                   )}
                   {client.phone && (
-                    <div className="flex items-center text-[0.9375rem] text-slate-800 min-w-0">
+                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
                       <dt className="sr-only">Phone</dt>
-                      <dd className="flex min-w-0 flex-1 items-center text-slate-800" title={client.phone}>
-                        <Phone size={16} className="mr-4 flex-shrink-0 text-slate-500" aria-hidden="true" />
+                      <dd className="flex min-w-0 flex-1 items-center text-text" title={client.phone}>
+                        <Phone size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">{client.phone}</span>
                       </dd>
                     </div>
                   )}
                   {client.company && (
-                    <div className="flex items-center text-[0.9375rem] text-slate-800 min-w-0">
+                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
                       <dt className="sr-only">Company</dt>
-                      <dd className="flex min-w-0 flex-1 items-center text-slate-800" title={client.company}>
-                        <Building2 size={16} className="mr-4 flex-shrink-0 text-slate-500" aria-hidden="true" />
+                      <dd className="flex min-w-0 flex-1 items-center text-text" title={client.company}>
+                        <Building2 size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">{client.company}</span>
                       </dd>
                     </div>
                   )}
                   {client.address && (
-                    <div className="flex items-center text-[0.9375rem] text-slate-800 min-w-0">
+                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
                       <dt className="sr-only">Address</dt>
-                      <dd className="flex min-w-0 flex-1 items-center text-slate-800" title={client.address}>
-                        <MapPin size={16} className="mr-4 flex-shrink-0 text-slate-500" aria-hidden="true" />
+                      <dd className="flex min-w-0 flex-1 items-center text-text" title={client.address}>
+                        <MapPin size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
                         <span className="overflow-hidden text-ellipsis whitespace-nowrap min-w-0 flex-1">{client.address}</span>
                       </dd>
                     </div>
                   )}
-                  <div className="flex items-center text-[0.9375rem] text-slate-800 min-w-0">
+                  <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
                     <dt className="sr-only">Date added</dt>
-                    <dd className="flex min-w-0 flex-1 items-center text-slate-800">
-                      <Calendar size={16} className="mr-4 flex-shrink-0 text-slate-500" aria-hidden="true" />
+                    <dd className="flex min-w-0 flex-1 items-center text-text">
+                      <Calendar size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
                       Added {new Date(client.createdAt).toLocaleDateString()}
                     </dd>
                   </div>
@@ -315,7 +315,7 @@ const Clients = () => {
         ariaLabel={editingClient ? 'Edit client form' : 'Add new client form'}
         size="md"
       >
-        <form onSubmit={handleFormSubmit(onSubmit)} className="flex flex-col gap-5" noValidate>
+        <form onSubmit={handleFormSubmit(onSubmit)} className="grid gap-5 md:grid-cols-2" noValidate>
           <AccessibleInput
             id="client-name"
             label="Client Name"
@@ -326,6 +326,7 @@ const Clients = () => {
             placeholder="Enter client name"
             ariaLabel="Client name"
             helperText={`${clientName.length}/100 characters (Minimum 3, maximum 100)`}
+            className="md:col-span-2"
           />
 
           <AccessibleInput
@@ -358,15 +359,15 @@ const Clients = () => {
             ariaLabel="Client company name"
           />
 
-          <div className="mb-4">
-            <label htmlFor="client-address" className="text-sm font-medium text-slate-900 mb-1 block leading-normal">
+          <div className="md:col-span-2">
+            <label htmlFor="client-address" className="mb-1 block text-sm font-medium leading-normal text-text">
               Address
             </label>
             <textarea
               id="client-address"
               {...register('address')}
-              className={`py-3.5 px-4 border rounded-md text-[0.9375rem] font-sans text-slate-900 bg-white transition-colors duration-200 min-h-[100px] w-full resize-y ${
-                formErrors.address ? 'border-red-600' : 'border-slate-200'
+              className={`w-full resize-y rounded-2xl border px-4 py-3.5 text-[0.9375rem] font-sans text-text transition-colors duration-200 ${
+                formErrors.address ? 'border-red-600 bg-white' : 'border-border bg-white'
               }`}
               placeholder="Full address"
               rows="3"
@@ -382,12 +383,12 @@ const Clients = () => {
           </div>
 
           {error && (
-            <div role="alert" aria-live="assertive" className="bg-red-50 text-red-700 py-3.5 px-4 rounded-md mb-4 border border-red-200 text-[0.9375rem]">
+            <div role="alert" aria-live="assertive" className="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-[0.9375rem] text-red-700 md:col-span-2">
               {error}
             </div>
           )}
 
-          <div className="flex justify-end gap-4 mt-2 pt-6 border-t border-slate-200">
+          <div className="mt-2 flex justify-end gap-4 border-t border-border pt-6 md:col-span-2">
             <AccessibleButton
               type="button"
               onClick={handleCloseModal}
@@ -423,7 +424,7 @@ const Clients = () => {
           <div className="flex justify-center mb-2" aria-hidden="true">
             <AlertTriangle size={48} className="text-red-600" />
           </div>
-          <p className="text-[0.9375rem] text-slate-600 leading-relaxed m-0 max-w-[36ch]">
+          <p className="m-0 max-w-[36ch] text-[0.9375rem] leading-relaxed text-text-muted">
             Are you sure you want to delete <strong>{clientToDelete?.name}</strong>? This action cannot be undone.
           </p>
         </div>

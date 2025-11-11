@@ -5,6 +5,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Routes import karo - ye sabhi API endpoints define karte hain
 import authRoutes from './routes/authRoutes.js';           
@@ -16,7 +18,11 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import errorHandler from './middleware/errorHandler.js';   
 import notFound from './middleware/notFound.js';    
 
-dotenv.config();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({
+  path: path.resolve(__dirname, '../.env')
+});
 
 // Express app instance create karo
 const app = express();

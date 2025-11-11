@@ -138,7 +138,7 @@ const NotificationBell = () => {
         aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
         aria-expanded={showDropdown}
         aria-haspopup="true"
-        className="relative flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 transition-all duration-200 hover:border-primary hover:text-primary focus:outline-none focus-visible:ring-3 focus-visible:ring-primary/40 focus-visible:ring-offset-2"
+        className="relative flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full border border-border bg-white text-neutral-400 transition-all duration-200 hover:border-accent hover:text-accent focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/35 focus-visible:ring-offset-2"
       >
         <Bell size={18} aria-hidden="true" />
         {unreadCount > 0 && (
@@ -155,11 +155,11 @@ const NotificationBell = () => {
         <div
           role="menu"
           aria-label="Notifications"
-          className="absolute top-[calc(100%+0.75rem)] right-0 z-[1100] flex max-h-[28rem] w-[22rem] max-w-[90vw] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-surface"
+          className="absolute top-[calc(100%+0.75rem)] right-0 z-[1100] flex max-h-[28rem] w-[22rem] max-w-[90vw] flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-surface"
         >
           {/* Header - Fixed */}
-          <div className="sticky top-0 z-10 flex flex-shrink-0 items-center justify-between border-b border-slate-200 bg-white px-5 py-4">
-            <h3 className="m-0 flex items-center gap-2 text-base font-semibold tracking-tight text-slate-900">
+          <div className="sticky top-0 z-10 flex flex-shrink-0 items-center justify-between border-b border-border bg-white px-5 py-4">
+            <h3 className="m-0 flex items-center gap-2 text-base font-semibold tracking-tight text-text">
               Notifications
               {unreadCount > 0 && (
                 <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-[10px] bg-red-600 px-1.5 text-xs font-semibold leading-none text-white shadow-sm" aria-label={`${unreadCount} unread`}>
@@ -172,19 +172,19 @@ const NotificationBell = () => {
                 onClick={handleManualRefresh}
                 aria-label="Refresh notifications"
                 disabled={loading}
-                className="flex min-h-9 min-w-9 items-center justify-center rounded-lg border border-transparent bg-transparent p-2 text-slate-500 transition-colors duration-200 hover:bg-primary/10 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:opacity-50"
+                className="flex min-h-9 min-w-9 items-center justify-center rounded-lg border border-transparent bg-transparent p-2 text-neutral-400 transition-colors duration-200 hover:bg-primary-50 hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 disabled:opacity-50"
               >
                 <RefreshCw 
                   size={16} 
                   aria-hidden="true"
-                  className={loading ? 'animate-spin text-slate-400' : 'text-slate-500'}
+                  className={loading ? 'animate-spin text-neutral-300' : 'text-neutral-400'}
                 />
               </button>
               {notifications.length > 0 && (
                 <button
                   onClick={handleMarkAllRead}
                   aria-label="Mark all notifications as read"
-                  className="min-h-9 whitespace-nowrap rounded-lg border border-transparent bg-transparent px-3 py-2 text-sm font-medium text-primary transition-colors duration-200 hover:bg-primary/10 hover:text-primary-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                  className="min-h-9 whitespace-nowrap rounded-lg border border-transparent bg-transparent px-3 py-2 text-sm font-medium text-accent transition-colors duration-200 hover:bg-primary-50 hover:text-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
                 >
                   Mark all read
                 </button>
@@ -196,7 +196,7 @@ const NotificationBell = () => {
           <div 
             role="group" 
             aria-label="Notification list"
-            className="max-h-[calc(28rem-73px)] min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-slate-300 [&::-webkit-scrollbar-thumb]:hover:bg-slate-400"
+            className="max-h-[calc(28rem-73px)] min-h-0 flex-1 overflow-y-auto overflow-x-hidden scroll-smooth [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 [&::-webkit-scrollbar-thumb]:hover:bg-neutral-400"
             data-notification-list
           >
             {loading ? (
@@ -204,15 +204,15 @@ const NotificationBell = () => {
                 <RefreshCw 
                   size={24} 
                   aria-hidden="true"
-                  className="mb-2 animate-spin text-slate-400"
+                  className="mb-2 animate-spin text-neutral-300"
                 />
-                <p className="m-0 mb-1 text-[0.9375rem] font-medium text-slate-600">Loading notifications...</p>
+                <p className="m-0 mb-1 text-[0.9375rem] font-medium text-text-muted">Loading notifications...</p>
               </div>
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
-                <Bell size={32} aria-hidden="true" className="mb-3 text-slate-300" />
-                <p className="m-0 mb-1 text-[0.9375rem] font-medium text-slate-600">No notifications</p>
-                <p className="m-0 text-[0.8125rem] text-slate-400">You're all caught up!</p>
+                <Bell size={32} aria-hidden="true" className="mb-3 text-neutral-300" />
+                <p className="m-0 mb-1 text-[0.9375rem] font-medium text-text-muted">No notifications</p>
+                <p className="m-0 text-[0.8125rem] text-text-subtle">You're all caught up!</p>
               </div>
             ) : (
               notifications.map((notification, index) => (
@@ -220,10 +220,10 @@ const NotificationBell = () => {
                   key={notification._id}
                   role="menuitem"
                   onClick={() => handleNotificationClick(notification)}
-                  className={`flex w-full cursor-pointer items-start gap-3 border-0 border-b border-slate-200 px-5 py-4 text-left outline-none transition-colors duration-150 hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset ${
+                  className={`flex w-full cursor-pointer items-start gap-3 border-0 border-b border-border px-5 py-4 text-left outline-none transition-colors duration-150 hover:bg-primary-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-inset ${
                     notification.isRead
                       ? 'bg-white'
-                      : 'bg-primary/12 border-l-[3px] border-l-primary'
+                      : 'bg-primary-50 border-l-[3px] border-l-accent'
                   } ${index === notifications.length - 1 ? 'border-b-0' : ''}`}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' || e.key === ' ') {
@@ -233,25 +233,25 @@ const NotificationBell = () => {
                   }}
                 >
                   <div className="flex min-w-0 flex-1 items-start gap-3">
-                    <div className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary/12">
+                    <div className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-primary-50">
                       <FileText
                         size={18}
                         aria-hidden="true"
-                        className={notification.isRead ? 'text-slate-400' : 'text-primary'}
+                        className={notification.isRead ? 'text-neutral-300' : 'text-accent'}
                       />
                       {!notification.isRead && (
                         <div className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full border-2 border-white bg-red-600 shadow-sm" aria-hidden="true" />
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <div className="mb-1 break-words text-sm font-semibold leading-snug text-slate-900">
+                      <div className="mb-1 break-words text-sm font-semibold leading-snug text-text">
                         {notification.title}
                       </div>
-                      <div className="mb-1.5 break-words text-[0.8125rem] leading-relaxed text-slate-600">
+                      <div className="mb-1.5 break-words text-[0.8125rem] leading-relaxed text-text-muted">
                         {notification.message}
                       </div>
                       {notification.createdAt && (
-                        <div className="text-xs leading-snug text-slate-400">
+                        <div className="text-xs leading-snug text-text-subtle">
                           {new Date(notification.createdAt).toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',

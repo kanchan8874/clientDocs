@@ -83,8 +83,8 @@ const Register = () => {
         <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
-        <h1 className="text-center text-[1.75rem] font-bold mb-2 text-slate-900 tracking-tight leading-tight">Create your account</h1>
-        <p className="text-center text-[0.9375rem] text-slate-600 mb-6 leading-relaxed">Get started with ClientDocs today</p>
+        <h1 className="mb-2 text-center text-[1.75rem] font-bold leading-tight tracking-tight text-text">Create your account</h1>
+        <p className="mb-6 text-center text-[0.9375rem] leading-relaxed text-text-muted">Get started with ClientDocs today</p>
 
         {errors.root && (
           <div 
@@ -181,11 +181,11 @@ const Register = () => {
           )}
         </form>
 
-        <p className="text-center mt-5 text-sm text-slate-600 leading-relaxed">
+        <p className="mt-5 text-center text-sm leading-relaxed text-text-muted">
           Already have an account?{' '}
           <Link 
             to="/login" 
-            className="text-primary no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-primary-dark focus:outline-none focus-visible:ring-3 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:rounded"
+            className="cursor-pointer font-semibold text-accent no-underline transition-colors duration-200 hover:text-primary-700 focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/35 focus-visible:ring-offset-2 focus-visible:rounded"
             aria-label="Navigate to login page"
           >
             Login here

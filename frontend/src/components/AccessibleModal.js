@@ -104,8 +104,8 @@ const AccessibleModal = ({
 
   const sizeClasses = {
     sm: 'max-w-[28rem]',
-    md: 'max-w-[40rem]',
-    lg: 'max-w-[52rem]',
+    md: 'max-w-[42rem]',
+    lg: 'max-w-[54rem]',
     xl: 'max-w-[72rem]'
   };
 
@@ -124,21 +124,20 @@ const AccessibleModal = ({
       aria-label={ariaLabel}
       ref={modalRef}
       tabIndex={-1}
-      className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-[1040] p-4"
+      className="fixed inset-0 z-[1040] flex items-start justify-center bg-neutral-900/40 px-4 py-6 sm:py-8 md:py-10 lg:items-center backdrop-blur-lg"
       onClick={handleOverlayClick}
     >
       <div className={`
-        relative bg-white rounded-2xl
-        ${title ? 'p-8' : 'p-6'}
-        w-full max-h-[85vh] overflow-y-auto overflow-x-hidden
-        shadow-soft-glow border border-slate-200
-        outline-none flex flex-col
+        relative flex w-full flex-col overflow-x-hidden overflow-y-auto rounded-3xl border border-border bg-white/95 scrollbar-hidden
+        ${title ? 'p-6 sm:p-7 lg:p-8' : 'p-5 sm:p-6 lg:p-7'}
+        max-h-[85vh]
+        shadow-surface backdrop-blur-sm outline-none
         ${sizeClasses[size] || sizeClasses.md}
       `.trim().replace(/\s+/g, ' ')}>
         {(title || onClose) && (
-          <div className="mb-6 flex items-start justify-between border-b border-slate-200 pb-4">
+          <div className="mb-6 flex items-start justify-between border-b border-border pb-4">
             {title && (
-              <h2 id="modal-title" className="m-0 text-2xl font-semibold leading-tight text-slate-900">
+              <h2 id="modal-title" className="m-0 text-2xl font-semibold leading-tight text-text">
                 {title}
               </h2>
             )}
@@ -147,7 +146,7 @@ const AccessibleModal = ({
                 type="button"
                 onClick={onClose}
                 aria-label="Close dialog"
-                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-transparent bg-transparent p-2 text-slate-500 transition-colors duration-200 hover:bg-slate-100 hover:text-slate-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                className="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-2xl border border-transparent bg-transparent p-2 text-text-subtle transition-colors duration-200 hover:bg-primary-50 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
               >
                 <X size={20} aria-hidden="true" />
               </button>

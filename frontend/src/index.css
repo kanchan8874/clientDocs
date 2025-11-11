@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600&display=swap');
+
 /* 
    WCAG 2.2 Level AA Accessible Base Styles
  */
@@ -16,7 +18,7 @@
   }
 
   body {
-    @apply font-sans text-slate-900 bg-slate-50 antialiased min-h-screen;
+    @apply font-sans text-text bg-surface-tint antialiased min-h-screen;
     background-image: theme('backgroundImage.body-gradient');
     background-attachment: fixed;
     background-size: cover;
@@ -43,7 +45,7 @@
 @layer components {
   /* Skip to Content Link (WCAG 2.2 Requirement) */
   .skip-to-content {
-    @apply absolute -top-24 left-0 bg-primary text-white px-3 py-2 no-underline z-[9999] font-semibold rounded-br-md shadow-md;
+    @apply absolute -top-24 left-0 bg-accent text-white px-3 py-2 no-underline z-[9999] font-semibold rounded-br-md shadow-md;
   }
 
   .skip-to-content:focus {
@@ -62,28 +64,28 @@
   }
 
   .surface-card {
-    @apply bg-white border border-slate-200/80 rounded-xl shadow-md transition-all duration-300 ease-out;
+    @apply bg-surface border border-border/70 rounded-2xl shadow-sm transition-all duration-300 ease-out;
   }
 
   .surface-card:hover {
-    @apply -translate-y-0.5 shadow-lg;
+    @apply -translate-y-1 shadow-surface;
   }
 
   .surface-card:focus-within,
   .surface-card:focus-visible {
-    @apply shadow-lg;
+    @apply shadow-surface;
   }
 
   .interactive-card {
-    @apply surface-card cursor-pointer text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-primary/25 focus-visible:ring-offset-2;
+    @apply surface-card cursor-pointer text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-accent/20 focus-visible:ring-offset-2;
   }
 
   .interactive-card:hover {
-    @apply -translate-y-0.5 shadow-lg;
+    @apply -translate-y-1 shadow-soft-glow;
   }
 
   .glass-card {
-    @apply backdrop-blur-lg bg-white/85 border border-white/60 shadow-lg;
+    @apply backdrop-blur-xl bg-white/80 border border-border/60 shadow-lg;
   }
 
   .scrollbar-hidden {
@@ -99,6 +101,6 @@
 @layer utilities {
   /* Focus visible styles for accessibility */
   .focus-visible-ring {
-    @apply focus:outline-none focus-visible:outline-2 focus-visible:outline-primary focus-visible:outline-offset-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-opacity-30;
+    @apply focus:outline-none focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-offset-2 focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-opacity-30;
   }
 }

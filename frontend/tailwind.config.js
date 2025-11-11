@@ -8,59 +8,91 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#1A73E8',
-          dark: '#1557B0',
-          light: '#E8F0FE',
+          25: '#F6FAFF',
+          50: '#EEF4FF',
+          100: '#DFEAFF',
+          200: '#C7DAFF',
+          300: '#A7C3FF',
+          400: '#7FA5FF',
+          500: '#5888FF',
+          600: '#3B82F6',
+          700: '#2C5FCC',
+          800: '#1E4399',
+          900: '#152E70',
+          DEFAULT: '#DFEAFF'
         },
         accent: {
-          DEFAULT: '#F4B400',
-          dark: '#C49000',
+          DEFAULT: '#3B82F6',
+          soft: '#E4F0FF',
+          vivid: '#2563EB',
         },
-        text: {
-          DEFAULT: '#202124',
-          secondary: '#5F6368',
-          muted: '#80868B',
+        neutral: {
+          50: '#F8FAFC',
+          100: '#EEF1F7',
+          200: '#DDE4EE',
+          300: '#C4CEDC',
+          400: '#9AA7BC',
+          500: '#74839B',
+          600: '#5B6A83',
+          700: '#455066',
+          800: '#303847',
+          900: '#1F2530',
         },
-        // Alias for easier usage
-        'text-primary': '#202124',
-        'text-secondary': '#5F6368',
-        'text-muted': '#80868B',
         success: {
-          DEFAULT: '#137333',
-          light: '#E6F4EA',
-          dark: '#0B4D23',
+          DEFAULT: '#10B981',
+          light: '#ECFDF5',
+          dark: '#047857',
         },
         danger: {
-          DEFAULT: '#C5221F',
-          light: '#FCE8E6',
-          dark: '#9E1B19',
+          DEFAULT: '#EF4444',
+          light: '#FEE2E2',
+          dark: '#B91C1C',
         },
         warning: {
-          DEFAULT: '#EA8600',
-          light: '#FEF7E0',
+          DEFAULT: '#F59E0B',
+          light: '#FEF3C7',
+          dark: '#B45309',
+        },
+        info: {
+          DEFAULT: '#0EA5E9',
+          light: '#E0F2FE',
+          dark: '#0369A1',
+        },
+        surface: {
+          DEFAULT: '#FFFFFF',
+          tint: '#F8FAFF',
+          subtle: '#F1F5FF',
         },
         border: {
-          DEFAULT: '#DADCE0',
-          dark: '#BDC1C6',
+          DEFAULT: '#E2E8F0',
+          strong: '#CBD5F5',
+          muted: '#E6EBF6',
         },
+        text: {
+          DEFAULT: '#1F2937',
+          secondary: '#4B5563',
+          muted: '#6B7280',
+          subtle: '#94A3B8',
+          inverted: '#F8FAFC',
+        }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Inter', 'Poppins', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
       },
       boxShadow: {
-        'xs': '0 1px 2px 0 rgba(15, 23, 42, 0.04)',
-        'sm': '0 2px 4px -2px rgba(15, 23, 42, 0.08), 0 1px 3px -1px rgba(15, 23, 42, 0.06)',
-        'md': '0 5px 10px -6px rgba(15, 23, 42, 0.12), 0 2px 6px -4px rgba(15, 23, 42, 0.05)',
-        'lg': '0 10px 18px -8px rgba(15, 23, 42, 0.12), 0 4px 8px -6px rgba(15, 23, 42, 0.06)',
-        'xl': '0 16px 26px -12px rgba(15, 23, 42, 0.14), 0 8px 12px -10px rgba(15, 23, 42, 0.08)',
-        'surface': '0 16px 32px -22px rgba(15, 23, 42, 0.16)',
-        'surface-strong': '0 22px 42px -25px rgba(15, 23, 42, 0.2)',
-        'soft-glow': '0 24px 48px -28px rgba(59, 130, 246, 0.18)',
-        'focus-ring': '0 0 0 4px rgba(26, 115, 232, 0.18)'
+        xs: '0 2px 4px rgba(15, 23, 42, 0.06)',
+        sm: '0 4px 12px rgba(15, 23, 42, 0.08)',
+        md: '0 12px 30px -12px rgba(15, 23, 42, 0.18)',
+        lg: '0 18px 40px -18px rgba(15, 23, 42, 0.22)',
+        xl: '0 25px 60px -25px rgba(15, 23, 42, 0.24)',
+        'surface': '0 20px 50px -25px rgba(59, 130, 246, 0.18)',
+        'surface-strong': '0 30px 70px -30px rgba(37, 99, 235, 0.22)',
+        'soft-glow': '0 18px 40px -20px rgba(59, 130, 246, 0.25)',
+        'focus-ring': '0 0 0 4px rgba(59, 130, 246, 0.22)'
       },
       backgroundImage: {
-        'body-gradient': 'linear-gradient(180deg, rgba(249,250,251,1) 0%, rgba(241,245,249,1) 100%)',
-        'card-gradient': 'linear-gradient(135deg, rgba(244,247,252,0.96), rgba(255,255,255,0.96))'
+        'body-gradient': 'linear-gradient(180deg, rgba(244,248,255,1) 0%, rgba(235,244,255,1) 45%, rgba(249,250,255,1) 100%)',
+        'card-gradient': 'linear-gradient(145deg, rgba(255,255,255,0.95), rgba(239,246,255,0.9))'
       },
       keyframes: {
         slideDownFade: {
