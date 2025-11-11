@@ -21,26 +21,26 @@ const AccessibleButton = ({
 
   const variantClasses = {
     primary: disabled || loading
-      ? 'bg-slate-300 text-white shadow-none'
-      : 'bg-primary text-white shadow-md hover:bg-primary-dark hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 focus-visible:ring-4 focus-visible:ring-primary/25 focus-visible:ring-offset-2',
+      ? 'bg-neutral-300 text-white shadow-none'
+      : 'bg-gradient-to-r from-accent to-primary-600 text-white shadow-soft-glow hover:shadow-surface hover:-translate-y-0.5 active:translate-y-0',
     secondary: disabled || loading
-      ? 'bg-slate-200 text-slate-500 border border-slate-200 shadow-none'
-      : 'bg-white text-primary border border-primary/40 shadow-sm hover:bg-primary/10 hover:text-primary-dark',
+      ? 'bg-neutral-100 text-text-muted border border-border shadow-none'
+      : 'bg-white text-accent border border-border shadow-sm hover:bg-primary-50 hover:text-primary-700',
     danger: disabled || loading
       ? 'bg-rose-300 text-white shadow-none'
       : 'bg-danger text-white shadow-md hover:bg-danger-dark hover:shadow-lg',
     ghost: disabled || loading
-      ? 'bg-transparent text-slate-400 border border-slate-200 shadow-none'
-      : 'bg-transparent text-slate-800 border border-slate-200 hover:bg-slate-100'
+      ? 'bg-transparent text-text-muted border border-border shadow-none'
+      : 'bg-transparent text-text border border-border hover:bg-primary-50'
   };
 
   const baseClasses = `
     font-semibold leading-normal
     min-h-[44px] min-w-[44px]
-    rounded-[10px]
+    rounded-2xl
     transition-all duration-200 ease-in-out
     inline-flex items-center justify-center gap-2
-    focus:outline-none focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-primary/25 focus-visible:ring-offset-2
+    focus:outline-none focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/25 focus-visible:ring-offset-2
     disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
     ${sizeClasses[size]}
     ${variantClasses[variant]}

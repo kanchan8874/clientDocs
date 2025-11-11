@@ -77,8 +77,8 @@ const Login = () => {
         <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
-        <h1 className="text-center text-[1.75rem] font-bold mb-2 text-slate-900 tracking-tight leading-tight">Welcome back</h1>
-        <p className="text-center text-[0.9375rem] text-slate-600 mb-8 leading-relaxed">Sign in to your account to continue</p>
+        <h1 className="mb-2 text-center text-[1.75rem] font-bold leading-tight tracking-tight text-text">Welcome back</h1>
+        <p className="mb-8 text-center text-[0.9375rem] leading-relaxed text-text-muted">Sign in to your account to continue</p>
 
         {errors.root && (
           <div 
@@ -142,7 +142,7 @@ const Login = () => {
           </AccessibleButton>
         </form>
 
-        <p className="text-center mt-6 text-sm text-slate-600 leading-relaxed">
+        <p className="mt-6 text-center text-sm leading-relaxed text-text-muted">
           Don't have an account?{' '}
           <Link 
             to="/register" 

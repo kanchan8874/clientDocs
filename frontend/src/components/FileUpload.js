@@ -108,13 +108,13 @@ const FileUpload = ({
 
   const uploadZoneClasses = `
     flex flex-col items-center justify-center
-    rounded-xl border-2 border-dashed border-slate-200 bg-white/90
+    rounded-2xl border-2 border-dashed border-border bg-white/90
     p-8 text-center shadow-sm
     transition-all duration-200 ease-out
     min-h-[10rem]
     cursor-pointer outline-none
-    focus-visible:ring-4 focus-visible:ring-primary/20 focus-visible:ring-offset-2
-    ${isDragging ? 'border-primary bg-primary/12 scale-[1.01]' : ''}
+    focus-visible:ring-4 focus-visible:ring-accent/20 focus-visible:ring-offset-2
+    ${isDragging ? 'border-accent bg-primary-50 scale-[1.01]' : ''}
     ${displayError ? 'border-red-600 bg-red-50' : ''}
   `.trim().replace(/\s+/g, ' ');
 
@@ -147,20 +147,20 @@ const FileUpload = ({
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          <Upload size={36} className={isDragging ? 'text-primary' : 'text-slate-500'} aria-hidden="true" />
-          <p className="my-4 mt-2 text-base leading-normal text-slate-900">
-            Drag &amp; drop your file here, or <span className="font-semibold text-primary underline underline-offset-2">browse</span>
+          <Upload size={36} className={isDragging ? 'text-accent' : 'text-text-subtle'} aria-hidden="true" />
+          <p className="my-4 mt-2 text-base leading-normal text-text">
+            Drag &amp; drop your file here, or <span className="font-semibold text-accent underline underline-offset-2">browse</span>
           </p>
-          <p className="m-0 text-sm leading-normal text-slate-600">
+          <p className="m-0 text-sm leading-normal text-text-muted">
             Accepted: {accept.replace(/\./g, '').toUpperCase()} • Max size: {maxSize / (1024 * 1024)}MB
           </p>
         </div>
       ) : (
-        <div className="flex items-center gap-4 rounded-xl border border-slate-200 bg-white p-4 shadow-md">
-          <File size={24} className="text-primary" aria-hidden="true" />
+        <div className="flex items-center gap-4 rounded-2xl border border-border bg-white p-4 shadow-md">
+          <File size={24} className="text-accent" aria-hidden="true" />
           <div className="flex flex-1 flex-col gap-1">
-            <span className="text-base font-medium leading-normal text-slate-900">{selectedFile.name}</span>
-            <span className="text-sm leading-normal text-slate-600">{formatFileSize(selectedFile.size)}</span>
+            <span className="text-base font-medium leading-normal text-text">{selectedFile.name}</span>
+            <span className="text-sm leading-normal text-text-muted">{formatFileSize(selectedFile.size)}</span>
           </div>
           <button
             type="button"

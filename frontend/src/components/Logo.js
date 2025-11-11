@@ -18,7 +18,7 @@ const Logo = ({ size = 'md', showText = true }) => {
       <div className="relative flex items-center justify-center">
         {/* Background circle with enhanced gradient and shadow */}
         <div 
-          className={`flex items-center justify-center rounded-full bg-gradient-to-br from-primary to-sky-500 shadow-lg shadow-primary/20 transition-all duration-300 hover:shadow-xl`}
+          className={`flex items-center justify-center rounded-full bg-gradient-to-br from-accent via-primary-500 to-primary-700 shadow-soft-glow transition-all duration-300 hover:shadow-surface-strong`}
           style={{
             width: `${icon + circle}px`,
             height: `${icon + circle}px`
@@ -28,7 +28,7 @@ const Logo = ({ size = 'md', showText = true }) => {
         </div>
         {/* Enhanced accent dot with glow effect */}
         <div 
-          className="absolute -bottom-1 -right-1 rounded-full border-[3px] border-white bg-amber-300 shadow-sm"
+          className="absolute -bottom-1 -right-1 rounded-full border-[3px] border-white bg-info shadow-sm"
           style={{
             width: `${icon * 0.45}px`,
             height: `${icon * 0.45}px`
@@ -37,7 +37,7 @@ const Logo = ({ size = 'md', showText = true }) => {
       </div>
       {showText && (
         <span 
-          className={`${text} font-bold tracking-tight bg-gradient-to-br from-slate-900 to-slate-600 bg-clip-text text-transparent transition-all duration-300`}
+          className={`${text} font-bold tracking-tight bg-gradient-to-br from-neutral-900 to-neutral-600 bg-clip-text text-transparent transition-all duration-300`}
         >
           ClientDoc
         </span>

@@ -603,7 +603,7 @@ const Documents = () => {
         ariaLabel="Upload document form"
         size="lg"
       >
-        <form onSubmit={handleUploadSubmit(onUploadSubmit)} className="flex flex-col gap-6" noValidate>
+        <form onSubmit={handleUploadSubmit(onUploadSubmit)} className="grid gap-5 md:grid-cols-2" noValidate>
           <AccessibleInput
             id="doc-title"
             label="Title"
@@ -614,16 +614,17 @@ const Documents = () => {
             placeholder="Enter document title"
             ariaLabel="Document title"
             helperText="Minimum 3 characters, maximum 100 characters"
+            className="md:col-span-2"
           />
 
-          <div className="mb-4">
-            <label htmlFor="doc-category" className="text-sm font-medium text-slate-900 mb-1 block">
+          <div>
+            <label htmlFor="doc-category" className="mb-1 block text-sm font-medium text-text">
               Category *
             </label>
             <select
               id="doc-category"
               {...registerUpload('category')}
-              className={`px-4 py-3.5 border rounded-md text-sm font-sans text-slate-900 bg-white transition-colors cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${uploadErrors.category ? 'border-red-500' : 'border-slate-200'}`}
+              className={`w-full cursor-pointer rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.category ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
               aria-label="Document category"
               aria-invalid={uploadErrors.category ? 'true' : 'false'}
               aria-describedby={uploadErrors.category ? 'category-error' : undefined}
@@ -635,20 +636,20 @@ const Documents = () => {
               <option value="Contract">Contract</option>
             </select>
             {uploadErrors.category && (
-              <span id="category-error" role="alert" className="text-xs text-red-600 mt-1 block">
+              <span id="category-error" role="alert" className="mt-1 block text-xs text-red-600">
                 {uploadErrors.category.message}
               </span>
             )}
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="doc-client" className="text-sm font-medium text-slate-900 mb-1 block">
+          <div>
+            <label htmlFor="doc-client" className="mb-1 block text-sm font-medium text-text">
               Client *
             </label>
             <select
               id="doc-client"
               {...registerUpload('clientId')}
-              className={`px-4 py-3.5 border rounded-md text-sm font-sans text-slate-900 bg-white transition-colors cursor-pointer w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${uploadErrors.clientId ? 'border-red-500' : 'border-slate-200'}`}
+              className={`w-full cursor-pointer rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.clientId ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
               aria-label="Select client"
               aria-invalid={uploadErrors.clientId ? 'true' : 'false'}
               aria-describedby={uploadErrors.clientId ? 'client-error' : undefined}
@@ -657,20 +658,20 @@ const Documents = () => {
               {clients.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
             </select>
             {uploadErrors.clientId && (
-              <span id="client-error" role="alert" className="text-xs text-red-600 mt-1 block">
+              <span id="client-error" role="alert" className="mt-1 block text-xs text-red-600">
                 {uploadErrors.clientId.message}
               </span>
             )}
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="doc-description" className="text-sm font-medium text-slate-900 mb-1 block">
+          <div className="md:col-span-2">
+            <label htmlFor="doc-description" className="mb-1 block text-sm font-medium text-text">
               Description
             </label>
             <textarea
               id="doc-description"
               {...registerUpload('description')}
-              className={`px-4 py-3.5 border rounded-md text-sm font-sans resize-y text-slate-900 bg-white transition-colors min-h-[100px] w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent ${uploadErrors.description ? 'border-red-500' : 'border-slate-200'}`}
+              className={`min-h-[100px] w-full resize-y rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.description ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
               placeholder="Enter document description (optional, max 300 chars)"
               rows="3"
               aria-label="Document description"
@@ -678,55 +679,55 @@ const Documents = () => {
               aria-describedby={uploadErrors.description ? 'description-error' : undefined}
             />
             {uploadErrors.description && (
-              <span id="description-error" role="alert" className="text-xs text-red-600 mt-1 block">
+              <span id="description-error" role="alert" className="mt-1 block text-xs text-red-600">
                 {uploadErrors.description.message}
               </span>
             )}
           </div>
 
-          <fieldset className="border-0 p-0 m-0 mb-4">
-            <legend className="text-sm font-medium text-slate-900 mb-1">Access Level *</legend>
-            <div className="flex gap-6 mt-2" role="radiogroup" aria-label="Document access level">
-              <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-900">
+          <fieldset className="md:col-span-2 m-0 border-0 p-0">
+            <legend className="mb-1 text-sm font-medium text-text">Access Level *</legend>
+            <div className="mt-2 flex flex-wrap gap-4" role="radiogroup" aria-label="Document access level">
+              <label className="flex items-center gap-2 text-sm text-text">
                 <input
                   type="radio"
                   {...registerUpload('accessLevel')}
                   value="private"
-                  className="w-[18px] h-[18px] cursor-pointer accent-primary"
+                  className="h-[18px] w-[18px] cursor-pointer accent-accent"
                   aria-label="Private access"
                 />
                 <span>Private</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-900">
+              <label className="flex items-center gap-2 text-sm text-text">
                 <input
                   type="radio"
                   {...registerUpload('accessLevel')}
                   value="shared"
-                  className="w-[18px] h-[18px] cursor-pointer accent-primary"
+                  className="h-[18px] w-[18px] cursor-pointer accent-accent"
                   aria-label="Shared access"
                 />
                 <span>Shared</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer text-sm text-slate-900">
+              <label className="flex items-center gap-2 text-sm text-text">
                 <input
                   type="radio"
                   {...registerUpload('accessLevel')}
                   value="public"
-                  className="w-[18px] h-[18px] cursor-pointer accent-primary"
+                  className="h-[18px] w-[18px] cursor-pointer accent-accent"
                   aria-label="Public access"
                 />
                 <span>Public</span>
               </label>
             </div>
             {uploadErrors.accessLevel && (
-              <span role="alert" className="text-xs text-red-600 mt-1 block">
+              <span role="alert" className="mt-1 block text-xs text-red-600">
                 {uploadErrors.accessLevel.message}
               </span>
             )}
           </fieldset>
 
-          <div className="mb-4">
-            <label htmlFor="doc-file" className="text-sm font-medium text-slate-900 mb-1 block">
+          <div className="md:col-span-2">
+            <label htmlFor="doc-file" className="mb-1 block text-sm font-medium text-text">
               File *
             </label>
             <Controller
@@ -744,17 +745,17 @@ const Documents = () => {
               )}
             />
             {!uploadErrors.file && (
-              <p className="text-[13px] text-slate-600 mt-2 mb-0">PDF, PNG, or DOCX files only. Maximum size: 5MB</p>
+              <p className="mt-2 mb-0 text-[13px] text-text-muted">PDF, PNG, or DOCX files only. Maximum size: 5MB</p>
             )}
           </div>
 
           {error && (
-            <div role="alert" aria-live="assertive" className="bg-red-50 text-red-700 py-3.5 px-4 rounded-md border border-red-200 text-[0.9375rem]">
+            <div role="alert" aria-live="assertive" className="md:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-[0.9375rem] text-red-700">
               {error}
             </div>
           )}
 
-          <div className="flex justify-end gap-4 mt-2 pt-6 border-t border-slate-200">
+          <div className="md:col-span-2 mt-2 flex flex-col justify-end gap-3 border-t border-border pt-6 sm:flex-row">
             <AccessibleButton
               type="button"
               onClick={handleCloseUploadModal}
@@ -789,8 +790,8 @@ const Documents = () => {
       >
         {sharingDocument && (
           <>
-            <div className="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200" role="region" aria-label="Document information">
-              <p className="text-sm text-slate-900 m-0 font-medium">
+            <div className="mb-6 rounded-2xl border border-border bg-primary-50 p-4" role="region" aria-label="Document information">
+              <p className="m-0 text-sm font-medium text-text">
                 <strong>Document:</strong> {sharingDocument.title}
               </p>
             </div>
@@ -810,12 +811,12 @@ const Documents = () => {
               />
 
               {sharingDocument.sharedWith && sharingDocument.sharedWith.length > 0 && (
-                <div className="mb-6 p-4 bg-slate-50 rounded-md border border-slate-200" role="region" aria-label="Already shared with">
-                  <p className="text-sm font-semibold text-slate-900 mb-3 m-0">Already shared with:</p>
+                <div className="mb-6 rounded-2xl border border-border bg-primary-50 p-4" role="region" aria-label="Already shared with">
+                  <p className="m-0 mb-3 text-sm font-semibold text-text">Already shared with:</p>
                   <ul className="flex flex-col gap-2" role="list">
                     {sharingDocument.sharedWith.map((sharedUser, index) => {
                       let displayName = 'Unknown User';
-                      
+
                       if (typeof sharedUser === 'object' && sharedUser !== null) {
                         if (sharedUser.name) {
                           displayName = sharedUser.name;
@@ -825,10 +826,10 @@ const Documents = () => {
                       } else if (typeof sharedUser === 'string') {
                         displayName = 'Loading user...';
                       }
-                      
+
                       return (
-                        <li key={sharedUser?._id || sharedUser || index} className="flex items-center text-sm text-slate-900 p-2 bg-white rounded-sm border border-slate-200" role="listitem">
-                          <Users size={16} className="text-slate-600 mr-2" aria-hidden="true" />
+                        <li key={sharedUser?._id || sharedUser || index} className="flex items-center rounded-xl border border-border bg-white p-2 text-sm text-text shadow-xs" role="listitem">
+                          <Users size={16} className="mr-2 text-text-subtle" aria-hidden="true" />
                           <span>{displayName}</span>
                         </li>
                       );

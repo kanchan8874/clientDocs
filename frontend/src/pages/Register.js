@@ -83,8 +83,8 @@ const Register = () => {
         <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
-        <h1 className="text-center text-[1.75rem] font-bold mb-2 text-slate-900 tracking-tight leading-tight">Create your account</h1>
-        <p className="text-center text-[0.9375rem] text-slate-600 mb-6 leading-relaxed">Get started with ClientDocs today</p>
+        <h1 className="mb-2 text-center text-[1.75rem] font-bold leading-tight tracking-tight text-text">Create your account</h1>
+        <p className="mb-6 text-center text-[0.9375rem] leading-relaxed text-text-muted">Get started with ClientDocs today</p>
 
         {errors.root && (
           <div 
@@ -181,7 +181,7 @@ const Register = () => {
           )}
         </form>
 
-        <p className="text-center mt-5 text-sm text-slate-600 leading-relaxed">
+        <p className="mt-5 text-center text-sm leading-relaxed text-text-muted">
           Already have an account?{' '}
           <Link 
             to="/login" 
