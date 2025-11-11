@@ -74,6 +74,15 @@ app.get('/health', (req, res) => {
   });
 });
 
+// API Health route (kuch systems /api/health call karte hain)
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'OK',
+    message: 'ClientDocs API is running',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Root Route - Render jese platforms ke health check ke liye 200 response
 app.get('/', (req, res) => {
   res.json({
