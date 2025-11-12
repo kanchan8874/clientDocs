@@ -1,4 +1,7 @@
 import Notification from '../models/Notification.js';
+
+
+
 export const getNotifications = async (req, res, next) => {
   try {
     const { unreadOnly } = req.query;

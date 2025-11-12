@@ -1,14 +1,12 @@
-import { useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth } from '../contexts/AuthContext.js';
-import { loginSchema } from '../utils/validation.js';
-import Logo from '../components/Logo.js';
-import AccessibleInput from '../components/AccessibleInput.js';
-import AccessibleButton from '../components/AccessibleButton.js';
-
-
+import { useEffect, useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useAuth } from "../contexts/AuthContext.js";
+import { loginSchema } from "../utils/validation.js";
+import Logo from "../components/Logo.js";
+import AccessibleInput from "../components/AccessibleInput.js";
+import AccessibleButton from "../components/AccessibleButton.js";
 
 const Login = () => {
   const { login } = useAuth();
@@ -21,28 +19,28 @@ const Login = () => {
     handleSubmit,
     formState: { errors, isSubmitting },
     setError,
-    watch
+    watch,
   } = useForm({
     resolver: zodResolver(loginSchema),
-    mode: 'onChange',
+    mode: "onChange",
     defaultValues: {
-      email: '',
-      password: ''
-    }
+      email: "",
+      password: "",
+    },
   });
 
   // Watch form values to determine if form can be submitted
   const watchedValues = watch();
-  const emailValue = watchedValues.email?.trim() || '';
-  const passwordValue = watchedValues.password?.trim() || '';
-  
-  const hasAllFields = emailValue.includes('@') && passwordValue.length > 0;
+  const emailValue = watchedValues.email?.trim() || "";
+  const passwordValue = watchedValues.password?.trim() || "";
+
+  const hasAllFields = emailValue.includes("@") && passwordValue.length > 0;
   const hasErrors = errors.email || errors.password;
   const canSubmit = hasAllFields && !hasErrors && !isSubmitting;
 
   // Focus management on mount
   useEffect(() => {
-    const firstInput = formRef.current?.querySelector('input');
+    const firstInput = formRef.current?.querySelector("input");
     if (firstInput) {
       firstInput.focus();
     }
@@ -59,11 +57,11 @@ const Login = () => {
     const result = await login(data);
 
     if (result.success) {
-      navigate('/dashboard');
+      navigate("/dashboard");
     } else {
-      setError('root', {
-        type: 'manual',
-        message: result.error || 'Login failed'
+      setError("root", {
+        type: "manual",
+        message: result.error || "Login failed",
       });
       if (errorRef.current) {
         errorRef.current.focus();
@@ -77,11 +75,15 @@ const Login = () => {
         <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
-        <h1 className="mb-2 text-center text-[1.75rem] font-bold leading-tight tracking-tight text-text">Welcome back</h1>
-        <p className="mb-8 text-center text-[0.9375rem] leading-relaxed text-text-muted">Sign in to your account to continue</p>
+        <h1 className="mb-2 text-center text-[1.75rem] font-bold leading-tight tracking-tight text-text">
+          Welcome back
+        </h1>
+        <p className="mb-8 text-center text-[0.9375rem] leading-relaxed text-text-muted">
+          Sign in to your account to continue
+        </p>
 
         {errors.root && (
-          <div 
+          <div
             ref={errorRef}
             role="alert"
             aria-live="assertive"
@@ -92,9 +94,9 @@ const Login = () => {
           </div>
         )}
 
-        <form 
+        <form
           ref={formRef}
-          onSubmit={handleSubmit(onSubmit)} 
+          onSubmit={handleSubmit(onSubmit)}
           className="flex flex-col gap-5"
           aria-label="Login form"
           noValidate
@@ -103,10 +105,10 @@ const Login = () => {
             id="login-email"
             label="Email address"
             type="email"
-            {...register('email')}
+            {...register("email")}
             error={errors.email?.message}
             required
-            placeholder="Enter your email"
+            placeholder="Please enter your email"
             ariaLabel="Email address"
             autoComplete="email"
           />
@@ -115,10 +117,10 @@ const Login = () => {
             id="login-password"
             label="Password"
             type="password"
-            {...register('password')}
+            {...register("password")}
             error={errors.password?.message}
             required
-            placeholder="Enter your password"
+            placeholder="Please enter your password"
             ariaLabel="Password"
             autoComplete="current-password"
             showPasswordToggle
@@ -130,23 +132,23 @@ const Login = () => {
             disabled={!canSubmit}
             loading={isSubmitting}
             ariaLabel={
-              isSubmitting 
-                ? 'Logging in, please wait' 
-                : canSubmit 
-                  ? 'Sign in to your account' 
-                  : 'Please fill all required fields correctly to sign in'
+              isSubmitting
+                ? "Logging in, please wait"
+                : canSubmit
+                ? "Sign in to your account"
+                : "Please fill all required fields correctly to sign in"
             }
             className="w-full mt-4"
           >
-            {isSubmitting ? 'Logging in...' : 'Login'}
+            {isSubmitting ? "Logging in..." : "Login"}
           </AccessibleButton>
         </form>
 
         <p className="mt-6 text-center text-sm leading-relaxed text-text-muted">
-          Don't have an account?{' '}
-          <Link 
-            to="/register" 
-            className="text-primary no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-primary-dark focus:outline-none focus-visible:ring-3 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:rounded"
+          Don't have an account?{" "}
+          <Link
+            to="/register"
+            className="text-blue-500 no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-blue-700 focus:outline-none focus-visible:ring-3 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:rounded"
             aria-label="Navigate to registration page"
           >
             Register here
