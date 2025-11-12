@@ -98,6 +98,8 @@ const Documents = () => {
   const loadData = async () => {
     try {
       setLoading(true);
+      setError('');
+      
       const clientsRes = await getClients();
       setClients(clientsRes.data?.clients || []);
       
@@ -109,7 +111,9 @@ const Documents = () => {
       if (filters.endDate) filtersToSend.endDate = filters.endDate;
       
       const documentsRes = await getDocuments(filtersToSend);
-      let docs = documentsRes.data?.documents || [];
+      // API client interceptor returns response.data directly
+      // Backend returns: { success: true, data: { documents: [...] } }
+      let docs = documentsRes?.data?.documents || documentsRes?.documents || [];
       
       if (filters.search) {
         docs = docs.filter(doc =>
@@ -120,7 +124,9 @@ const Documents = () => {
       setDocuments(docs);
       setError('');
     } catch (err) {
-      setError('Failed to load documents.');
+      console.error('Error loading documents:', err);
+      const errorMessage = err?.message || err?.data?.message || 'Failed to load documents.';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -601,9 +607,9 @@ const Documents = () => {
         onClose={handleCloseUploadModal}
         title="Upload Document"
         ariaLabel="Upload document form"
-        size="lg"
+        size="md"
       >
-        <form onSubmit={handleUploadSubmit(onUploadSubmit)} className="grid gap-5 md:grid-cols-2" noValidate>
+        <form onSubmit={handleUploadSubmit(onUploadSubmit)} className="grid gap-4 md:grid-cols-2" noValidate>
           <AccessibleInput
             id="doc-title"
             label="Title"

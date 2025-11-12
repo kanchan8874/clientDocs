@@ -124,13 +124,13 @@ const AccessibleModal = ({
       aria-label={ariaLabel}
       ref={modalRef}
       tabIndex={-1}
-      className="fixed inset-0 z-[1040] flex items-start justify-center bg-neutral-900/40 px-4 py-6 sm:py-8 md:py-10 lg:items-center backdrop-blur-lg"
+      className="fixed inset-0 z-[1040] flex items-center justify-center bg-neutral-900/40 px-4 py-8 sm:px-6 sm:py-10 md:px-8 md:py-12 lg:px-10 lg:py-16 backdrop-blur-lg"
       onClick={handleOverlayClick}
     >
       <div className={`
         relative flex w-full flex-col overflow-x-hidden overflow-y-auto rounded-3xl border border-border bg-white/95 scrollbar-hidden
         ${title ? 'p-6 sm:p-7 lg:p-8' : 'p-5 sm:p-6 lg:p-7'}
-        max-h-[85vh]
+        max-h-[85vh] sm:max-h-[80vh] md:max-h-[75vh] lg:max-h-[70vh]
         shadow-surface backdrop-blur-sm outline-none
         ${sizeClasses[size] || sizeClasses.md}
       `.trim().replace(/\s+/g, ' ')}>
