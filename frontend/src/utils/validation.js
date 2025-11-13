@@ -5,36 +5,56 @@ import { z } from 'zod';
 // User Registration Schema
 export const registerSchema = z.object({
   name: z.string()
-    .min(3, 'Name must be at least 3 characters.')
-    .max(50, 'Name cannot exceed 50 characters.')
-    .trim(),
+    .min(1, 'Full name is required.')
+    .min(3, 'Full name must be at least 3 characters.')
+    .max(50, 'Full name cannot exceed 50 characters.')
+    .trim()
+    .superRefine((val, ctx) => {
+      if (!val) return;
+      // Check if name contains only letters and spaces
+      if (!/^[A-Za-z\s]+$/.test(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Full name can only contain letters and spaces.'
+        });
+      }
+    }),
   email: z.string()
-    .email('Please provide a valid email address.')
+    .min(1, 'Email address is required.')
+    .max(150, 'Email address cannot exceed 150 characters.')
+    .email('Please enter a valid email address.')
     .toLowerCase()
     .trim(),
   password: z.string()
     .min(1, 'Password is required.')
-    .min(8, 'Password must be at least 8 characters.')
-    .max(100, 'Password cannot exceed 100 characters.')
-    .refine((val) => /[A-Z]/.test(val), {
-      message: 'Password must contain at least one uppercase letter.'
-    })
-    .refine((val) => /[a-z]/.test(val), {
-      message: 'Password must contain at least one lowercase letter.'
-    })
-    .refine((val) => /[0-9]/.test(val), {
-      message: 'Password must contain at least one number.'
+    .min(8, 'Password must include at least 8 characters, one uppercase, one lowercase, and one number.')
+    .max(64, 'Password cannot exceed 64 characters.')
+    .superRefine((val, ctx) => {
+      if (!val) return;
+      const hasUpperCase = /[A-Z]/.test(val);
+      const hasLowerCase = /[a-z]/.test(val);
+      const hasNumber = /[0-9]/.test(val);
+      
+      if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Password must include at least 8 characters, one uppercase, one lowercase, and one number.'
+        });
+      }
     })
 });
 
 // User Login Schema
 export const loginSchema = z.object({
   email: z.string()
+    .min(1, 'Email address is required.')
+    .max(254, 'Email address cannot exceed 254 characters.')
     .email('Please provide a valid email address.')
     .toLowerCase()
     .trim(),
   password: z.string()
     .min(1, 'Password is required.')
+    .max(128, 'Password cannot exceed 128 characters.')
 });
 
 // Client Creation/Update Schema

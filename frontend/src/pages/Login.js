@@ -48,10 +48,22 @@ const Login = () => {
 
   // Announce errors to screen readers
   useEffect(() => {
-    if (errors.root && errorRef.current) {
+    if (errors.root?.message && errorRef.current) {
       errorRef.current.focus();
     }
-  }, [errors.root]);
+  }, [errors.root?.message]);
+
+  // Auto-dismiss error message after 5 seconds
+  useEffect(() => {
+    if (errors.root?.message) {
+      const timer = setTimeout(() => {
+        setError("root", { type: "manual", message: "" });
+      }, 5000); // 5 seconds
+
+      // Cleanup timer on unmount or when error changes
+      return () => clearTimeout(timer);
+    }
+  }, [errors.root?.message, setError]);
 
   const onSubmit = async (data) => {
     // Clear any previous errors
@@ -90,7 +102,7 @@ const Login = () => {
           Sign in to your account to continue.
         </p>
 
-        {errors.root && (
+        {errors.root?.message && (
           <div
             ref={errorRef}
             role="alert"
@@ -119,6 +131,7 @@ const Login = () => {
             placeholder="Enter your email"
             ariaLabel="Email address"
             autoComplete="email"
+            maxLength={254}
           />
 
           <AccessibleInput
@@ -132,6 +145,7 @@ const Login = () => {
             ariaLabel="Password"
             autoComplete="current-password"
             showPasswordToggle
+            maxLength={128}
           />
 
           <AccessibleButton

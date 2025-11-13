@@ -56,10 +56,10 @@ const Register = () => {
 
   // Announce errors to screen readers
   useEffect(() => {
-    if (errors.root && errorRef.current) {
+    if (errors.root?.message && errorRef.current) {
       errorRef.current.focus();
     }
-  }, [errors.root]);
+  }, [errors.root?.message]);
 
   const onSubmit = async (data) => {
     const result = await registerUser(data);
@@ -90,7 +90,7 @@ const Register = () => {
           Get started with ClientDocs today.
         </p>
 
-        {errors.root && (
+        {errors.root?.message && (
           <div
             ref={errorRef}
             role="alert"
@@ -132,6 +132,7 @@ const Register = () => {
             placeholder="Enter your email"
             ariaLabel="Email address"
             autoComplete="email"
+            maxLength={254}
           />
 
           <AccessibleInput
@@ -146,6 +147,7 @@ const Register = () => {
             autoComplete="new-password"
             helperText="Minimum 8 characters with uppercase, lowercase, and number."
             showPasswordToggle
+            maxLength={128}
           />
 
           <AccessibleButton

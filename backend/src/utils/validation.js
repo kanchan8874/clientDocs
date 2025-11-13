@@ -3,19 +3,43 @@ import { z } from 'zod';
 // User Registration Schema
 export const registerSchema = z.object({
   name: z.string()
-    .min(3, 'Name must be at least 3 characters')
-    .max(50, 'Name cannot exceed 50 characters')
-    .trim(),
+    .min(1, 'Full name is required.')
+    .min(3, 'Full name must be at least 3 characters.')
+    .max(50, 'Full name cannot exceed 50 characters.')
+    .trim()
+    .superRefine((val, ctx) => {
+      if (!val) return;
+      // Check if name contains only letters and spaces
+      if (!/^[A-Za-z\s]+$/.test(val)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Full name can only contain letters and spaces.'
+        });
+      }
+    }),
   email: z.string()
-    .email('Please provide a valid email address')
+    .min(1, 'Email address is required.')
+    .max(254, 'Email address cannot exceed 254 characters.')
+    .email('Please enter a valid email address.')
     .toLowerCase()
     .trim(),
   password: z.string()
-    .min(8, 'Password must be at least 8 characters')
-    .max(100, 'Password cannot exceed 100 characters')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-    .regex(/[0-9]/, 'Password must contain at least one number')
+    .min(1, 'Password is required.')
+    .min(8, 'Password must include at least 8 characters, one uppercase, one lowercase, and one number.')
+    .max(128, 'Password cannot exceed 128 characters.')
+    .superRefine((val, ctx) => {
+      if (!val) return;
+      const hasUpperCase = /[A-Z]/.test(val);
+      const hasLowerCase = /[a-z]/.test(val);
+      const hasNumber = /[0-9]/.test(val);
+      
+      if (!hasUpperCase || !hasLowerCase || !hasNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Password must include at least 8 characters, one uppercase, one lowercase, and one number.'
+        });
+      }
+    })
 });
 
 // User Login Schema
