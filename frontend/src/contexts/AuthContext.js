@@ -104,6 +104,8 @@ export const AuthProvider = ({ children }) => {
       // Token aur user info localStorage me save karo
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(loggedInUser));
+      // Last login time save karo
+      localStorage.setItem('lastLogin', new Date().toISOString());
       
       // User state update karo
       setUser(loggedInUser);
@@ -111,8 +113,12 @@ export const AuthProvider = ({ children }) => {
       // Success return karo
       return { success: true };
     } catch (err) {
-      // Error aayi - error message extract karo
-      const errorMessage = err.message || 'Login failed';
+      // Error aayi - detailed error message extract karo
+      // API client interceptor already extracts errorData.message
+      // err.message should contain the backend's error message
+      const errorMessage = err.message || 
+                          err.response?.data?.message || 
+                          'Login failed.';
       
       // Error state me store karo
       setError(errorMessage);

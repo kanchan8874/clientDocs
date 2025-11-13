@@ -11,7 +11,7 @@ import {
 import authGuard from '../middleware/authGuard.js';
 import { uploadSingle, handleUploadError } from '../middleware/upload.js';
 import { validate } from '../utils/validation.js';
-import { documentSchema, shareDocumentSchema, documentFiltersSchema } from '../utils/validation.js';
+import { documentSchema, documentUpdateSchema, shareDocumentSchema, documentFiltersSchema } from '../utils/validation.js';
 
 const router = express.Router();
 
@@ -28,7 +28,7 @@ router.post(
   uploadDocument
 );
 
-router.put('/:id', validate(documentSchema), updateDocument);
+router.put('/:id', validate(documentUpdateSchema), updateDocument);
 router.delete('/:id', deleteDocument);
 router.post('/:id/share', validate(shareDocumentSchema), shareDocument);
 router.get('/:id/download', downloadDocument);

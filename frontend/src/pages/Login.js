@@ -54,18 +54,26 @@ const Login = () => {
   }, [errors.root]);
 
   const onSubmit = async (data) => {
+    // Clear any previous errors
+    setError("root", { type: "manual", message: "" });
+    
     const result = await login(data);
 
     if (result.success) {
       navigate("/dashboard");
     } else {
+      // Set error message from backend response
+      const errorMessage = result.error || "Login failed.";
       setError("root", {
         type: "manual",
-        message: result.error || "Login failed",
+        message: errorMessage,
       });
-      if (errorRef.current) {
-        errorRef.current.focus();
-      }
+      // Focus error message for accessibility
+      setTimeout(() => {
+        if (errorRef.current) {
+          errorRef.current.focus();
+        }
+      }, 100);
     }
   };
 
@@ -79,7 +87,7 @@ const Login = () => {
           Welcome back
         </h1>
         <p className="mb-8 text-center text-[0.9375rem] leading-relaxed text-text-muted">
-          Sign in to your account to continue
+          Sign in to your account to continue.
         </p>
 
         {errors.root && (
@@ -108,7 +116,7 @@ const Login = () => {
             {...register("email")}
             error={errors.email?.message}
             required
-            placeholder="Please enter your email"
+            placeholder="Enter your email"
             ariaLabel="Email address"
             autoComplete="email"
           />
@@ -120,7 +128,7 @@ const Login = () => {
             {...register("password")}
             error={errors.password?.message}
             required
-            placeholder="Please enter your password"
+            placeholder="Enter your password"
             ariaLabel="Password"
             autoComplete="current-password"
             showPasswordToggle
@@ -133,14 +141,14 @@ const Login = () => {
             loading={isSubmitting}
             ariaLabel={
               isSubmitting
-                ? "Logging in, please wait"
+                ? "Logging in, please wait."
                 : canSubmit
-                ? "Sign in to your account"
-                : "Please fill all required fields correctly to sign in"
+                ? "Sign in to your account."
+                : "Please fill all required fields correctly to sign in."
             }
             className="w-full mt-4"
           >
-            {isSubmitting ? "Logging in..." : "Login"}
+            {isSubmitting ? "Logging in..." : "Sign in"}
           </AccessibleButton>
         </form>
 
@@ -151,7 +159,7 @@ const Login = () => {
             className="text-blue-500 no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-blue-700 focus:outline-none focus-visible:ring-3 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:rounded"
             aria-label="Navigate to registration page"
           >
-            Register here
+            Sign up here
           </Link>
         </p>
       </div>

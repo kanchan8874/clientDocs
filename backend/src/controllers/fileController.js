@@ -9,47 +9,93 @@ import configureCloudinary from '../config/cloudinary.js';
 
 export const getDocuments = async (req, res, next) => {
   try {
-    const { category, accessLevel, startDate, endDate, clientId } = req.query;
-    const query = {};
-
-    // Documents owned by user OR shared with user OR public
-    query.$or = [
-      { createdBy: req.user.id },
-      { accessLevel: 'public' },
-      { accessLevel: 'shared', sharedWith: req.user.id }
-    ];
-
-    // Apply filters
-    if (category) {
-      query.category = category;
+    const { category, accessLevel, startDate, endDate, clientId, search } = req.query;
+    
+    // Debug: Log received query parameters
+    if (search) {
+      console.log('Received search parameter:', search);
+      console.log('All query params:', req.query);
     }
+    
+    // Build base query conditions
+    const conditions = [];
 
+    // Build access query (documents owned by user OR shared with user OR public)
+    let accessCondition = {
+      $or: [
+        { createdBy: req.user.id },
+        { accessLevel: 'public' },
+        { accessLevel: 'shared', sharedWith: req.user.id }
+      ]
+    };
+
+    // Apply accessLevel filter
     if (accessLevel) {
-      // If filtering by accessLevel, still need to check access
       if (accessLevel === 'private') {
-        query.createdBy = req.user.id;
-        query.accessLevel = 'private';
+        accessCondition = { createdBy: req.user.id, accessLevel: 'private' };
       } else if (accessLevel === 'shared') {
-        query.$or = [
-          { createdBy: req.user.id, accessLevel: 'shared' },
-          { accessLevel: 'shared', sharedWith: req.user.id }
-        ];
+        accessCondition = {
+          $or: [
+            { createdBy: req.user.id, accessLevel: 'shared' },
+            { accessLevel: 'shared', sharedWith: req.user.id }
+          ]
+        };
       } else if (accessLevel === 'public') {
-        query.accessLevel = 'public';
+        accessCondition = { accessLevel: 'public' };
       }
     }
+    conditions.push(accessCondition);
 
-    if (clientId) {
-      query.clientId = clientId;
+    // Apply category filter
+    if (category) {
+      conditions.push({ category });
     }
+
+    // Apply clientId filter
+    if (clientId) {
+      conditions.push({ clientId });
+    }
+
+    // Apply date filters
     if (startDate || endDate) {
-      query.uploadDate = {};
+      const dateCondition = {};
       if (startDate) {
-        query.uploadDate.$gte = new Date(startDate);
+        dateCondition.$gte = new Date(startDate);
       }
       if (endDate) {
-        query.uploadDate.$lte = new Date(endDate);
+        dateCondition.$lte = new Date(endDate);
       }
+      conditions.push({ uploadDate: dateCondition });
+    }
+
+    // Apply search filter (search in title and description)
+    if (search && search.trim()) {
+      const searchTerm = search.trim();
+      // Escape special regex characters to prevent regex injection
+      const escapedSearch = searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Use MongoDB regex format directly
+      conditions.push({
+        $or: [
+          { title: { $regex: escapedSearch, $options: 'i' } },
+          { description: { $regex: escapedSearch, $options: 'i' } }
+        ]
+      });
+    }
+
+    // Build final query
+    let query;
+    if (conditions.length === 0) {
+      query = {};
+    } else if (conditions.length === 1) {
+      query = conditions[0];
+    } else {
+      query = { $and: conditions };
+    }
+
+    // Debug: Log query when search is active
+    if (search && search.trim()) {
+      console.log('Search query:', search.trim());
+      console.log('MongoDB query:', JSON.stringify(query, null, 2));
     }
 
     const documents = await Document.find(query)
@@ -57,6 +103,15 @@ export const getDocuments = async (req, res, next) => {
       .populate('createdBy', 'name email')
       .populate('sharedWith', 'name email')
       .sort({ uploadDate: -1 });
+
+    // Debug: Log results when search is active
+    if (search && search.trim()) {
+      console.log('Documents found:', documents.length);
+      if (documents.length > 0) {
+        console.log('First document title:', documents[0].title);
+        console.log('First document description:', documents[0].description);
+      }
+    }
 
     res.json({
       success: true,

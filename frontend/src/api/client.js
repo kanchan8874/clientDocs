@@ -55,9 +55,12 @@ apiClient.interceptors.response.use(
   
   // Error case - error handle karo
   (error) => {
-    // 401 Unauthorized - Token invalid ya expired
-    if (error.response?.status === 401) {
-      // Token expired/invalid - logout karo
+    // 401 Unauthorized - Token invalid ya expired (but not for login/register endpoints)
+    const isAuthEndpoint = error.config?.url?.includes('/auth/login') || 
+                          error.config?.url?.includes('/auth/register');
+    
+    if (error.response?.status === 401 && !isAuthEndpoint) {
+      // Token expired/invalid - logout karo (but not for login/register)
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       // Login page pe redirect karo
@@ -67,13 +70,17 @@ apiClient.interceptors.response.use(
     // Error data extract karo (backend se aaya error message)
     // error.response?.data - backend se aaya error
     // error.message - network error ya other errors
-    const errorData = error.response?.data || { message: error.message };
+    const errorData = error.response?.data || {};
+    
+    // Prioritize backend error message over axios default message
+    const errorMessage = errorData.message || error.message || 'An error occurred';
     
     // Error reject karo - caller ko error mil jayega
     return Promise.reject({
       ...errorData,
-      message: errorData.message || error.message,
-      status: error.response?.status
+      message: errorMessage,
+      status: error.response?.status,
+      response: error.response // Keep full response for detailed error handling
     });
   }
 );

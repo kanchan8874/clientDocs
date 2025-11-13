@@ -60,9 +60,9 @@ const Layout = ({ children }) => {
         tabIndex={-1}
         role="main"
         aria-label="Main content"
-        className="relative z-10 flex-1 px-4 pt-24 pb-[calc(6.5rem+env(safe-area-inset-bottom))] text-text transition-[margin] duration-300 ease-out focus:outline-none sm:px-6 md:px-8 lg:ml-64 lg:px-8 lg:pb-20 lg:pt-28 xl:ml-72 xl:px-14"
+        className="relative z-10 flex-1 px-4 pt-24 pb-[calc(6.5rem+env(safe-area-inset-bottom))] text-text transition-[margin] duration-300 ease-out focus:outline-none sm:px-6 md:px-8 lg:ml-64 lg:px-8 lg:pb-20 lg:pt-28 xl:ml-72 xl:px-6 2xl:px-8"
       >
-        <div className="mx-auto w-full max-w-[900px]">{children}</div>
+        <div className="mx-auto w-full max-w-[900px] md:max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1200px] 2xl:max-w-[1280px]">{children}</div>
       </main>
       <MobileNav />
     </div>

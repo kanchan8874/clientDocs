@@ -69,7 +69,7 @@ const Register = () => {
     } else {
       setError("root", {
         type: "manual",
-        message: result.error || "Registration failed",
+        message: result.error || "Registration failed.",
       });
       if (errorRef.current) {
         errorRef.current.focus();
@@ -87,7 +87,7 @@ const Register = () => {
           Create your account
         </h1>
         <p className="mb-6 text-center text-[0.9375rem] leading-relaxed text-text-muted">
-          Get started with ClientDocs today
+          Get started with ClientDocs today.
         </p>
 
         {errors.root && (
@@ -119,7 +119,7 @@ const Register = () => {
             placeholder="Enter your full name"
             ariaLabel="Full name"
             autoComplete="name"
-            helperText="Minimum 3 characters"
+            helperText="Minimum 3 characters."
           />
 
           <AccessibleInput
@@ -144,7 +144,7 @@ const Register = () => {
             placeholder="Create a password"
             ariaLabel="Password"
             autoComplete="new-password"
-            helperText="Minimum 8 characters with uppercase, lowercase, and number"
+            helperText="Minimum 8 characters with uppercase, lowercase, and number."
             showPasswordToggle
           />
 
@@ -176,7 +176,7 @@ const Register = () => {
               role="alert"
               aria-live="polite"
             >
-              Form has validation errors. Please correct the following:{" "}
+              Form has validation errors. Please correct the following: {" "}
               {[
                 errors.name?.message,
                 errors.email?.message,
@@ -195,7 +195,7 @@ const Register = () => {
             className="text-blue-500 no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-blue-700 focus:outline-none focus-visible:ring-3 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:rounded"
             aria-label="Navigate to login page"
           >
-            Login here
+            Sign in here
           </Link>
         </p>
       </div>

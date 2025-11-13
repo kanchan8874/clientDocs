@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, FileText, Plus, Upload, ArrowRight, TrendingUp, Share2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [recentClients, setRecentClients] = useState([]);
   const [recentDocuments, setRecentDocuments] = useState([]);
   const [documents, setDocuments] = useState([]);
+  const isMountedRef = useRef(true);
 
   // Helper function to check if a document is shared with current user
   // Returns true only if:
@@ -43,15 +44,31 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    loadDashboardData();
+    isMountedRef.current = true;
+    
+    // Delay initial load to avoid React Strict Mode double mount
+    const loadTimer = setTimeout(() => {
+      if (isMountedRef.current) {
+        loadDashboardData();
+      }
+    }, 100);
+
+    return () => {
+      isMountedRef.current = false;
+      clearTimeout(loadTimer);
+    };
   }, []);
 
   const loadDashboardData = async () => {
+    if (!isMountedRef.current) return;
+
     try {
       const [clientsRes, documentsRes] = await Promise.all([
         getClients(),
         getDocuments()
       ]);
+
+      if (!isMountedRef.current) return;
 
       const clients = clientsRes.data?.clients || [];
       const docs = documentsRes.data?.documents || [];
@@ -63,17 +80,26 @@ const Dashboard = () => {
         loading: false
       });
 
-      setRecentClients(clients.slice(0, 5));
-      setRecentDocuments(docs.slice(0, 5));
+      setRecentClients(clients.slice(0, 4));
+      setRecentDocuments(docs.slice(0, 4));
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
-      setStats(prev => ({ ...prev, loading: false }));
+      // Silently handle rate limit errors
+      if (error.response?.status === 429 || error.status === 429 || error.message?.includes('Too many requests')) {
+        if (isMountedRef.current) {
+          setStats(prev => ({ ...prev, loading: false }));
+        }
+        return;
+      }
+      if (isMountedRef.current) {
+        console.error('Error loading dashboard data:', error);
+        setStats(prev => ({ ...prev, loading: false }));
+      }
     }
   };
 
   return (
     <Layout>
-      <section className="space-y-10 md:space-y-12" aria-label="Dashboard overview">
+      <section className="space-y-8 md:space-y-10 lg:space-y-12" aria-label="Dashboard overview">
         <header className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-primary-50 via-white to-primary-100 p-8 shadow-soft-glow sm:p-10">
           <div className="pointer-events-none absolute -top-14 right-10 h-44 w-44 rounded-full bg-accent/10 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-16 left-12 h-56 w-56 rounded-full bg-info/10 blur-3xl" />
@@ -193,12 +219,7 @@ const Dashboard = () => {
         </section>
 
         <section aria-label="Quick actions" role="region">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h2 className="text-[1.375rem] font-semibold leading-tight tracking-tight text-text">Quick actions</h2>
-            <p className="m-0 text-sm text-text-muted">
-              Speed up your workflow with curated shortcuts for frequent tasks.
-            </p>
-          </div>
+          <h2 className="text-[1.375rem] font-semibold leading-tight tracking-tight text-text">Quick actions</h2>
           <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             <button
               onClick={() => navigate('/clients')}
@@ -249,113 +270,161 @@ const Dashboard = () => {
           </div>
         </section>
 
-        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-          <section className="space-y-6" aria-label="Recent clients" role="region">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[1.375rem] font-semibold leading-tight tracking-tight text-text">Recent clients</h2>
+        <div className="grid grid-cols-1 gap-6 sm:gap-8 xl:grid-cols-2 xl:items-stretch">
+          {/* Recent Clients Section */}
+          <section className="flex flex-col space-y-4 sm:space-y-5" aria-label="Recent clients" role="region">
+            {/* Header with icon, title, and View All button */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 shadow-lg shadow-blue-500/20">
+                  <Users size={18} className="sm:w-5 sm:h-5 text-white" aria-hidden="true" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold leading-tight tracking-tight text-slate-900">Recent Clients</h2>
+              </div>
               <button
                 onClick={() => navigate('/clients')}
-                className="inline-flex items-center gap-2 rounded-full border border-transparent bg-primary-50 px-4 py-2 text-sm font-semibold text-accent transition-colors duration-200 hover:bg-primary-100 focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/30 focus-visible:ring-offset-2"
+                className="group relative inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border-2 border-blue-500/60 bg-transparent px-4 py-2 sm:px-5 sm:py-2.5 text-sm font-semibold text-blue-600 transition-all duration-300 ease-out hover:border-blue-500 hover:bg-gradient-to-r hover:from-blue-500 hover:to-blue-600 hover:text-white hover:shadow-lg hover:shadow-blue-500/25 active:scale-[0.98] focus:outline-none focus-visible:ring-3 focus-visible:ring-blue-400/40 focus-visible:ring-offset-2"
+                aria-label="View all clients"
               >
-                View all
-                <ArrowRight size={16} aria-hidden="true" />
+                <span className="relative z-10 transition-colors duration-300">View All</span>
+                <ArrowRight size={14} className="sm:w-4 sm:h-4 relative z-10 transition-transform duration-300 ease-out group-hover:translate-x-0.5" aria-hidden="true" />
               </button>
             </div>
 
-            {recentClients.length > 0 ? (
-              <div className="flex flex-col gap-4">
-                {recentClients.map((client) => (
-                  <div
-                    key={client._id}
-                    className="surface-card flex items-center gap-5 rounded-3xl bg-white/90 p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-surface backdrop-blur-sm"
-                  >
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/12 text-accent">
-                      <Users size={20} aria-hidden="true" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div
-                        className="mb-1 text-[0.95rem] font-semibold leading-tight text-text"
-                        title={client.name}
-                        aria-label={`Client: ${client.name}`}
-                      >
-                        {client.name.length > 20 ? `${client.name.substring(0, 20)}…` : client.name}
-                      </div>
-                      <div className="text-sm leading-normal text-text-muted">
-                        {client.email || 'No email'} • {client.company || 'No company'}
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => navigate('/clients')}
-                      className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-accent to-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-soft-glow transition-all duration-200 hover:shadow-surface focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2"
+            {/* Glassmorphism container with gradient background - No scroll, exactly 4 cards */}
+            <div className="relative flex-1 overflow-visible rounded-2xl border border-slate-200/50 bg-gradient-to-br from-white via-blue-50/15 to-white/95 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.1)] backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-[0_4px_12px_rgba(59,130,246,0.08),0_2px_4px_rgba(0,0,0,0.05)] hover:border-blue-200/70">
+              {/* Subtle gradient overlay */}
+              <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 sm:h-40 sm:w-40 rounded-full bg-blue-400/6 blur-3xl transition-opacity duration-500" aria-hidden="true" />
+              <div className="pointer-events-none absolute -left-6 -bottom-6 h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-blue-300/4 blur-2xl transition-opacity duration-500" aria-hidden="true" />
+              
+              {/* Cards grid - 4 cards max, no scroll, fixed height */}
+              {recentClients.length > 0 ? (
+                <div className="relative grid grid-cols-1 gap-3 sm:gap-4">
+                  {recentClients.map((client) => (
+                    <div
+                      key={client._id}
+                      className="group/item relative flex items-center gap-3 sm:gap-4 rounded-2xl border border-slate-100/70 bg-white/90 p-3.5 sm:p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-blue-200/50 hover:bg-white hover:shadow-[0_4px_12px_rgba(59,130,246,0.12),0_2px_4px_rgba(0,0,0,0.08)]"
                     >
-                      View
-                    </button>
+                      {/* Icon with soft blue gradient */}
+                      <div className="flex h-10 w-10 sm:h-11 sm:w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-md shadow-blue-500/20 transition-all duration-300 ease-out group-hover/item:scale-110 group-hover/item:shadow-lg group-hover/item:shadow-blue-500/30">
+                        <Users size={16} className="sm:w-[18px] sm:h-[18px] text-white" aria-hidden="true" />
+                      </div>
+                      
+                      {/* Client info */}
+                      <div className="flex-1 min-w-0">
+                        <h3
+                          className="mb-0.5 sm:mb-1 text-sm sm:text-[0.9375rem] font-semibold leading-tight text-slate-900 overflow-hidden text-ellipsis whitespace-nowrap transition-colors duration-200 ease-out group-hover/item:text-blue-700"
+                          title={client.name}
+                          aria-label={`Client: ${client.name}`}
+                        >
+                          {client.name}
+                        </h3>
+                        <p 
+                          className="text-xs leading-relaxed text-slate-600 overflow-hidden text-ellipsis whitespace-nowrap"
+                          title={`${client.email || 'No email'}${client.company ? ` • ${client.company}` : ''}`}
+                        >
+                          {client.email || 'No email'}{client.company ? ` • ${client.company}` : ''}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-10 sm:py-12 text-center">
+                  <div className="mb-3 sm:mb-4 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-slate-100">
+                    <Users size={28} className="sm:w-8 sm:h-8 text-slate-400" aria-hidden="true" />
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="glass-card text-center py-12 px-6">
-                <Users size={48} className="mx-auto text-neutral-300" aria-hidden="true" />
-                <p className="mt-6 mb-4 text-[0.9375rem] text-text-muted">No clients yet</p>
-                <button
-                  onClick={() => navigate('/clients')}
-                  className="rounded-full bg-gradient-to-r from-accent to-primary-600 px-6 py-3 text-[0.9375rem] font-semibold text-white shadow-soft-glow transition-all duration-200 hover:shadow-surface focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  Create your first client
-                </button>
-              </div>
-            )}
+                  <p className="mb-3 sm:mb-4 text-sm font-medium text-slate-600">No clients yet.</p>
+                  <button
+                    onClick={() => navigate('/clients')}
+                    className="rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 px-4 py-2 sm:px-5 sm:py-2.5 text-sm font-semibold text-white shadow-md shadow-blue-500/20 transition-all duration-200 ease-out hover:shadow-lg hover:shadow-blue-500/30 active:scale-[0.98] focus:outline-none focus-visible:ring-3 focus-visible:ring-blue-400/40 focus-visible:ring-offset-2"
+                  >
+                    Create your first client
+                  </button>
+                </div>
+              )}
+            </div>
           </section>
 
-          <section className="space-y-6" aria-label="Recent documents" role="region">
-            <div className="flex items-center justify-between">
-              <h2 className="text-[1.375rem] font-semibold leading-tight tracking-tight text-text">Recent documents</h2>
+          {/* Recent Documents Section */}
+          <section className="flex flex-col space-y-4 sm:space-y-5" aria-label="Recent documents" role="region">
+            {/* Header with icon, title, and View All button */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-500 via-emerald-600 to-emerald-700 shadow-lg shadow-emerald-500/20">
+                  <FileText size={18} className="sm:w-5 sm:h-5 text-white" aria-hidden="true" />
+                </div>
+                <h2 className="text-lg sm:text-xl font-semibold leading-tight tracking-tight text-slate-900">Recent Documents</h2>
+              </div>
               <button
                 onClick={() => navigate('/documents')}
-                className="inline-flex items-center gap-2 rounded-full border border-transparent bg-primary-50 px-4 py-2 text-sm font-semibold text-accent transition-colors duration-200 hover:bg-primary-100 focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/30 focus-visible:ring-offset-2"
+                className="group relative inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border-2 border-emerald-500/60 bg-transparent px-4 py-2 sm:px-5 sm:py-2.5 text-sm font-semibold text-emerald-600 transition-all duration-300 ease-out hover:border-emerald-500 hover:bg-gradient-to-r hover:from-emerald-500 hover:to-emerald-600 hover:text-white hover:shadow-lg hover:shadow-emerald-500/25 active:scale-[0.98] focus:outline-none focus-visible:ring-3 focus-visible:ring-emerald-400/40 focus-visible:ring-offset-2"
+                aria-label="View all documents"
               >
-                View all
-                <ArrowRight size={16} aria-hidden="true" />
+                <span className="relative z-10 transition-colors duration-300">View All</span>
+                <ArrowRight size={14} className="sm:w-4 sm:h-4 relative z-10 transition-transform duration-300 ease-out group-hover:translate-x-0.5" aria-hidden="true" />
               </button>
             </div>
 
-            {recentDocuments.length > 0 ? (
-              <div className="flex flex-col gap-4">
-                {recentDocuments.map((doc) => (
-                  <div
-                    key={doc._id}
-                    className="surface-card flex items-center gap-5 rounded-3xl bg-white/90 p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-surface backdrop-blur-sm"
-                  >
-                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-success-light text-success">
-                      <FileText size={20} aria-hidden="true" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="mb-1 text-[0.95rem] font-semibold leading-tight text-text">{doc.title}</div>
-                      <div className="flex items-center gap-2 text-sm leading-normal text-text-muted">
-                        <CategoryBadge category={doc.category} /> • {new Date(doc.uploadDate).toLocaleDateString()}
+            {/* Glassmorphism container with gradient background - No scroll, exactly 4 cards */}
+            <div className="relative flex-1 overflow-visible rounded-2xl border border-slate-200/50 bg-gradient-to-br from-white via-emerald-50/15 to-white/95 p-5 sm:p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.1)] backdrop-blur-sm transition-all duration-300 ease-out hover:shadow-[0_4px_12px_rgba(34,197,94,0.08),0_2px_4px_rgba(0,0,0,0.05)] hover:border-emerald-200/70">
+              {/* Subtle gradient overlay */}
+              <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 sm:h-40 sm:w-40 rounded-full bg-emerald-400/6 blur-3xl transition-opacity duration-500" aria-hidden="true" />
+              <div className="pointer-events-none absolute -left-6 -bottom-6 h-24 w-24 sm:h-32 sm:w-32 rounded-full bg-emerald-300/4 blur-2xl transition-opacity duration-500" aria-hidden="true" />
+              
+              {/* Cards grid - 4 cards max, no scroll, fixed height */}
+              {recentDocuments.length > 0 ? (
+                <div className="relative grid grid-cols-1 gap-3 sm:gap-4">
+                  {recentDocuments.map((doc) => (
+                    <div
+                      key={doc._id}
+                      className="group/item relative flex items-center gap-3 sm:gap-4 rounded-2xl border border-slate-100/70 bg-white/90 p-3.5 sm:p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-emerald-200/50 hover:bg-white hover:shadow-[0_4px_12px_rgba(34,197,94,0.12),0_2px_4px_rgba(0,0,0,0.08)]"
+                    >
+                      {/* Icon with soft green gradient */}
+                      <div className="flex h-10 w-10 sm:h-11 sm:w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-md shadow-emerald-500/20 transition-all duration-300 ease-out group-hover/item:scale-110 group-hover/item:shadow-lg group-hover/item:shadow-emerald-500/30">
+                        <FileText size={16} className="sm:w-[18px] sm:h-[18px] text-white" aria-hidden="true" />
+                      </div>
+                      
+                      {/* Document info */}
+                      <div className="flex-1 min-w-0">
+                        <h3
+                          className="mb-0.5 sm:mb-1 text-sm sm:text-[0.9375rem] font-semibold leading-tight text-slate-900 overflow-hidden text-ellipsis whitespace-nowrap transition-colors duration-200 ease-out group-hover/item:text-emerald-700"
+                          title={doc.title}
+                          aria-label={`Document: ${doc.title}`}
+                        >
+                          {doc.title}
+                        </h3>
+                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs leading-relaxed text-slate-600">
+                          <CategoryBadge category={doc.category} />
+                          {doc.clientId?.name && (
+                            <span 
+                              className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-emerald-700"
+                              title={`Client: ${doc.clientId.name}`}
+                            >
+                              • {doc.clientId.name}
+                            </span>
+                          )}
+                          <span className="overflow-hidden text-ellipsis whitespace-nowrap">• {doc.uploadDate ? new Date(doc.uploadDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                        </div>
                       </div>
                     </div>
-                    <button
-                      onClick={() => navigate('/documents')}
-                      className="inline-flex items-center justify-center rounded-full bg-gradient-to-r from-accent to-primary-600 px-5 py-2 text-sm font-semibold text-white shadow-soft-glow transition-all duration-200 hover:shadow-surface focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2"
-                    >
-                      View
-                    </button>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-10 sm:py-12 text-center">
+                  <div className="mb-3 sm:mb-4 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-slate-100">
+                    <FileText size={28} className="sm:w-8 sm:h-8 text-slate-400" aria-hidden="true" />
                   </div>
-                ))}
-              </div>
-            ) : (
-              <div className="glass-card text-center py-12 px-6">
-                <FileText size={48} className="mx-auto text-neutral-300" aria-hidden="true" />
-                <p className="mt-6 mb-4 text-[0.9375rem] text-text-muted">No documents yet</p>
-                <button
-                  onClick={() => navigate('/documents')}
-                  className="rounded-full bg-gradient-to-r from-accent to-primary-600 px-6 py-3 text-[0.9375rem] font-semibold text-white shadow-soft-glow transition-all duration-200 hover:shadow-surface focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-                >
-                  Upload your first document
-                </button>
-              </div>
-            )}
+                  <p className="mb-3 sm:mb-4 text-sm font-medium text-slate-600">No documents yet.</p>
+                  <button
+                    onClick={() => navigate('/documents')}
+                    className="rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 px-4 py-2 sm:px-5 sm:py-2.5 text-sm font-semibold text-white shadow-md shadow-emerald-500/20 transition-all duration-200 ease-out hover:shadow-lg hover:shadow-emerald-500/30 active:scale-[0.98] focus:outline-none focus-visible:ring-3 focus-visible:ring-emerald-400/40 focus-visible:ring-offset-2"
+                  >
+                    Upload your first document
+                  </button>
+                </div>
+              )}
+            </div>
           </section>
         </div>
       </section>

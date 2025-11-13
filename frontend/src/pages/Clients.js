@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Users, Edit, Trash2, Mail, Phone, Building2, MapPin, Calendar, AlertTriangle } from 'lucide-react';
+import { Plus, Users, Edit, Trash2, Mail, Phone, Building2, MapPin, Calendar, AlertTriangle, Eye } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
 import { getClients, createClient, updateClient, deleteClient } from '../api/clients.js';
 import { clientSchema } from '../utils/validation.js';
@@ -21,6 +21,10 @@ const Clients = () => {
   // Modal state
   const [showModal, setShowModal] = useState(false);
   const [editingClient, setEditingClient] = useState(null);
+  
+  // View client modal state
+  const [showViewModal, setShowViewModal] = useState(false);
+  const [viewingClient, setViewingClient] = useState(null);
   
   // React Hook Form setup
   const {
@@ -157,6 +161,16 @@ const Clients = () => {
     setClientToDelete(null);
   };
 
+  const handleViewClick = (client) => {
+    setViewingClient(client);
+    setShowViewModal(true);
+  };
+
+  const handleCloseViewModal = () => {
+    setShowViewModal(false);
+    setViewingClient(null);
+  };
+
   return (
     <Layout>
       {/* Content */}
@@ -164,7 +178,7 @@ const Clients = () => {
         <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-2">
             <h1 className="m-0 text-2xl font-semibold tracking-tight text-text sm:text-3xl">Clients</h1>
-            <p className="m-0 text-sm text-text-muted sm:text-base">Manage your client relationships and information</p>
+            <p className="m-0 text-sm text-text-muted sm:text-base">Manage your client relationships and information.</p>
           </div>
           <AccessibleButton
             onClick={() => handleOpenModal()}
@@ -208,7 +222,7 @@ const Clients = () => {
             <div className="mb-6 flex justify-center text-neutral-300" aria-hidden="true">
               <Users size={64} />
             </div>
-            <h2 className="mb-2 text-xl font-semibold text-text">No clients yet</h2>
+            <h2 className="mb-2 text-xl font-semibold text-text">No clients yet.</h2>
             <p className="mb-6 text-[0.9375rem] text-text-muted">Create your first client to get started!</p>
             <AccessibleButton
               onClick={() => handleOpenModal()}
@@ -229,17 +243,24 @@ const Clients = () => {
                 className="surface-card rounded-3xl bg-white/90 p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-surface backdrop-blur-sm"
               >
                 <div className="mb-5 flex min-w-0 items-center gap-3 border-b border-border pb-5">
-                  <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/12 text-accent" aria-hidden="true">
-                    <Users size={20} />
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-accent/12 text-accent" aria-hidden="true">
+                    <Users size={18} />
                   </div>
                   <h3
                     className="m-0 flex-1 min-w-0 overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold leading-tight tracking-tight text-text"
                     title={client.name}
                     aria-label={`Client: ${client.name}`}
                   >
-                    {client.name.length > 20 ? `${client.name.substring(0, 20)}…` : client.name}
+                    {client.name}
                   </h3>
                   <div className="flex flex-shrink-0 gap-2" role="group" aria-label={`Actions for ${client.name}`}>
+                    <AccessibleButton
+                      onClick={() => handleViewClick(client)}
+                      variant="ghost"
+                      size="sm"
+                      ariaLabel={`View ${client.name} details`}
+                      icon={<Eye size={16} aria-hidden="true" />}
+                    />
                     <AccessibleButton
                       onClick={() => handleOpenModal(client)}
                       variant="ghost"
@@ -346,7 +367,7 @@ const Clients = () => {
             error={formErrors.phone?.message}
             placeholder="1234567890"
             ariaLabel="Client phone number"
-            helperText="Enter exactly 10 digits (optional)"
+            helperText="Enter exactly 10 digits (optional)."
           />
 
           <AccessibleInput
@@ -408,6 +429,109 @@ const Clients = () => {
             </AccessibleButton>
           </div>
         </form>
+      </AccessibleModal>
+
+      {/* View Client Details Modal */}
+      <AccessibleModal
+        isOpen={showViewModal}
+        onClose={handleCloseViewModal}
+        title="Client Details"
+        ariaLabel="View client details"
+        size="md"
+      >
+        {viewingClient && (
+          <div className="space-y-6">
+            {/* Client Name Section */}
+            <div className="flex items-center gap-4 rounded-2xl border border-slate-200/60 bg-gradient-to-br from-primary-50/50 via-white to-primary-50/30 p-5 shadow-sm">
+              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-accent via-primary-500 to-primary-700 shadow-md shadow-accent/20">
+                <Users size={24} className="text-white" aria-hidden="true" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="m-0 mb-1 text-lg font-semibold leading-tight text-slate-900 overflow-hidden text-ellipsis whitespace-nowrap" title={viewingClient.name}>
+                  {viewingClient.name}
+                </h3>
+                <p className="m-0 text-sm text-slate-600">Client Information</p>
+              </div>
+            </div>
+
+            {/* Details Grid */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              {/* Email */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                    <Mail size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Email</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingClient.email || <span className="text-slate-400 italic">Not provided</span>}
+                </p>
+              </div>
+
+              {/* Phone */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600">
+                    <Phone size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Phone</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingClient.phone || <span className="text-slate-400 italic">Not provided</span>}
+                </p>
+              </div>
+
+              {/* Company */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
+                    <Building2 size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Company</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingClient.company || <span className="text-slate-400 italic">Not provided</span>}
+                </p>
+              </div>
+
+              {/* Added On */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+                    <Calendar size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Added On</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingClient.createdAt 
+                    ? new Date(viewingClient.createdAt).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })
+                    : <span className="text-slate-400 italic">Not available</span>
+                  }
+                </p>
+              </div>
+            </div>
+
+            {/* Address - Full Width */}
+            {viewingClient.address && (
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
+                    <MapPin size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Address</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingClient.address}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </AccessibleModal>
 
       {/* Delete Confirmation Modal */}

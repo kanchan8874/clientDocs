@@ -40,7 +40,8 @@ export const register = async (req, res, next) => {
         user: {
           id: user._id,
           name: user.name,
-          email: user.email //pasord nahi bhejega
+          email: user.email, //pasord nahi bhejega
+          createdAt: user.createdAt
         }
       }
     });
@@ -57,22 +58,22 @@ export const login = async (req, res, next) => {
     const { email, password } = req.body; //Request body se email aur password lete hain
 
     // Database me user find karo
-    const user = await User.findOne({ email }).select('+password');
+    const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
     
-    // Agar user nahi mila to error
+    // Agar user nahi mila to specific error
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
-        message: 'Invalid email or password'
+        message: 'User does not exist'
       });
     }
     const isMatch = await user.matchPassword(password);
     
-    // Agar password match nahi hua to error
+    // Agar password match nahi hua to specific error
     if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: 'Invalid email or password'
+        message: 'Invalid password'
       });
     }
 
@@ -87,7 +88,8 @@ export const login = async (req, res, next) => {
         user: {
           id: user._id,
           name: user.name,
-          email: user.email
+          email: user.email,
+          createdAt: user.createdAt
         }
       }
     });

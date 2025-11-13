@@ -12,17 +12,34 @@ const NotificationBell = () => {
   const [loading, setLoading] = useState(false);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
+  const isMountedRef = useRef(true);
+  const lastRequestTimeRef = useRef(0);
+  const requestThrottleMs = 5000; // Minimum 5 seconds between requests
 
   useEffect(() => {
-    loadNotifications();
-    loadUnreadCount();
+    isMountedRef.current = true;
+    
+    // Initial load with delay to avoid double mount issues
+    const initialLoad = setTimeout(() => {
+      if (isMountedRef.current) {
+        loadNotifications();
+        loadUnreadCount();
+      }
+    }, 100);
 
+    // Polling interval increased to 5 minutes
     const interval = setInterval(() => {
-      loadNotifications();
-      loadUnreadCount();
-    }, 120000); // 2 minutes
+      if (isMountedRef.current) {
+        loadNotifications();
+        loadUnreadCount();
+      }
+    }, 300000); // 5 minutes
 
-    return () => clearInterval(interval);
+    return () => {
+      isMountedRef.current = false;
+      clearTimeout(initialLoad);
+      clearInterval(interval);
+    };
   }, []);
 
   // Close dropdown when clicking outside or pressing Escape
@@ -52,35 +69,69 @@ const NotificationBell = () => {
   }, [showDropdown]);
 
   const loadNotifications = async () => {
+    // Throttle requests
+    const now = Date.now();
+    if (now - lastRequestTimeRef.current < requestThrottleMs) {
+      return;
+    }
+    lastRequestTimeRef.current = now;
+
+    if (!isMountedRef.current) return;
+
     try {
       const response = await getNotifications(true);
-      setNotifications(response.data?.notifications || []);
+      if (isMountedRef.current) {
+        setNotifications(response.data?.notifications || []);
+      }
     } catch (error) {
-      if (error.message?.includes('Too many requests')) {
+      // Silently handle rate limit errors
+      if (error.response?.status === 429 || error.status === 429 || error.message?.includes('Too many requests')) {
         return;
       }
-      console.error('Error loading notifications:', error);
+      if (isMountedRef.current) {
+        console.error('Error loading notifications:', error);
+      }
     }
   };
 
   const loadUnreadCount = async () => {
+    // Throttle requests
+    const now = Date.now();
+    if (now - lastRequestTimeRef.current < requestThrottleMs) {
+      return;
+    }
+    lastRequestTimeRef.current = now;
+
+    if (!isMountedRef.current) return;
+
     try {
       const response = await getUnreadCount();
-      setUnreadCount(response.data?.count || 0);
+      if (isMountedRef.current) {
+        setUnreadCount(response.data?.count || 0);
+      }
     } catch (error) {
-      if (error.message?.includes('Too many requests')) {
+      // Silently handle rate limit errors
+      if (error.response?.status === 429 || error.status === 429 || error.message?.includes('Too many requests')) {
         return;
       }
-      console.error('Error loading unread count:', error);
+      if (isMountedRef.current) {
+        console.error('Error loading unread count:', error);
+      }
     }
   };
 
   const handleBellClick = async () => {
     if (!showDropdown) {
       setLoading(true);
-      await loadNotifications();
-      await loadUnreadCount();
-      setLoading(false);
+      try {
+        await Promise.all([loadNotifications(), loadUnreadCount()]);
+      } catch (error) {
+        // Errors already handled in individual functions
+      } finally {
+        if (isMountedRef.current) {
+          setLoading(false);
+        }
+      }
     }
     setShowDropdown(!showDropdown);
   };
@@ -95,9 +146,15 @@ const NotificationBell = () => {
   const handleManualRefresh = async (e) => {
     e.stopPropagation();
     setLoading(true);
-    await loadNotifications();
-    await loadUnreadCount();
-    setLoading(false);
+    try {
+      await Promise.all([loadNotifications(), loadUnreadCount()]);
+    } catch (error) {
+      // Errors already handled in individual functions
+    } finally {
+      if (isMountedRef.current) {
+        setLoading(false);
+      }
+    }
   };
 
   const handleNotificationClick = async (notification) => {
@@ -211,7 +268,7 @@ const NotificationBell = () => {
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center px-6 py-10 text-center">
                 <Bell size={32} aria-hidden="true" className="mb-3 text-neutral-300" />
-                <p className="m-0 mb-1 text-[0.9375rem] font-medium text-text-muted">No notifications</p>
+                <p className="m-0 mb-1 text-[0.9375rem] font-medium text-text-muted">No notifications.</p>
                 <p className="m-0 text-[0.8125rem] text-text-subtle">You're all caught up!</p>
               </div>
             ) : (

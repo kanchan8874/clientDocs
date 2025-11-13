@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Upload, FileText, Share2, Trash2, Download, AlertTriangle, Search, Users, Eye } from 'lucide-react';
+import { Upload, FileText, Share2, Trash2, Download, AlertTriangle, Search, Users, Eye, Tag, Calendar, Lock, HardDrive, File, Edit } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
 import { getClients } from '../api/clients.js';
 import {
@@ -21,6 +21,7 @@ import FileUpload from '../components/FileUpload.js';
 import AccessibleModal from '../components/AccessibleModal.js';
 import AccessibleButton from '../components/AccessibleButton.js';
 import AccessibleInput from '../components/AccessibleInput.js';
+import SearchableDropdown from '../components/SearchableDropdown.js';
 
 const Documents = () => {
   const { user } = useAuth();
@@ -39,7 +40,9 @@ const Documents = () => {
     formState: { errors: uploadErrors, isSubmitting: isUploading, isValid: isUploadValid },
     reset: resetUpload,
     control: uploadControl,
-    setError: setUploadError
+    setError: setUploadError,
+    watch: watchUpload,
+    setValue: setUploadValue
   } = useForm({
     resolver: zodResolver(documentSchema),
     mode: 'onChange',
@@ -61,7 +64,9 @@ const Documents = () => {
     register: registerEdit,
     handleSubmit: handleEditSubmit,
     formState: { errors: editErrors, isSubmitting: isEditing, isValid: isEditValid },
-    reset: resetEdit
+    reset: resetEdit,
+    control: editControl,
+    setValue: setEditValue
   } = useForm({
     resolver: zodResolver(documentUpdateSchema),
     mode: 'onChange',
@@ -69,6 +74,7 @@ const Documents = () => {
       title: '',
       description: '',
       category: '',
+      clientId: '',
       accessLevel: 'private'
     }
   });
@@ -91,6 +97,7 @@ const Documents = () => {
     search: ''
   });
 
+  // Load data when filters change (excluding search - handled client-side)
   useEffect(() => {
     loadData();
   }, [filters.category, filters.accessLevel, filters.clientId, filters.startDate, filters.endDate]);
@@ -109,24 +116,22 @@ const Documents = () => {
       if (filters.clientId) filtersToSend.clientId = filters.clientId;
       if (filters.startDate) filtersToSend.startDate = filters.startDate;
       if (filters.endDate) filtersToSend.endDate = filters.endDate;
+      // Search is handled client-side, not sent to backend
       
       const documentsRes = await getDocuments(filtersToSend);
       // API client interceptor returns response.data directly
       // Backend returns: { success: true, data: { documents: [...] } }
-      let docs = documentsRes?.data?.documents || documentsRes?.documents || [];
+      const docs = documentsRes?.data?.documents || documentsRes?.documents || [];
       
-      if (filters.search) {
-        docs = docs.filter(doc =>
-          doc.title.toLowerCase().includes(filters.search.toLowerCase())
-        );
-      }
-      
-      setDocuments(docs);
+      // Store all documents (search filtering happens in render)
+      setDocuments(Array.isArray(docs) ? docs : []);
       setError('');
     } catch (err) {
       console.error('Error loading documents:', err);
       const errorMessage = err?.message || err?.data?.message || 'Failed to load documents.';
       setError(errorMessage);
+      // On error, clear documents to show error state
+      setDocuments([]);
     } finally {
       setLoading(false);
     }
@@ -170,7 +175,7 @@ const Documents = () => {
     } catch (err) {
       const errorMsg = err.response?.data?.message || 
                       err.response?.data?.errors?.[0]?.message ||
-                      'Upload failed';
+                      'Upload failed.';
       setError(errorMsg);
     }
   };
@@ -209,7 +214,7 @@ const Documents = () => {
       setSuccess('Document downloaded successfully!');
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setError('Download failed');
+      setError('Download failed.');
     }
   };
 
@@ -224,13 +229,62 @@ const Documents = () => {
       setViewingDocument(response.data?.document || doc);
       setShowViewModal(true);
     } catch (err) {
-      setError('Failed to load document details');
+      setError('Failed to load document details.');
     }
   };
 
   const handleCloseViewModal = () => {
     setShowViewModal(false);
     setViewingDocument(null);
+  };
+
+  const handleOpenEditModal = (doc) => {
+    setEditingDocument(doc);
+    const clientId = doc.clientId?._id || doc.clientId || '';
+    const formData = {
+      title: doc.title || '',
+      description: doc.description || '',
+      category: doc.category || '',
+      clientId: clientId,
+      accessLevel: doc.accessLevel || 'private'
+    };
+    resetEdit(formData);
+    // Explicitly set values using setValue to ensure form state is updated
+    setEditValue('title', formData.title);
+    setEditValue('description', formData.description);
+    setEditValue('category', formData.category);
+    setEditValue('clientId', formData.clientId);
+    setEditValue('accessLevel', formData.accessLevel);
+    setShowEditModal(true);
+    setShowViewModal(false);
+    setError('');
+    setSuccess('');
+  };
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setEditingDocument(null);
+    resetEdit();
+    setError('');
+    setSuccess('');
+  };
+
+  const onEditSubmit = async (data) => {
+    setError('');
+    setSuccess('');
+
+    try {
+      await updateDocument(editingDocument._id, data);
+      setSuccess('Document updated successfully!');
+      handleCloseEditModal();
+      loadData();
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 
+                      err.response?.data?.errors?.[0]?.message ||
+                      'Failed to update document. Please try again.';
+      setError(errorMsg);
+    }
   };
 
   const handleOpenShareModal = async (doc) => {
@@ -319,7 +373,6 @@ const Documents = () => {
   };
 
   const isOwner = (doc) => doc.createdBy?._id === user?.id || doc.createdBy === user?.id;
-  const ownedDocs = documents.filter(doc => isOwner(doc));
   
   // Helper function to check if a document is shared with current user
   // Returns true only if:
@@ -335,8 +388,29 @@ const Documents = () => {
       id === user?.id || id?.toString() === user?.id?.toString()
     );
   };
+
+  // Filter documents based on search query (client-side)
+  const filterDocumentsBySearch = (docs) => {
+    if (!filters.search || !filters.search.trim()) {
+      return docs;
+    }
+    const searchTerm = filters.search.trim().toLowerCase();
+    return docs.filter(doc => {
+      const titleMatch = doc.title?.toLowerCase().includes(searchTerm);
+      const descriptionMatch = doc.description?.toLowerCase().includes(searchTerm);
+      const clientNameMatch = doc.clientId?.name?.toLowerCase().includes(searchTerm);
+      return titleMatch || descriptionMatch || clientNameMatch;
+    });
+  };
+
+  // Apply search filter to all documents first, then separate by ownership
+  const filteredDocuments = filterDocumentsBySearch(documents);
+  const ownedDocs = filteredDocuments.filter(doc => isOwner(doc));
+  const sharedDocs = filteredDocuments.filter(isSharedWithMe);
   
-  const sharedDocs = documents.filter(isSharedWithMe);
+  // Check if search is active and no results found
+  const isSearchActive = filters.search && filters.search.trim();
+  const hasNoResults = isSearchActive && ownedDocs.length === 0 && sharedDocs.length === 0;
 
   return (
     <Layout>
@@ -344,7 +418,7 @@ const Documents = () => {
         <header className="flex justify-between items-start mb-8">
           <div>
             <h1 className="text-3xl font-semibold text-slate-900 m-0 mb-2 tracking-tight">Documents</h1>
-            <p className="text-base text-slate-600 m-0">Manage and organize your client documents</p>
+            <p className="text-base text-slate-600 m-0">Manage and organize your client documents.</p>
           </div>
           <AccessibleButton
             onClick={handleOpenUploadModal}
@@ -376,47 +450,70 @@ const Documents = () => {
               type="text" 
               placeholder="Search documents..." 
               value={filters.search} 
-              onChange={(e) => setFilters({...filters, search: e.target.value})} 
+              onChange={(e) => {
+                const searchValue = e.target.value;
+                setFilters({...filters, search: searchValue});
+              }}
               className="w-full rounded-md border border-slate-200 bg-white pl-12 pr-4 py-3.5 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
           <div className="flex gap-4 flex-wrap items-center">
-            <select 
-              name="category" 
+            <div className="min-w-[160px]">
+              <SearchableDropdown
+                id="filter-category"
+                label=""
+                options={[
+                  { value: '', label: 'All Categories' },
+                  { value: 'Proposal', label: 'Proposal' },
+                  { value: 'Invoice', label: 'Invoice' },
+                  { value: 'Report', label: 'Report' },
+                  { value: 'Contract', label: 'Contract' }
+                ]}
               value={filters.category} 
-              onChange={handleFilterChange} 
-              className="min-w-[150px] rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="">All Categories</option>
-              <option value="Proposal">Proposal</option>
-              <option value="Invoice">Invoice</option>
-              <option value="Report">Report</option>
-              <option value="Contract">Contract</option>
-            </select>
-            <select 
-              name="accessLevel" 
+                onChange={(value) => setFilters({...filters, category: value})}
+                placeholder="All Categories"
+                ariaLabel="Filter by category"
+                maxHeight="180px"
+                showSearch={false}
+                className=""
+              />
+            </div>
+            <div className="min-w-[160px]">
+              <SearchableDropdown
+                id="filter-access"
+                label=""
+                options={[
+                  { value: '', label: 'All Access' },
+                  { value: 'private', label: 'My Documents' },
+                  { value: 'shared', label: 'Shared' },
+                  { value: 'public', label: 'Public' }
+                ]}
               value={filters.accessLevel} 
-              onChange={handleFilterChange} 
-              className="min-w-[150px] rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="">All Access</option>
-              <option value="private">My Documents</option>
-              <option value="shared">Shared</option>
-              <option value="public">Public</option>
-            </select>
-            <select 
-              name="clientId" 
+                onChange={(value) => setFilters({...filters, accessLevel: value})}
+                placeholder="All Access"
+                ariaLabel="Filter by access level"
+                maxHeight="180px"
+                showSearch={false}
+                className=""
+              />
+            </div>
+            <div className="min-w-[180px]">
+              <SearchableDropdown
+                id="filter-client"
+                label=""
+                options={[
+                  { value: '', label: 'All Clients' },
+                  ...clients.map(c => ({ value: c._id, label: c.name, _id: c._id }))
+                ]}
               value={filters.clientId} 
-              onChange={handleFilterChange} 
-              className="min-w-[150px] rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="">All Clients</option>
-              {clients.map(c => (
-                <option key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
+                onChange={(value) => setFilters({...filters, clientId: value})}
+                placeholder="All Clients"
+                ariaLabel="Filter by client"
+                maxHeight="180px"
+                showSearch={false}
+                className=""
+              />
+            </div>
             <input 
               type="date" 
               name="startDate" 
@@ -447,12 +544,29 @@ const Documents = () => {
             <div className="h-10 w-10 animate-spin rounded-full border-[3px] border-slate-300 border-t-primary" aria-hidden="true"></div>
             <p>Loading documents...</p>
           </div>
+        ) : hasNoResults ? (
+          <div className="surface-card text-center py-16 px-8" role="status" aria-live="polite">
+            <div className="mb-6 flex justify-center" aria-hidden="true">
+              <FileText size={64} className="text-slate-300" />
+            </div>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">No documents found.</h2>
+            <p className="mb-6 text-[0.9375rem] text-slate-600">
+              No documents match your search query: <strong className="text-slate-900">"{filters.search}"</strong>
+            </p>
+            <AccessibleButton
+              onClick={() => setFilters({ ...filters, search: '' })}
+              variant="secondary"
+              ariaLabel="Clear search"
+            >
+              Clear Search
+            </AccessibleButton>
+          </div>
         ) : documents.length === 0 ? (
           <div className="surface-card text-center py-16 px-8" role="status" aria-live="polite">
             <div className="mb-6 flex justify-center" aria-hidden="true">
               <FileText size={64} className="text-slate-300" />
             </div>
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">No documents yet</h2>
+            <h2 className="text-xl font-semibold text-slate-900 mb-2">No documents yet.</h2>
             <p className="mb-6 text-[0.9375rem] text-slate-600">Upload your first document to get started!</p>
             <AccessibleButton
               onClick={handleOpenUploadModal}
@@ -477,8 +591,8 @@ const Documents = () => {
                       className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
-                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-primary" aria-hidden="true">
-                          <FileText size={24} className="text-primary" />
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-blue-50" aria-hidden="true">
+                          <FileText size={20} className="text-blue-600" />
                         </div>
                         <h3 
                           className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
@@ -553,8 +667,8 @@ const Documents = () => {
                       className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
-                        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-md bg-green-50 text-green-600" aria-hidden="true">
-                          <FileText size={24} className="text-green-600" />
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-green-50 text-green-600" aria-hidden="true">
+                          <FileText size={20} className="text-green-600" />
                         </div>
                         <h3 
                           className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
@@ -619,55 +733,57 @@ const Documents = () => {
             required
             placeholder="Enter document title"
             ariaLabel="Document title"
-            helperText="Minimum 3 characters, maximum 100 characters"
+            helperText="Minimum 3 characters, maximum 100 characters."
             className="md:col-span-2"
           />
 
           <div>
-            <label htmlFor="doc-category" className="mb-1 block text-sm font-medium text-text">
-              Category *
-            </label>
-            <select
+            <Controller
+              name="category"
+              control={uploadControl}
+              render={({ field }) => (
+                <SearchableDropdown
               id="doc-category"
-              {...registerUpload('category')}
-              className={`w-full cursor-pointer rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.category ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
-              aria-label="Document category"
-              aria-invalid={uploadErrors.category ? 'true' : 'false'}
-              aria-describedby={uploadErrors.category ? 'category-error' : undefined}
-            >
-              <option value="">Select Category</option>
-              <option value="Proposal">Proposal</option>
-              <option value="Invoice">Invoice</option>
-              <option value="Report">Report</option>
-              <option value="Contract">Contract</option>
-            </select>
-            {uploadErrors.category && (
-              <span id="category-error" role="alert" className="mt-1 block text-xs text-red-600">
-                {uploadErrors.category.message}
-              </span>
-            )}
+                  label="Category"
+                  options={[
+                    { value: 'Proposal', label: 'Proposal' },
+                    { value: 'Invoice', label: 'Invoice' },
+                    { value: 'Report', label: 'Report' },
+                    { value: 'Contract', label: 'Contract' }
+                  ]}
+                  value={field.value || ''}
+                  onChange={(value) => field.onChange(value)}
+                  placeholder="Select Category"
+                  error={uploadErrors.category?.message}
+                  required
+                  ariaLabel="Document category"
+                  maxHeight="200px"
+                  showSearch={false}
+                />
+              )}
+            />
           </div>
 
           <div>
-            <label htmlFor="doc-client" className="mb-1 block text-sm font-medium text-text">
-              Client *
-            </label>
-            <select
+            <Controller
+              name="clientId"
+              control={uploadControl}
+              render={({ field }) => (
+                <SearchableDropdown
               id="doc-client"
-              {...registerUpload('clientId')}
-              className={`w-full cursor-pointer rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.clientId ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
-              aria-label="Select client"
-              aria-invalid={uploadErrors.clientId ? 'true' : 'false'}
-              aria-describedby={uploadErrors.clientId ? 'client-error' : undefined}
-            >
-              <option value="">Select Client</option>
-              {clients.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-            </select>
-            {uploadErrors.clientId && (
-              <span id="client-error" role="alert" className="mt-1 block text-xs text-red-600">
-                {uploadErrors.clientId.message}
-              </span>
-            )}
+                  label="Client"
+                  options={clients.map(c => ({ value: c._id, label: c.name, _id: c._id }))}
+                  value={field.value || ''}
+                  onChange={(value) => field.onChange(value)}
+                  placeholder="Select Client"
+                  error={uploadErrors.clientId?.message}
+                  required
+                  ariaLabel="Select client"
+                  maxHeight="250px"
+                  showSearch={false}
+                />
+              )}
+            />
           </div>
 
           <div className="md:col-span-2">
@@ -678,7 +794,7 @@ const Documents = () => {
               id="doc-description"
               {...registerUpload('description')}
               className={`min-h-[100px] w-full resize-y rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.description ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
-              placeholder="Enter document description (optional, max 300 chars)"
+              placeholder="Enter document description (optional, max 300 characters)"
               rows="3"
               aria-label="Document description"
               aria-invalid={uploadErrors.description ? 'true' : 'false'}
@@ -751,7 +867,7 @@ const Documents = () => {
               )}
             />
             {!uploadErrors.file && (
-              <p className="mt-2 mb-0 text-[13px] text-text-muted">PDF, PNG, or DOCX files only. Maximum size: 5MB</p>
+              <p className="mt-2 mb-0 text-[13px] text-text-muted">PDF, PNG, or DOCX files only. Maximum size: 5MB.</p>
             )}
           </div>
 
@@ -813,7 +929,7 @@ const Documents = () => {
                 placeholder="Enter user email to share with"
                 disabled={sharing}
                 ariaLabel="User email to share document with"
-                helperText="User must be registered in the system"
+                helperText="User must be registered in the system."
               />
 
               {sharingDocument.sharedWith && sharingDocument.sharedWith.length > 0 && (
@@ -921,131 +1037,327 @@ const Documents = () => {
       <AccessibleModal
         isOpen={showViewModal && !!viewingDocument}
         onClose={handleCloseViewModal}
-        title=""
+        title="Document Details"
         ariaLabel="View document details"
-        size="lg"
+        size="md"
       >
         {viewingDocument && (
-          <div className="flex flex-col gap-5 max-h-[calc(90vh-120px)] overflow-hidden">
-            {/* Document Header */}
-            <div className="flex items-start gap-4 pb-5 border-b border-slate-200 flex-shrink-0">
-              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50 flex items-center justify-center flex-shrink-0 shadow-sm border border-blue-200/30">
-                <FileText size={36} className="text-primary" strokeWidth={2} />
+          <div className="space-y-6">
+            {/* Document Name Section */}
+            <div className="flex items-center gap-4 rounded-2xl border border-slate-200/60 bg-gradient-to-br from-primary-50/50 via-white to-primary-50/30 p-5 shadow-sm">
+              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-accent via-primary-500 to-primary-700 shadow-md shadow-accent/20">
+                <FileText size={24} className="text-white" aria-hidden="true" />
               </div>
-              <div className="flex-1 min-w-0 flex flex-col gap-2">
-                <h2 
-                  className="text-[1.375rem] font-bold text-slate-900 m-0 tracking-tight leading-snug overflow-hidden text-ellipsis line-clamp-2 max-h-[3.85em] break-words" 
-                  title={viewingDocument.title}
-                >
+              <div className="flex-1 min-w-0">
+                <h3 className="m-0 mb-1 text-lg font-semibold leading-tight text-slate-900 overflow-hidden text-ellipsis whitespace-nowrap" title={viewingDocument.title}>
                   {viewingDocument.title}
-                </h2>
-                {viewingDocument.description && (
-                  <p 
-                    className="text-sm text-slate-600 m-0 leading-relaxed overflow-hidden text-ellipsis line-clamp-2 max-h-[2.625em] break-words" 
-                    title={viewingDocument.description}
-                  >
-                    {viewingDocument.description}
-                  </p>
-                )}
+                </h3>
+                <p className="m-0 text-sm text-slate-600">Document Information</p>
               </div>
             </div>
 
-            {/* Document Details Grid */}
-            <dl className="grid grid-cols-3 gap-4 p-5 bg-slate-50 rounded-xl border border-slate-200 flex-shrink-0 list-none m-0" role="list">
-              <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Category</dt>
-                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
+            {/* Details Grid */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              {/* Category */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+                    <Tag size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Category</span>
+                </div>
+                <div className="ml-11">
                   <CategoryBadge category={viewingDocument.category} />
-                </dd>
               </div>
-              <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Client</dt>
-                <dd 
-                  className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap"
-                  title={viewingDocument.clientId?.name || 'N/A'}
-                  aria-label={`Client: ${viewingDocument.clientId?.name || 'N/A'}`}
-                >
-                  {viewingDocument.clientId?.name 
-                    ? (viewingDocument.clientId.name.length > 20 ? `${viewingDocument.clientId.name.substring(0, 20)}...` : viewingDocument.clientId.name)
-                    : 'N/A'}
-                </dd>
               </div>
-              <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Access Level</dt>
-                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
-                  <span className={`inline-block px-3 py-1.5 rounded-md text-[0.8125rem] font-semibold capitalize leading-snug whitespace-nowrap ${
-                    viewingDocument.accessLevel === 'public' 
-                      ? 'bg-green-50 text-green-700 border border-green-200' 
-                      : viewingDocument.accessLevel === 'shared'
-                      ? 'bg-yellow-50 text-yellow-800 border border-yellow-300'
-                      : 'bg-slate-100 text-slate-700 border border-slate-200'
-                  }`}>
-                    {viewingDocument.accessLevel}
-                  </span>
-                </dd>
+
+              {/* Client */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                    <Users size={16} aria-hidden="true" />
               </div>
-              <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Upload Date</dt>
-                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
-                  {new Date(viewingDocument.uploadDate).toLocaleDateString('en-US', {
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Client</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingDocument.clientId?.name || <span className="text-slate-400 italic">Not provided</span>}
+                </p>
+              </div>
+
+              {/* Access Level */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">
+                    <Lock size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Access Level</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900 capitalize">
+                  {viewingDocument.accessLevel || <span className="text-slate-400 italic">Not provided</span>}
+                </p>
+              </div>
+
+              {/* Upload Date */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-amber-100 text-amber-600">
+                    <Calendar size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Upload Date</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingDocument.uploadDate 
+                    ? new Date(viewingDocument.uploadDate).toLocaleDateString('en-US', { 
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'
-                  })}
-                </dd>
+                      })
+                    : <span className="text-slate-400 italic">Not available</span>
+                  }
+                </p>
               </div>
-              <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">File Type</dt>
-                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
-                  {viewingDocument.file?.fileType?.split('/')[1]?.toUpperCase() || 'N/A'}
-                </dd>
+
+              {/* File Type */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                    <File size={16} aria-hidden="true" />
               </div>
-              <div className="flex flex-col gap-1.5 min-w-0" role="listitem">
-                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">File Size</dt>
-                <dd className="text-[0.9375rem] font-medium text-slate-900 m-0 leading-relaxed overflow-hidden text-ellipsis whitespace-nowrap">
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">File Type</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingDocument.file?.fileType?.split('/')[1]?.toUpperCase() || <span className="text-slate-400 italic">Not available</span>}
+                </p>
+              </div>
+
+              {/* File Size */}
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-600">
+                    <HardDrive size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">File Size</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
                   {viewingDocument.file?.fileSize 
                     ? `${(viewingDocument.file.fileSize / 1024 / 1024).toFixed(2)} MB`
-                    : 'N/A'}
-                </dd>
+                    : <span className="text-slate-400 italic">Not available</span>
+                  }
+                </p>
               </div>
-            </dl>
+            </div>
 
-            {/* Shared With Section */}
-            {viewingDocument.accessLevel === 'shared' && viewingDocument.sharedWith && viewingDocument.sharedWith.length > 0 && (
-              <div className="flex flex-col gap-2.5 p-4 bg-slate-50 rounded-lg border border-slate-200 flex-shrink-0" role="region" aria-label="Shared with users">
-                <dt className="text-xs font-semibold text-slate-600 uppercase tracking-wider m-0 leading-snug">Shared With</dt>
-                <dd className="flex flex-wrap gap-2 m-0">
-                  {viewingDocument.sharedWith.map((sharedUser, index) => (
-                    <span 
-                      key={sharedUser?._id || index} 
-                      className="inline-block px-3 py-1.5 bg-white rounded-md text-sm font-medium text-slate-900 border border-slate-200 shadow-sm leading-snug whitespace-nowrap"
-                    >
-                      {sharedUser?.name || sharedUser?.email || 'Unknown User'}
-                    </span>
-                  ))}
-                </dd>
+            {/* Description - Full Width */}
+            {viewingDocument.description && (
+              <div className="flex flex-col gap-2 rounded-xl border border-slate-200/60 bg-slate-50/50 p-4 transition-colors duration-200 hover:bg-slate-100/50">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600">
+                    <FileText size={16} aria-hidden="true" />
+                  </div>
+                  <span className="text-xs font-semibold uppercase tracking-[0.08em] text-slate-500">Description</span>
+                </div>
+                <p className="m-0 ml-11 break-words text-sm font-medium leading-relaxed text-slate-900">
+                  {viewingDocument.description}
+                </p>
               </div>
             )}
 
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-5 border-t border-slate-200 flex-shrink-0" role="group" aria-label="Document actions">
+            <div className="flex justify-end gap-3 pt-4 border-t border-slate-200/60">
+              <AccessibleButton
+                onClick={() => handleOpenEditModal(viewingDocument)}
+                variant="secondary"
+                ariaLabel={`Edit ${viewingDocument.title}`}
+                icon={<Edit size={18} aria-hidden="true" />}
+                iconPosition="left"
+              >
+                Edit Document
+              </AccessibleButton>
               <AccessibleButton
                 onClick={() => {
                   handleDownload(viewingDocument._id);
                   handleCloseViewModal();
                 }}
                 variant="primary"
-                size="md"
                 ariaLabel={`Download ${viewingDocument.title}`}
                 icon={<Download size={18} aria-hidden="true" />}
                 iconPosition="left"
-                className="flex-1"
               >
                 Download Document
               </AccessibleButton>
             </div>
           </div>
         )}
+      </AccessibleModal>
+
+      {/* Edit Document Modal */}
+      <AccessibleModal
+        isOpen={showEditModal && !!editingDocument}
+        onClose={handleCloseEditModal}
+        title="Edit Document"
+        ariaLabel="Edit document form"
+        size="md"
+      >
+        <form onSubmit={handleEditSubmit(onEditSubmit)} className="grid gap-4 md:grid-cols-2" noValidate>
+          <AccessibleInput
+            id="edit-title"
+            label="Title"
+            type="text"
+            {...registerEdit('title')}
+            error={editErrors.title?.message}
+            required
+            placeholder="Enter document title"
+            ariaLabel="Document title"
+            helperText="Minimum 3 characters, maximum 100 characters."
+            className="md:col-span-2"
+          />
+
+          <div>
+            <Controller
+              name="category"
+              control={editControl}
+              render={({ field }) => (
+                <SearchableDropdown
+                  id="edit-category"
+                  label="Category"
+                  options={[
+                    { value: 'Proposal', label: 'Proposal' },
+                    { value: 'Invoice', label: 'Invoice' },
+                    { value: 'Report', label: 'Report' },
+                    { value: 'Contract', label: 'Contract' }
+                  ]}
+                  value={field.value || ''}
+                  onChange={(value) => field.onChange(value)}
+                  placeholder="Select Category"
+                  error={editErrors.category?.message}
+                  required
+                  ariaLabel="Document category"
+                  maxHeight="200px"
+                  showSearch={false}
+                />
+              )}
+            />
+          </div>
+
+          <div>
+            <Controller
+              name="clientId"
+              control={editControl}
+              render={({ field }) => (
+                <SearchableDropdown
+                  id="edit-client"
+                  label="Client"
+                  options={clients.map(c => ({ value: c._id, label: c.name, _id: c._id }))}
+                  value={field.value || ''}
+                  onChange={(value) => field.onChange(value)}
+                  placeholder="Select Client"
+                  error={editErrors.clientId?.message}
+                  required
+                  ariaLabel="Select client"
+                  maxHeight="250px"
+                  showSearch={false}
+                />
+              )}
+            />
+          </div>
+
+          <div>
+            <Controller
+              name="accessLevel"
+              control={editControl}
+              render={({ field }) => (
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-text">Access Level *</label>
+                  <div className="mt-2 flex flex-wrap gap-4" role="radiogroup" aria-label="Document access level">
+                    <label className="flex items-center gap-2 text-sm text-text">
+                      <input
+                        type="radio"
+                        {...field}
+                        value="private"
+                        className="h-[18px] w-[18px] cursor-pointer accent-accent"
+                        aria-label="Private access"
+                      />
+                      <span>Private</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-text">
+                      <input
+                        type="radio"
+                        {...field}
+                        value="shared"
+                        className="h-[18px] w-[18px] cursor-pointer accent-accent"
+                        aria-label="Shared access"
+                      />
+                      <span>Shared</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-sm text-text">
+                      <input
+                        type="radio"
+                        {...field}
+                        value="public"
+                        className="h-[18px] w-[18px] cursor-pointer accent-accent"
+                        aria-label="Public access"
+                      />
+                      <span>Public</span>
+                    </label>
+                  </div>
+                  {editErrors.accessLevel && (
+                    <span role="alert" className="mt-1 block text-xs text-red-600">
+                      {editErrors.accessLevel.message}
+                    </span>
+                  )}
+                </div>
+              )}
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label htmlFor="edit-description" className="mb-1 block text-sm font-medium text-text">
+              Description
+            </label>
+            <textarea
+              id="edit-description"
+              {...registerEdit('description')}
+              className={`min-h-[100px] w-full resize-y rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${editErrors.description ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
+              placeholder="Enter document description (optional, max 300 characters)"
+              rows="3"
+              aria-label="Document description"
+              aria-invalid={editErrors.description ? 'true' : 'false'}
+              aria-describedby={editErrors.description ? 'description-error' : undefined}
+            />
+            {editErrors.description && (
+              <span id="description-error" role="alert" className="mt-1 block text-xs text-red-600">
+                {editErrors.description.message}
+              </span>
+            )}
+          </div>
+
+          {error && (
+            <div role="alert" aria-live="assertive" className="md:col-span-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-[0.9375rem] text-red-700">
+              {error}
+            </div>
+          )}
+
+          <div className="md:col-span-2 mt-2 flex flex-col justify-end gap-3 border-t border-border pt-6 sm:flex-row">
+            <AccessibleButton
+              type="button"
+              onClick={handleCloseEditModal}
+              variant="secondary"
+              disabled={isEditing}
+              ariaLabel="Cancel edit"
+            >
+              Cancel
+            </AccessibleButton>
+            <AccessibleButton
+              type="submit"
+              variant="primary"
+              disabled={isEditing || !isEditValid}
+              loading={isEditing}
+              ariaLabel={isEditing ? 'Updating document' : 'Update document'}
+            >
+              {isEditing ? 'Updating...' : 'Update Document'}
+            </AccessibleButton>
+          </div>
+        </form>
       </AccessibleModal>
     </Layout>
   );
