@@ -74,9 +74,19 @@ const Dashboard = () => {
       const docs = documentsRes.data?.documents || [];
 
       setDocuments(docs);
+      
+      // Calculate accurate counts
+      const isOwner = (doc) => doc.createdBy?._id === user?.id || doc.createdBy === user?.id;
+      const ownedCount = docs.filter(doc => isOwner(doc)).length;
+      const sharedCount = docs.filter(isSharedWithMe).length;
+      const publicCount = docs.filter(doc => !isOwner(doc) && doc.accessLevel === 'public').length;
+      
+      // Total = owned + shared + public (no duplicates)
+      const totalDocuments = ownedCount + sharedCount + publicCount;
+
       setStats({
         totalClients: clients.length,
-        totalDocuments: docs.length,
+        totalDocuments: totalDocuments,
         loading: false
       });
 
@@ -420,7 +430,7 @@ const Dashboard = () => {
                                 • {doc.clientId.name}
                               </span>
                             )}
-                            <span className="overflow-hidden text-ellipsis whitespace-nowrap">• {doc.uploadDate ? new Date(doc.uploadDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap" title={doc.uploadDate ? new Date(doc.uploadDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}>• {doc.uploadDate ? new Date(doc.uploadDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
                           </div>
                         </div>
                       </div>

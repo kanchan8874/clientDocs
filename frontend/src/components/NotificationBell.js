@@ -27,18 +27,28 @@ const NotificationBell = () => {
       }
     }, 100);
 
-    // Polling interval increased to 5 minutes
+    // Polling interval - check every 30 seconds for new notifications
     const interval = setInterval(() => {
+      if (isMountedRef.current) {
+        loadUnreadCount(); // Only check count, not full notifications
+      }
+    }, 30000); // 30 seconds
+
+    // Listen for custom event to refresh notifications (e.g., after document share)
+    const handleRefreshNotifications = () => {
       if (isMountedRef.current) {
         loadNotifications();
         loadUnreadCount();
       }
-    }, 300000); // 5 minutes
+    };
+
+    window.addEventListener('notificationRefresh', handleRefreshNotifications);
 
     return () => {
       isMountedRef.current = false;
       clearTimeout(initialLoad);
       clearInterval(interval);
+      window.removeEventListener('notificationRefresh', handleRefreshNotifications);
     };
   }, []);
 
@@ -121,19 +131,20 @@ const NotificationBell = () => {
   };
 
   const handleBellClick = async () => {
-    if (!showDropdown) {
+    const willOpen = !showDropdown;
+    // Open dropdown immediately for better UX
+    setShowDropdown(willOpen);
+    
+    // Load data in background if opening
+    if (willOpen) {
       setLoading(true);
-      try {
-        await Promise.all([loadNotifications(), loadUnreadCount()]);
-      } catch (error) {
-        // Errors already handled in individual functions
-      } finally {
+      // Load data asynchronously without blocking UI
+      Promise.all([loadNotifications(), loadUnreadCount()]).finally(() => {
         if (isMountedRef.current) {
           setLoading(false);
         }
-      }
+      });
     }
-    setShowDropdown(!showDropdown);
   };
 
   const handleKeyDown = (e) => {
@@ -200,8 +211,9 @@ const NotificationBell = () => {
         <Bell size={18} aria-hidden="true" />
         {unreadCount > 0 && (
           <span
-            className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-red-600 text-xs font-semibold text-white shadow-soft-glow"
+            className="absolute -top-1 -right-1 z-10 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-red-600 text-xs font-semibold text-white shadow-lg"
             aria-label={`${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}`}
+            style={{ lineHeight: '1' }}
           >
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>

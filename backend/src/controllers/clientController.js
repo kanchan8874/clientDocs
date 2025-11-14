@@ -1,4 +1,5 @@
 import Client from '../models/Client.js';
+import User from '../models/User.js';
 
 
 export const getClients = async (req, res, next) => {
@@ -48,6 +49,23 @@ export const getClient = async (req, res, next) => {
 
 export const createClient = async (req, res, next) => {
   try {
+    // Get current user's email
+    const currentUser = await User.findById(req.user.id);
+    if (!currentUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Check if client email matches current user's email
+    if (req.body.email && req.body.email.trim().toLowerCase() === currentUser.email.toLowerCase()) {
+      return res.status(400).json({
+        success: false,
+        message: 'You cannot use your own email address for a client. Please use a different email address.'
+      });
+    }
+
     // Add user ID to request body
     req.body.createdBy = req.user.id;
 
@@ -81,6 +99,24 @@ export const updateClient = async (req, res, next) => {
         message: 'Not authorized to update this client'
       });
     }
+
+    // Get current user's email
+    const currentUser = await User.findById(req.user.id);
+    if (!currentUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Check if updated client email matches current user's email
+    if (req.body.email && req.body.email.trim().toLowerCase() === currentUser.email.toLowerCase()) {
+      return res.status(400).json({
+        success: false,
+        message: 'You cannot use your own email address for a client. Please use a different email address.'
+      });
+    }
+
     client = await Client.findByIdAndUpdate(
       req.params.id,
       req.body,

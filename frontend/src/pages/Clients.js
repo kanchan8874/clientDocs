@@ -152,6 +152,12 @@ const Clients = () => {
     setError('');
     setSuccess('');
 
+    // Frontend validation: Check if client email matches current user's email
+    if (data.email && data.email.trim().toLowerCase() === user?.email?.toLowerCase()) {
+      setError('You cannot use your own email address for a client. Please use a different email address.');
+      return;
+    }
+
     try {
       if (editingClient) {
         // Update existing client

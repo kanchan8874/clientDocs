@@ -131,9 +131,17 @@ const Documents = () => {
       
       // Handle users result
       if (usersRes.status === 'fulfilled') {
-        setUsers(usersRes.value.data?.users || []);
+        const usersData = usersRes.value.data?.users || usersRes.value?.users || [];
+        console.log('Loaded users:', usersData.length, usersData);
+        // Filter out current user from the list
+        const filteredUsers = usersData.filter(u => {
+          const userId = u.id || u._id;
+          return userId !== user?.id && userId?.toString() !== user?.id?.toString();
+        });
+        setUsers(filteredUsers);
+        console.log('Filtered users (excluding current):', filteredUsers.length, filteredUsers);
       } else {
-        console.warn('Failed to load users:', usersRes.reason);
+        console.error('Failed to load users:', usersRes.reason);
         setUsers([]);
         // Don't show error for users failure, just log it
       }
@@ -451,6 +459,10 @@ const Documents = () => {
       setToastMessage(`Document shared successfully with ${selectedUser.name}!`);
       setShowToast(true);
       loadData();
+      
+      // Trigger notification refresh event
+      window.dispatchEvent(new CustomEvent('notificationRefresh'));
+      
       setTimeout(() => { handleCloseShareModal(); }, 1000);
     } catch (err) {
       const errorMsg = err.response?.data?.message || 
@@ -493,14 +505,22 @@ const Documents = () => {
     });
   };
 
+  // Helper function to check if a document is public (not owned, not shared, but public)
+  const isPublicDocument = (doc) => {
+    if (isOwner(doc)) return false; // Exclude owner's documents
+    if (isSharedWithMe(doc)) return false; // Exclude shared documents
+    return doc.accessLevel === 'public'; // Only public documents
+  };
+
   // Apply search filter to all documents first, then separate by ownership
   const filteredDocuments = filterDocumentsBySearch(documents);
   const ownedDocs = filteredDocuments.filter(doc => isOwner(doc));
   const sharedDocs = filteredDocuments.filter(isSharedWithMe);
+  const publicDocs = filteredDocuments.filter(isPublicDocument);
   
   // Check if search is active and no results found
   const isSearchActive = filters.search && filters.search.trim();
-  const hasNoResults = isSearchActive && ownedDocs.length === 0 && sharedDocs.length === 0;
+  const hasNoResults = isSearchActive && ownedDocs.length === 0 && sharedDocs.length === 0 && publicDocs.length === 0;
 
   // Auto-hide toast after 3 seconds
   useEffect(() => {
@@ -683,7 +703,7 @@ const Documents = () => {
               name="startDate" 
               value={filters.startDate} 
               onChange={handleFilterChange} 
-              className="rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Start Date"
             />
             <input 
@@ -691,12 +711,12 @@ const Documents = () => {
               name="endDate" 
               value={filters.endDate} 
               onChange={handleFilterChange} 
-              className="rounded-md border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="End Date"
             />
             <button 
               onClick={() => setFilters({ category: '', accessLevel: '', clientId: '', startDate: '', endDate: '', search: '' })} 
-              className="rounded-md border border-slate-200 bg-white px-6 py-3 text-[0.9375rem] font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-[0.9375rem] font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               Clear Filters
             </button>
@@ -752,7 +772,7 @@ const Documents = () => {
                     <article 
                       key={doc._id}
                       role="listitem"
-                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5"
+                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
                     >
                       <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-blue-50" aria-hidden="true">
@@ -864,7 +884,15 @@ const Documents = () => {
                         </div>
                         <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5">
                           <span className="font-medium text-slate-600 flex-shrink-0">Date:</span>
-                          <span className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">{new Date(doc.uploadDate).toLocaleDateString()}</span>
+                          <span className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">
+                            {doc.uploadDate 
+                              ? new Date(doc.uploadDate).toLocaleDateString('en-US', { 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                })
+                              : 'N/A'}
+                          </span>
                         </div>
                       </div>
                     </article>
@@ -880,7 +908,7 @@ const Documents = () => {
                     <article 
                       key={doc._id}
                       role="listitem"
-                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5"
+                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
                     >
                       <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600" aria-hidden="true">
@@ -934,7 +962,7 @@ const Documents = () => {
                         <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5">
                           <span className="font-medium text-slate-600 flex-shrink-0">Shared On:</span>
                           <span 
-                            className="text-slate-900 font-medium"
+                            className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]"
                             title={doc.updatedAt ? new Date(doc.updatedAt).toLocaleString('en-US', { 
                               year: 'numeric', 
                               month: 'long', 
@@ -945,7 +973,7 @@ const Documents = () => {
                             aria-label={`Shared on: ${doc.updatedAt ? new Date(doc.updatedAt).toLocaleDateString('en-US', { 
                               year: 'numeric', 
                               month: 'long', 
-                              day: 'numeric'
+                              day: 'numeric' 
                             }) : 'Unknown'}`}
                           >
                             {doc.updatedAt 
@@ -955,6 +983,94 @@ const Documents = () => {
                                   day: 'numeric' 
                                 })
                               : 'Unknown'}
+                          </span>
+                        </div>
+                      </div>
+                      <AccessibleButton
+                        onClick={() => handleDownload(doc._id)}
+                        variant="primary"
+                        size="sm"
+                        ariaLabel={`Download ${doc.title}`}
+                        icon={<Download size={16} aria-hidden="true" />}
+                        iconPosition="left"
+                        className="w-full mt-4"
+                      >
+                        Download Document
+                      </AccessibleButton>
+                    </article>
+                  ))}
+                </div>
+              </section>
+            )}
+            {publicDocs.length > 0 && (
+              <section className="mb-8" aria-label="Public documents" role="region">
+                <h2 className="text-xl font-semibold text-slate-900 mb-5 tracking-tight">Public Documents ({publicDocs.length})</h2>
+                <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6" role="list" aria-label="Public documents list">
+                  {publicDocs.map(doc => (
+                    <article 
+                      key={doc._id}
+                      role="listitem"
+                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
+                    >
+                      <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-green-50 text-green-600" aria-hidden="true">
+                          <FileText size={20} className="text-green-600" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-green-100 text-green-700 text-xs font-semibold">
+                              <Users size={12} aria-hidden="true" />
+                              Public Document
+                            </span>
+                          </div>
+                          <h3 
+                            className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
+                            title={doc.title}
+                            aria-label={`Document: ${doc.title}`}
+                          >
+                            {doc.title}
+                          </h3>
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-0 mb-4">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Category:</span>
+                          <CategoryBadge category={doc.category} />
+                        </div>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Created By:</span>
+                          <span 
+                            className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]"
+                            title={doc.createdBy?.name || 'Unknown'}
+                            aria-label={`Created by: ${doc.createdBy?.name || 'Unknown'}`}
+                          >
+                            {doc.createdBy?.name || 'Unknown'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Client:</span>
+                          <span 
+                            className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]"
+                            title={doc.clientId?.name || 'Not assigned'}
+                            aria-label={`Client: ${doc.clientId?.name || 'Not assigned'}`}
+                          >
+                            {doc.clientId?.name || 'Not assigned'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Access:</span>
+                          <span className="text-slate-900 font-medium capitalize">{doc.accessLevel || 'public'}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Date:</span>
+                          <span className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">
+                            {doc.uploadDate 
+                              ? new Date(doc.uploadDate).toLocaleDateString('en-US', { 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                })
+                              : 'N/A'}
                           </span>
                         </div>
                       </div>
@@ -1191,7 +1307,7 @@ const Documents = () => {
                 label="Select User"
                 options={users.map(userItem => ({
                   value: userItem.id || userItem._id,
-                  label: userItem.name,
+                  label: `${userItem.name} (${userItem.email})`,
                   name: userItem.name,
                   email: userItem.email
                 }))}
@@ -1205,6 +1321,11 @@ const Documents = () => {
                 showSearch={true}
                 maxHeight="250px"
               />
+              {users.length === 0 && (
+                <p className="text-sm text-slate-500 mt-2">
+                  {loading ? 'Loading users...' : 'No other users available to share with.'}
+                </p>
+              )}
 
               {sharingDocument.sharedWith && sharingDocument.sharedWith.length > 0 && (
                 <div className="mb-6 rounded-2xl border border-border bg-primary-50 p-4" role="region" aria-label="Already shared with">
