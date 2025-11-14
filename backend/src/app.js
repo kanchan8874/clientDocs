@@ -41,7 +41,10 @@ const corsOptions = {
     }
     return callback(new Error(`Not allowed by CORS: ${origin}`));
   },
-  credentials: true,  // Cookies/credentials allow karta hai
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Range', 'X-Content-Range'],
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));

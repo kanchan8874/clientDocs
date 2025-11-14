@@ -217,11 +217,18 @@ export const uploadDocument = async (req, res, next) => {
     const uniqueId = `${Date.now()}-${Math.round(Math.random() * 1E9)}`;
     const publicId = `${folder}/${nameWithoutExt}-${uniqueId}`;
 
+    // Determine resource_type based on file type
+    // Images: png, jpg, jpeg, gif, webp, etc.
+    // Raw files: pdf, docx, txt, etc.
+    const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg', '.bmp', '.ico'];
+    const isImage = imageExtensions.includes(ext.toLowerCase());
+    const resourceType = isImage ? 'image' : 'raw';
+
     const uploadResult = await new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
           folder: folder,
-          resource_type: 'auto',
+          resource_type: resourceType,
           public_id: publicId,
           overwrite: false
         },
