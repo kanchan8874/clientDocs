@@ -375,40 +375,57 @@ const Dashboard = () => {
               {/* Cards grid - 4 cards max, no scroll, fixed height */}
               {recentDocuments.length > 0 ? (
                 <div className="relative grid grid-cols-1 gap-3 sm:gap-4">
-                  {recentDocuments.map((doc) => (
-                    <div
-                      key={doc._id}
-                      className="group/item relative flex items-center gap-3 sm:gap-4 rounded-2xl border border-slate-100/70 bg-white/90 p-3.5 sm:p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-emerald-200/50 hover:bg-white hover:shadow-[0_4px_12px_rgba(34,197,94,0.12),0_2px_4px_rgba(0,0,0,0.08)]"
-                    >
-                      {/* Icon with soft green gradient */}
-                      <div className="flex h-10 w-10 sm:h-11 sm:w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-md shadow-emerald-500/20 transition-all duration-300 ease-out group-hover/item:scale-110 group-hover/item:shadow-lg group-hover/item:shadow-emerald-500/30">
-                        <FileText size={16} className="sm:w-[18px] sm:h-[18px] text-white" aria-hidden="true" />
-                      </div>
-                      
-                      {/* Document info */}
-                      <div className="flex-1 min-w-0">
-                        <h3
-                          className="mb-0.5 sm:mb-1 text-sm sm:text-[0.9375rem] font-semibold leading-tight text-slate-900 overflow-hidden text-ellipsis whitespace-nowrap transition-colors duration-200 ease-out group-hover/item:text-emerald-700"
-                          title={doc.title}
-                          aria-label={`Document: ${doc.title}`}
-                        >
-                          {doc.title}
-                        </h3>
-                        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs leading-relaxed text-slate-600">
-                          <CategoryBadge category={doc.category} />
-                          {doc.clientId?.name && (
-                            <span 
-                              className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-emerald-700"
-                              title={`Client: ${doc.clientId.name}`}
+                  {recentDocuments.map((doc) => {
+                    // Check if document is owned by current user or shared
+                    const isOwned = doc.createdBy?._id === user?.id || doc.createdBy === user?.id;
+                    const isShared = !isOwned && doc.accessLevel === 'shared' && doc.sharedWith?.some(id => 
+                      (typeof id === 'object' ? id._id : id) === user?.id || 
+                      (typeof id === 'object' ? id._id : id)?.toString() === user?.id?.toString()
+                    );
+                    
+                    return (
+                      <div
+                        key={doc._id}
+                        className="group/item relative flex items-center gap-3 sm:gap-4 rounded-2xl border border-slate-100/70 bg-white/90 p-3.5 sm:p-4 shadow-[0_1px_2px_rgba(0,0,0,0.05)] backdrop-blur-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-emerald-200/50 hover:bg-white hover:shadow-[0_4px_12px_rgba(34,197,94,0.12),0_2px_4px_rgba(0,0,0,0.08)]"
+                      >
+                        {/* Icon with soft green gradient */}
+                        <div className="flex h-10 w-10 sm:h-11 sm:w-11 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-md shadow-emerald-500/20 transition-all duration-300 ease-out group-hover/item:scale-110 group-hover/item:shadow-lg group-hover/item:shadow-emerald-500/30">
+                          <FileText size={16} className="sm:w-[18px] sm:h-[18px] text-white" aria-hidden="true" />
+                        </div>
+                        
+                        {/* Document info */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5 sm:mb-1">
+                            <h3
+                              className="text-sm sm:text-[0.9375rem] font-semibold leading-tight text-slate-900 overflow-hidden text-ellipsis whitespace-nowrap transition-colors duration-200 ease-out group-hover/item:text-emerald-700 flex-1 min-w-0"
+                              title={doc.title}
+                              aria-label={`Document: ${doc.title}`}
                             >
-                              • {doc.clientId.name}
-                            </span>
-                          )}
-                          <span className="overflow-hidden text-ellipsis whitespace-nowrap">• {doc.uploadDate ? new Date(doc.uploadDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                              {doc.title}
+                            </h3>
+                            {isShared && (
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-700 text-[10px] sm:text-xs font-semibold flex-shrink-0" title="Shared Document">
+                                <Share2 size={10} aria-hidden="true" />
+                                <span className="hidden sm:inline">Shared</span>
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-xs leading-relaxed text-slate-600">
+                            <CategoryBadge category={doc.category} />
+                            {doc.clientId?.name && (
+                              <span 
+                                className="overflow-hidden text-ellipsis whitespace-nowrap font-medium text-emerald-700"
+                                title={`Client: ${doc.clientId.name}`}
+                              >
+                                • {doc.clientId.name}
+                              </span>
+                            )}
+                            <span className="overflow-hidden text-ellipsis whitespace-nowrap">• {doc.uploadDate ? new Date(doc.uploadDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A'}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-10 sm:py-12 text-center">

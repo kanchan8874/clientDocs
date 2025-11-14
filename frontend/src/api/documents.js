@@ -45,8 +45,9 @@ export const shareDocument = async (documentId, userIds) => {
 
 export const downloadDocument = async (documentId) => {
   const token = localStorage.getItem('token');
+  const apiUrl = import.meta.env.VITE_API_URL || 'https://clientdocs.onrender.com';
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL || 'https://clientdocs.onrender.com'}/documents/${documentId}/download`,
+    `${apiUrl}/api/documents/${documentId}/download`,
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -55,14 +56,25 @@ export const downloadDocument = async (documentId) => {
   );
   
   if (!response.ok) {
-    throw new Error('Download failed');
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.message || 'Download failed');
+  }
+  
+  // Get filename from Content-Disposition header or use documentId
+  const contentDisposition = response.headers.get('Content-Disposition');
+  let filename = documentId;
+  if (contentDisposition) {
+    const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/);
+    if (filenameMatch && filenameMatch[1]) {
+      filename = filenameMatch[1].replace(/['"]/g, '');
+    }
   }
   
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = documentId;
+  a.download = filename;
   document.body.appendChild(a);
   a.click();
   window.URL.revokeObjectURL(url);

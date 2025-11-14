@@ -72,7 +72,7 @@ export default {
         info: '#38BDF8'
       },
       fontFamily: {
-        sans: ['Inter', 'Poppins', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif'],
       },
       boxShadow: {
         xs: '0 2px 4px rgba(15, 23, 42, 0.06)',

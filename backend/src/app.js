@@ -3,7 +3,8 @@
 import express from 'express'; 
 import cors from 'cors';
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
+// Rate limiting disabled - removed import to prevent 429 errors during development
+// import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 
 // Routes import karo - ye sabhi API endpoints define karte hain
@@ -45,19 +46,20 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Rate Limiting - Too many requests se bachne ke liye,// Ek time period me maximum kitne requests allow hain
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes ka window
-  max: process.env.NODE_ENV === 'production' ? 100 : 500, // Production me 100, development me 500 requests
-  message: 'Too many requests from this IP, please try again later.',
-  standardHeaders: true,
-  legacyHeaders: false,
-  skip: (req) => {
-    // Health check route pe rate limiting skip karo
-    return ['/health', '/healthz', '/api/health'].includes(req.path);
-  }
-});
-app.use('/api/', limiter); 
+// Rate Limiting - Disabled for development to prevent 429 errors during active development
+// Uncomment and configure for production if needed
+// const limiter = rateLimit({
+//   windowMs: 15 * 60 * 1000, // 15 minutes ka window
+//   max: process.env.NODE_ENV === 'production' ? 100 : 10000, // Production me 100, development me 10000 requests
+//   message: 'Too many requests from this IP, please try again later.',
+//   standardHeaders: true,
+//   legacyHeaders: false,
+//   skip: (req) => {
+//     // Health check route pe rate limiting skip karo
+//     return ['/health', '/healthz', '/api/health'].includes(req.path);
+//   }
+// });
+// app.use('/api/', limiter); 
 
 // JSON data parse karo (request body me JSON data handle karne ke liye)
 app.use(express.json());

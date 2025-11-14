@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Plus, Users, Edit, Trash2, Mail, Phone, Building2, MapPin, Calendar, AlertTriangle, Eye } from 'lucide-react';
+import { Plus, Users, Edit, Trash2, Mail, Phone, Building2, MapPin, Calendar, AlertTriangle, Eye, MoreVertical } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
 import { getClients, createClient, updateClient, deleteClient } from '../api/clients.js';
 import { clientSchema } from '../utils/validation.js';
+import { createTextareaOnChange } from '../utils/textTransform.js';
 import Layout from '../components/Layout.js';
 import AccessibleModal from '../components/AccessibleModal.js';
 import AccessibleInput from '../components/AccessibleInput.js';
@@ -33,6 +34,7 @@ const Clients = () => {
     formState: { errors: formErrors, isSubmitting, isValid },
     reset,
     setError: setFormError,
+    setValue,
     watch
   } = useForm({
     resolver: zodResolver(clientSchema),
@@ -52,10 +54,45 @@ const Clients = () => {
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [clientToDelete, setClientToDelete] = useState(null);
+  
+  // Menu state for client actions
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   useEffect(() => {
     loadClients();
   }, []);
+
+  // Close menu when clicking outside or pressing Escape
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openMenuId) {
+        // Check if click is outside the menu button and dropdown
+        const menuContainer = event.target.closest('.relative');
+        const menuDropdown = event.target.closest('[role="menu"]');
+        if (!menuContainer && !menuDropdown) {
+          setOpenMenuId(null);
+        }
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && openMenuId) {
+        setOpenMenuId(null);
+      }
+    };
+
+    if (openMenuId) {
+      // Use setTimeout to avoid immediate closure
+      setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleEscape);
+      }, 0);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+      };
+    }
+  }, [openMenuId]);
 
   const loadClients = async () => {
     try {
@@ -64,8 +101,15 @@ const Clients = () => {
       setClients(response.data?.clients || []);
       setError('');
     } catch (err) {
-      setError('Failed to load clients. Please try again.');
-      console.error('Error loading clients:', err);
+      // Don't show error for rate limit (429) errors - just log it
+      if (err?.response?.status === 429 || err?.status === 429) {
+        console.warn('Rate limit reached. Please wait a moment and refresh.');
+        // Don't set error message for rate limits
+        setError('');
+      } else {
+        setError('Failed to load clients. Please try again.');
+        console.error('Error loading clients:', err);
+      }
     } finally {
       setLoading(false);
     }
@@ -253,33 +297,72 @@ const Clients = () => {
                   >
                     {client.name}
                   </h3>
-                  <div className="flex flex-shrink-0 gap-2" role="group" aria-label={`Actions for ${client.name}`}>
-                    <AccessibleButton
-                      onClick={() => handleViewClick(client)}
-                      variant="ghost"
-                      size="sm"
-                      ariaLabel={`View ${client.name} details`}
-                      icon={<Eye size={16} aria-hidden="true" />}
-                    />
-                    <AccessibleButton
-                      onClick={() => handleOpenModal(client)}
-                      variant="ghost"
-                      size="sm"
-                      ariaLabel={`Edit ${client.name}`}
-                      icon={<Edit size={16} aria-hidden="true" />}
-                    />
-                    <AccessibleButton
-                      onClick={() => handleDeleteClick(client._id)}
-                      variant="ghost"
-                      size="sm"
-                      ariaLabel={`Delete ${client.name}`}
-                      icon={<Trash2 size={16} aria-hidden="true" />}
-                    />
+                  <div className="relative flex-shrink-0" role="group" aria-label={`Actions for ${client.name}`}>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenMenuId(openMenuId === client._id ? null : client._id);
+                      }}
+                      className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                      aria-label={`More options for ${client.name}`}
+                      aria-expanded={openMenuId === client._id}
+                      aria-haspopup="true"
+                    >
+                      <MoreVertical size={18} aria-hidden="true" />
+                    </button>
+                    
+                    {openMenuId === client._id && (
+                      <div 
+                        className="absolute right-0 top-10 z-50 w-48 rounded-xl border border-slate-200 bg-white shadow-lg py-2"
+                        role="menu"
+                        aria-orientation="vertical"
+                      >
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleViewClick(client);
+                            setOpenMenuId(null);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors text-left"
+                          role="menuitem"
+                          aria-label={`View ${client.name} details`}
+                        >
+                          <Eye size={16} className="text-slate-500" aria-hidden="true" />
+                          <span>View</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenModal(client);
+                            setOpenMenuId(null);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors text-left"
+                          role="menuitem"
+                          aria-label={`Edit ${client.name}`}
+                        >
+                          <Edit size={16} className="text-slate-500" aria-hidden="true" />
+                          <span>Edit</span>
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteClick(client._id);
+                            setOpenMenuId(null);
+                          }}
+                          className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                          role="menuitem"
+                          aria-label={`Delete ${client.name}`}
+                        >
+                          <Trash2 size={16} className="text-red-500" aria-hidden="true" />
+                          <span>Delete</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <dl className="flex flex-col gap-3">
+                <dl className="flex flex-col gap-0">
                   {client.email && (
-                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
+                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text py-2.5 border-b border-slate-100">
                       <dt className="sr-only">Email</dt>
                       <dd className="flex min-w-0 flex-1 items-center text-text" title={client.email}>
                         <Mail size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
@@ -288,7 +371,7 @@ const Clients = () => {
                     </div>
                   )}
                   {client.phone && (
-                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
+                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text py-2.5 border-b border-slate-100">
                       <dt className="sr-only">Phone</dt>
                       <dd className="flex min-w-0 flex-1 items-center text-text" title={client.phone}>
                         <Phone size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
@@ -297,7 +380,7 @@ const Clients = () => {
                     </div>
                   )}
                   {client.company && (
-                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
+                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text py-2.5 border-b border-slate-100">
                       <dt className="sr-only">Company</dt>
                       <dd className="flex min-w-0 flex-1 items-center text-text" title={client.company}>
                         <Building2 size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
@@ -306,7 +389,7 @@ const Clients = () => {
                     </div>
                   )}
                   {client.address && (
-                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
+                    <div className="flex min-w-0 items-center text-[0.9375rem] text-text py-2.5 border-b border-slate-100">
                       <dt className="sr-only">Address</dt>
                       <dd className="flex min-w-0 flex-1 items-center text-text" title={client.address}>
                         <MapPin size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
@@ -314,11 +397,15 @@ const Clients = () => {
                       </dd>
                     </div>
                   )}
-                  <div className="flex min-w-0 items-center text-[0.9375rem] text-text">
+                  <div className="flex min-w-0 items-center text-[0.9375rem] text-text py-2.5">
                     <dt className="sr-only">Date added</dt>
                     <dd className="flex min-w-0 flex-1 items-center text-text">
                       <Calendar size={16} className="mr-4 flex-shrink-0 text-text-subtle" aria-hidden="true" />
-                      Added {new Date(client.createdAt).toLocaleDateString()}
+                      Added On {new Date(client.createdAt).toLocaleDateString('en-US', { 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                      })}
                     </dd>
                   </div>
                 </dl>
@@ -385,7 +472,11 @@ const Clients = () => {
             </label>
             <textarea
               id="client-address"
-              {...register('address')}
+              {...register('address', {
+                onChange: createTextareaOnChange((e) => {
+                  setValue('address', e.target.value, { shouldValidate: true });
+                }, 'address')
+              })}
               className={`w-full resize-y rounded-2xl border px-4 py-3.5 text-[0.9375rem] font-sans text-text transition-colors duration-200 ${
                 formErrors.address ? 'border-red-600 bg-white' : 'border-border bg-white'
               }`}
@@ -394,6 +485,7 @@ const Clients = () => {
               aria-label="Client address"
               aria-invalid={formErrors.address ? 'true' : 'false'}
               aria-describedby={formErrors.address ? 'address-error' : undefined}
+              autoCapitalize="sentences"
             />
             {formErrors.address && (
               <span id="address-error" role="alert" className="mt-1 block text-xs text-red-700">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Upload, FileText, Share2, Trash2, Download, AlertTriangle, Search, Users, Eye, Tag, Calendar, Lock, HardDrive, File, Edit } from 'lucide-react';
+import { Upload, FileText, Share2, Trash2, Download, AlertTriangle, Search, Users, Eye, Tag, Calendar, Lock, HardDrive, File, Edit, MoreVertical } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
 import { getClients } from '../api/clients.js';
 import {
@@ -13,8 +13,9 @@ import {
   shareDocument,
   downloadDocument
 } from '../api/documents.js';
-import { getUserByEmail } from '../api/auth.js';
+import { getUserByEmail, getAllUsers } from '../api/auth.js';
 import { documentSchema, documentUpdateSchema } from '../utils/validation.js';
+import { createTextareaOnChange } from '../utils/textTransform.js';
 import Layout from '../components/Layout.js';
 import CategoryBadge from '../components/CategoryBadge.js';
 import FileUpload from '../components/FileUpload.js';
@@ -27,6 +28,7 @@ const Documents = () => {
   const { user } = useAuth();
   const [documents, setDocuments] = useState([]);
   const [clients, setClients] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -81,12 +83,17 @@ const Documents = () => {
   
   const [showShareModal, setShowShareModal] = useState(false);
   const [sharingDocument, setSharingDocument] = useState(null);
-  const [shareEmail, setShareEmail] = useState('');
+  const [shareUserId, setShareUserId] = useState('');
   const [sharing, setSharing] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
   
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
+  
+  // Menu state for document actions
+  const [openMenuId, setOpenMenuId] = useState(null);
   
   const [filters, setFilters] = useState({
     category: '',
@@ -107,8 +114,29 @@ const Documents = () => {
       setLoading(true);
       setError('');
       
-      const clientsRes = await getClients();
-      setClients(clientsRes.data?.clients || []);
+      // Load clients and users in parallel, but handle errors separately
+      // so if one fails, the other can still succeed
+      const [clientsRes, usersRes] = await Promise.allSettled([
+        getClients(),
+        getAllUsers()
+      ]);
+      
+      // Handle clients result
+      if (clientsRes.status === 'fulfilled') {
+        setClients(clientsRes.value.data?.clients || []);
+      } else {
+        console.warn('Failed to load clients:', clientsRes.reason);
+        setClients([]);
+      }
+      
+      // Handle users result
+      if (usersRes.status === 'fulfilled') {
+        setUsers(usersRes.value.data?.users || []);
+      } else {
+        console.warn('Failed to load users:', usersRes.reason);
+        setUsers([]);
+        // Don't show error for users failure, just log it
+      }
       
       const filtersToSend = {};
       if (filters.category) filtersToSend.category = filters.category;
@@ -129,7 +157,10 @@ const Documents = () => {
     } catch (err) {
       console.error('Error loading documents:', err);
       const errorMessage = err?.message || err?.data?.message || 'Failed to load documents.';
-      setError(errorMessage);
+      // Only show error if it's not a rate limit error (429)
+      if (err?.response?.status !== 429) {
+        setError(errorMessage);
+      }
       // On error, clear documents to show error state
       setDocuments([]);
     } finally {
@@ -240,7 +271,16 @@ const Documents = () => {
 
   const handleOpenEditModal = (doc) => {
     setEditingDocument(doc);
-    const clientId = doc.clientId?._id || doc.clientId || '';
+    // Extract clientId - handle both object and string formats
+    let clientId = '';
+    if (doc.clientId) {
+      if (typeof doc.clientId === 'object' && doc.clientId._id) {
+        clientId = doc.clientId._id;
+      } else if (typeof doc.clientId === 'string') {
+        clientId = doc.clientId;
+      }
+    }
+    
     const formData = {
       title: doc.title || '',
       description: doc.description || '',
@@ -248,13 +288,20 @@ const Documents = () => {
       clientId: clientId,
       accessLevel: doc.accessLevel || 'private'
     };
+    
+    // Reset form with data
     resetEdit(formData);
+    
     // Explicitly set values using setValue to ensure form state is updated
-    setEditValue('title', formData.title);
-    setEditValue('description', formData.description);
-    setEditValue('category', formData.category);
-    setEditValue('clientId', formData.clientId);
-    setEditValue('accessLevel', formData.accessLevel);
+    // Use setTimeout to ensure form is ready
+    setTimeout(() => {
+      setEditValue('title', formData.title, { shouldValidate: false });
+      setEditValue('description', formData.description, { shouldValidate: false });
+      setEditValue('category', formData.category, { shouldValidate: false });
+      setEditValue('clientId', clientId, { shouldValidate: false });
+      setEditValue('accessLevel', formData.accessLevel, { shouldValidate: false });
+    }, 0);
+    
     setShowEditModal(true);
     setShowViewModal(false);
     setError('');
@@ -274,7 +321,36 @@ const Documents = () => {
     setSuccess('');
 
     try {
-      await updateDocument(editingDocument._id, data);
+      // Extract clientId from form data or fallback to existing document's clientId
+      let clientId = data.clientId;
+      
+      // If clientId is empty, try to get it from editingDocument
+      if (!clientId || clientId.trim() === '') {
+        if (editingDocument?.clientId) {
+          if (typeof editingDocument.clientId === 'object' && editingDocument.clientId._id) {
+            clientId = editingDocument.clientId._id;
+          } else if (typeof editingDocument.clientId === 'string') {
+            clientId = editingDocument.clientId;
+          }
+        }
+      }
+      
+      // Final validation - clientId must be present
+      if (!clientId || clientId.trim() === '') {
+        setError('Please select a client. Client is required.');
+        return;
+      }
+
+      // Prepare update data with ensured clientId
+      const updateData = {
+        title: data.title,
+        description: data.description || '',
+        category: data.category,
+        clientId: clientId,
+        accessLevel: data.accessLevel
+      };
+
+      await updateDocument(editingDocument._id, updateData);
       setSuccess('Document updated successfully!');
       handleCloseEditModal();
       loadData();
@@ -294,14 +370,14 @@ const Documents = () => {
       const freshDoc = response.data?.document;
       
       setSharingDocument(freshDoc || doc);
-      setShareEmail('');
+      setShareUserId('');
       setShowShareModal(true);
       setError('');
     } catch (err) {
       // If fetch fails, use the document from state
       console.error('Error fetching document details:', err);
       setSharingDocument(doc);
-      setShareEmail('');
+      setShareUserId('');
       setShowShareModal(true);
       setError('');
     }
@@ -310,7 +386,7 @@ const Documents = () => {
   const handleCloseShareModal = () => {
     setShowShareModal(false);
     setSharingDocument(null);
-    setShareEmail('');
+    setShareUserId('');
     setError('');
   };
 
@@ -319,23 +395,30 @@ const Documents = () => {
     setError('');
     setSharing(true);
 
-    if (!shareEmail.trim()) {
-      setError('Please enter a user email');
-      setSharing(false);
-      return;
-    }
-
-    // Check if user is trying to share with themselves
-    if (shareEmail.trim().toLowerCase() === user?.email?.toLowerCase()) {
-      setError('You cannot share a document with yourself. Please enter a different user\'s email.');
+    if (!shareUserId) {
+      setError('Please select a user to share with.');
       setSharing(false);
       return;
     }
 
     try {
-      // Get user by email
-      const userRes = await getUserByEmail(shareEmail.trim());
-      const targetUserId = userRes.data.user.id;
+      // Find selected user
+      const selectedUser = users.find(u => u.id === shareUserId || u._id === shareUserId);
+      
+      if (!selectedUser) {
+        setError('Selected user not found.');
+        setSharing(false);
+        return;
+      }
+
+      // Check if user is trying to share with themselves
+      if (selectedUser.id === user?.id || selectedUser._id === user?.id) {
+        setError('You cannot share a document with yourself.');
+        setSharing(false);
+        return;
+      }
+
+      const targetUserId = selectedUser.id || selectedUser._id;
 
       // Get existing shared users (if any)
       // Handle both populated objects and ID strings
@@ -346,8 +429,15 @@ const Documents = () => {
         return u.toString();
       }) || [];
       
+      // Check if already shared with this user
+      if (existingSharedIds.includes(targetUserId.toString())) {
+        setError(`Document is already shared with ${selectedUser.name}.`);
+        setSharing(false);
+        return;
+      }
+      
       // Combine with new user ID (remove duplicates)
-      const userIds = [...new Set([...existingSharedIds, targetUserId])];
+      const userIds = [...new Set([...existingSharedIds, targetUserId.toString()])];
 
       // Share document
       const shareResponse = await shareDocument(sharingDocument._id, userIds);
@@ -357,15 +447,15 @@ const Documents = () => {
         setSharingDocument(shareResponse.data.document);
       }
       
-      setSuccess(`Document shared successfully with ${userRes.data.user.name}!`);
-      // Don't close modal immediately, let user see the updated shared list
+      // Show toast notification
+      setToastMessage(`Document shared successfully with ${selectedUser.name}!`);
+      setShowToast(true);
       loadData();
-      setTimeout(() => {
-        setSuccess('');
-        handleCloseShareModal();
-      }, 2000);
+      setTimeout(() => { handleCloseShareModal(); }, 1000);
     } catch (err) {
-      const errorMsg = err.response?.data?.message || 'Failed to share document. Please check if the email is correct.';
+      const errorMsg = err.response?.data?.message || 
+                      err.response?.data?.errors?.[0]?.message ||
+                      'Failed to share document. Please try again.';
       setError(errorMsg);
     } finally {
       setSharing(false);
@@ -412,8 +502,82 @@ const Documents = () => {
   const isSearchActive = filters.search && filters.search.trim();
   const hasNoResults = isSearchActive && ownedDocs.length === 0 && sharedDocs.length === 0;
 
+  // Auto-hide toast after 3 seconds
+  useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false);
+        setToastMessage('');
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
+
+  // Close menu when clicking outside or pressing Escape
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (openMenuId) {
+        // Check if click is outside the menu button and dropdown
+        const menuContainer = event.target.closest('.relative');
+        const menuDropdown = event.target.closest('[role="menu"]');
+        if (!menuContainer && !menuDropdown) {
+          setOpenMenuId(null);
+        }
+      }
+    };
+
+    const handleEscape = (event) => {
+      if (event.key === 'Escape' && openMenuId) {
+        setOpenMenuId(null);
+      }
+    };
+
+    if (openMenuId) {
+      // Use setTimeout to avoid immediate closure
+      setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleEscape);
+      }, 0);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+      };
+    }
+  }, [openMenuId]);
+
   return (
     <Layout>
+      {/* Toast Notification */}
+      {showToast && (
+        <div
+          role="alert"
+          aria-live="assertive"
+          className="fixed top-20 right-4 z-[9999] bg-green-50 border border-green-200 text-green-800 px-6 py-4 rounded-xl shadow-lg flex items-center gap-3 max-w-md"
+          style={{
+            animation: 'slide-in-right 0.3s ease-out'
+          }}
+        >
+          <div className="flex-shrink-0">
+            <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <p className="text-sm font-medium m-0">{toastMessage}</p>
+          <button
+            onClick={() => {
+              setShowToast(false);
+              setToastMessage('');
+            }}
+            className="ml-auto flex-shrink-0 text-green-600 hover:text-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 rounded"
+            aria-label="Close notification"
+          >
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       <section className="max-w-[1400px] mx-auto" aria-label="Documents management">
         <header className="flex justify-between items-start mb-8">
           <div>
@@ -601,36 +765,88 @@ const Documents = () => {
                         >
                           {doc.title}
                         </h3>
-                        <div className="flex gap-2 flex-shrink-0" role="group" aria-label={`Actions for ${doc.title}`}>
-                          <AccessibleButton
-                            onClick={() => handleOpenShareModal(doc)}
-                            variant="ghost"
-                            size="sm"
-                            ariaLabel={`Share ${doc.title}`}
-                            icon={<Share2 size={16} aria-hidden="true" />}
-                          />
-                          <AccessibleButton
-                            onClick={() => handleDeleteClick(doc._id)}
-                            variant="ghost"
-                            size="sm"
-                            ariaLabel={`Delete ${doc.title}`}
-                            icon={<Trash2 size={16} aria-hidden="true" />}
-                          />
-                          <AccessibleButton
-                            onClick={() => handleViewDocument(doc)}
-                            variant="ghost"
-                            size="sm"
-                            ariaLabel={`View ${doc.title}`}
-                            icon={<Eye size={16} aria-hidden="true" />}
-                          />
+                        <div className="relative flex-shrink-0" role="group" aria-label={`Actions for ${doc.title}`}>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenMenuId(openMenuId === doc._id ? null : doc._id);
+                            }}
+                            className="flex items-center justify-center w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2"
+                            aria-label={`More options for ${doc.title}`}
+                            aria-expanded={openMenuId === doc._id}
+                            aria-haspopup="true"
+                          >
+                            <MoreVertical size={18} aria-hidden="true" />
+                          </button>
+                          
+                          {openMenuId === doc._id && (
+                            <div 
+                              className="absolute right-0 top-10 z-50 w-48 rounded-xl border border-slate-200 bg-white shadow-lg py-2"
+                              role="menu"
+                              aria-orientation="vertical"
+                            >
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenShareModal(doc);
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors text-left"
+                                role="menuitem"
+                                aria-label={`Share ${doc.title}`}
+                              >
+                                <Share2 size={16} className="text-slate-500" aria-hidden="true" />
+                                <span>Share</span>
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleViewDocument(doc);
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors text-left"
+                                role="menuitem"
+                                aria-label={`View ${doc.title}`}
+                              >
+                                <Eye size={16} className="text-slate-500" aria-hidden="true" />
+                                <span>View</span>
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenEditModal(doc);
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 transition-colors text-left"
+                                role="menuitem"
+                                aria-label={`Edit ${doc.title}`}
+                              >
+                                <Edit size={16} className="text-slate-500" aria-hidden="true" />
+                                <span>Edit</span>
+                              </button>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteClick(doc._id);
+                                  setOpenMenuId(null);
+                                }}
+                                className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
+                                role="menuitem"
+                                aria-label={`Delete ${doc.title}`}
+                              >
+                                <Trash2 size={16} className="text-red-500" aria-hidden="true" />
+                                <span>Delete</span>
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
-                      <div className="flex flex-col gap-3 mb-4">
-                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
+                      <div className="flex flex-col gap-0 mb-4">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
                           <span className="font-medium text-slate-600 flex-shrink-0">Category:</span>
                           <CategoryBadge category={doc.category} />
                         </div>
-                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
                           <span className="font-medium text-slate-600 flex-shrink-0">Client:</span>
                           <span 
                             className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]"
@@ -642,11 +858,11 @@ const Documents = () => {
                               : 'N/A'}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
                           <span className="font-medium text-slate-600 flex-shrink-0">Access:</span>
                           <span className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">{doc.accessLevel}</span>
                         </div>
-                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5">
                           <span className="font-medium text-slate-600 flex-shrink-0">Date:</span>
                           <span className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">{new Date(doc.uploadDate).toLocaleDateString()}</span>
                         </div>
@@ -667,35 +883,81 @@ const Documents = () => {
                       className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
-                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-green-50 text-green-600" aria-hidden="true">
-                          <FileText size={20} className="text-green-600" />
+                        <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600" aria-hidden="true">
+                          <FileText size={20} className="text-blue-600" />
                         </div>
-                        <h3 
-                          className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
-                          title={doc.title}
-                          aria-label={`Document: ${doc.title}`}
-                        >
-                          {doc.title}
-                        </h3>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-100 text-blue-700 text-xs font-semibold">
+                              <Share2 size={12} aria-hidden="true" />
+                              Shared Document
+                            </span>
+                          </div>
+                          <h3 
+                            className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
+                            title={doc.title}
+                            aria-label={`Document: ${doc.title}`}
+                          >
+                            {doc.title}
+                          </h3>
+                        </div>
                       </div>
-                      <dl className="flex flex-col gap-3 mb-4">
-                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
-                          <dt className="sr-only">Category</dt>
-                          <dd className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]">
-                            <CategoryBadge category={doc.category} />
-                          </dd>
+                      <div className="flex flex-col gap-0 mb-4">
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Category:</span>
+                          <CategoryBadge category={doc.category} />
                         </div>
-                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0">
-                          <dt className="sr-only">Owner</dt>
-                          <dd 
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Shared By:</span>
+                          <span 
                             className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]"
                             title={doc.createdBy?.name || 'Unknown'}
-                            aria-label={`Owner: ${doc.createdBy?.name || 'Unknown'}`}
+                            aria-label={`Shared by: ${doc.createdBy?.name || 'Unknown'}`}
                           >
                             {doc.createdBy?.name || 'Unknown'}
-                          </dd>
+                          </span>
                         </div>
-                      </dl>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Client:</span>
+                          <span 
+                            className="text-slate-900 font-medium overflow-hidden text-ellipsis whitespace-nowrap min-w-0 text-right max-w-[60%]"
+                            title={doc.clientId?.name || 'Not assigned'}
+                            aria-label={`Client: ${doc.clientId?.name || 'Not assigned'}`}
+                          >
+                            {doc.clientId?.name || 'Not assigned'}
+                          </span>
+                        </div>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Access:</span>
+                          <span className="text-slate-900 font-medium capitalize">{doc.accessLevel || 'private'}</span>
+                        </div>
+                        <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5">
+                          <span className="font-medium text-slate-600 flex-shrink-0">Shared On:</span>
+                          <span 
+                            className="text-slate-900 font-medium"
+                            title={doc.updatedAt ? new Date(doc.updatedAt).toLocaleString('en-US', { 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            }) : 'Unknown'}
+                            aria-label={`Shared on: ${doc.updatedAt ? new Date(doc.updatedAt).toLocaleDateString('en-US', { 
+                              year: 'numeric', 
+                              month: 'long', 
+                              day: 'numeric'
+                            }) : 'Unknown'}`}
+                          >
+                            {doc.updatedAt 
+                              ? new Date(doc.updatedAt).toLocaleDateString('en-US', { 
+                                  year: 'numeric', 
+                                  month: 'long', 
+                                  day: 'numeric' 
+                                })
+                              : 'Unknown'}
+                          </span>
+                        </div>
+                      </div>
                       <AccessibleButton
                         onClick={() => handleDownload(doc._id)}
                         variant="primary"
@@ -705,7 +967,7 @@ const Documents = () => {
                         iconPosition="left"
                         className="w-full mt-4"
                       >
-                        Download
+                        Download Document
                       </AccessibleButton>
                     </article>
                   ))}
@@ -792,13 +1054,18 @@ const Documents = () => {
             </label>
             <textarea
               id="doc-description"
-              {...registerUpload('description')}
+              {...registerUpload('description', {
+                onChange: createTextareaOnChange((e) => {
+                  setUploadValue('description', e.target.value, { shouldValidate: true });
+                }, 'description')
+              })}
               className={`min-h-[100px] w-full resize-y rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${uploadErrors.description ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
               placeholder="Enter document description (optional, max 300 characters)"
               rows="3"
               aria-label="Document description"
               aria-invalid={uploadErrors.description ? 'true' : 'false'}
               aria-describedby={uploadErrors.description ? 'description-error' : undefined}
+              autoCapitalize="sentences"
             />
             {uploadErrors.description && (
               <span id="description-error" role="alert" className="mt-1 block text-xs text-red-600">
@@ -919,17 +1186,24 @@ const Documents = () => {
             </div>
 
             <form onSubmit={handleShareSubmit} className="flex flex-col gap-6" noValidate>
-              <AccessibleInput
-                id="shareEmail"
-                label="User Email"
-                type="email"
-                value={shareEmail}
-                onChange={(e) => setShareEmail(e.target.value)}
+              <SearchableDropdown
+                id="shareUser"
+                label="Select User"
+                options={users.map(userItem => ({
+                  value: userItem.id || userItem._id,
+                  label: userItem.name,
+                  name: userItem.name,
+                  email: userItem.email
+                }))}
+                value={shareUserId}
+                onChange={(value) => setShareUserId(value)}
+                placeholder="Search and select a user"
+                searchPlaceholder="Search users..."
+                error={error && !shareUserId ? error : undefined}
                 required
-                placeholder="Enter user email to share with"
-                disabled={sharing}
-                ariaLabel="User email to share document with"
-                helperText="User must be registered in the system."
+                ariaLabel="Select user to share document with"
+                showSearch={true}
+                maxHeight="250px"
               />
 
               {sharingDocument.sharedWith && sharingDocument.sharedWith.length > 0 && (
@@ -1316,13 +1590,18 @@ const Documents = () => {
             </label>
             <textarea
               id="edit-description"
-              {...registerEdit('description')}
+              {...registerEdit('description', {
+                onChange: createTextareaOnChange((e) => {
+                  setEditValue('description', e.target.value, { shouldValidate: true });
+                }, 'description')
+              })}
               className={`min-h-[100px] w-full resize-y rounded-2xl border px-4 py-3.5 text-sm font-sans text-text transition-colors focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent ${editErrors.description ? 'border-red-500 bg-white' : 'border-border bg-white'}`}
               placeholder="Enter document description (optional, max 300 characters)"
               rows="3"
               aria-label="Document description"
               aria-invalid={editErrors.description ? 'true' : 'false'}
               aria-describedby={editErrors.description ? 'description-error' : undefined}
+              autoCapitalize="sentences"
             />
             {editErrors.description && (
               <span id="description-error" role="alert" className="mt-1 block text-xs text-red-600">

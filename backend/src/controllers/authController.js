@@ -178,3 +178,34 @@ export const logout = async (req, res, next) => {
     next(error);
   }
 };
+
+// getAllUsers() - Get All Users Function
+// 1. Database se saare users fetch karte hain (password exclude)
+// 2. Current logged-in user ko exclude karte hain
+// 3. Users list response me bhejte hain
+// Use Case: Document sharing ke liye - jab user kisi document ko share karta hai,
+// to dropdown me saare available users show hote hain
+
+export const getAllUsers = async (req, res, next) => {
+  try {
+    // Database se saare users fetch karo (password exclude)
+    // Current logged-in user ko exclude karo (self-sharing prevent karne ke liye)
+    const users = await User.find({ _id: { $ne: req.user.id } })
+      .select('-password')
+      .sort({ name: 1 }); // Name ke basis pe sort
+
+    // Users list response me bhejo
+    res.json({
+      success: true,
+      data: {
+        users: users.map(user => ({
+          id: user._id,
+          name: user.name,
+          email: user.email
+        }))
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+};

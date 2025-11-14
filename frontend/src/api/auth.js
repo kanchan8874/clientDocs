@@ -32,3 +32,8 @@ export const getUserByEmail = async (email) => {
   const response = await apiClient.get(`/auth/user/${encodeURIComponent(email)}`);
   return response;
 };
+
+export const getAllUsers = async () => {
+  const response = await apiClient.get('/auth/users');
+  return response;
+};
