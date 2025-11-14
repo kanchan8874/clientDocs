@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Upload, FileText, Share2, Trash2, Download, AlertTriangle, Search, Users, Eye, Tag, Calendar, Lock, HardDrive, File, Edit, MoreVertical } from 'lucide-react';
+import { Upload, FileText, Share2, Trash2, Download, AlertTriangle, Search, Users, Eye, Tag, Calendar, Lock, HardDrive, File, Edit, MoreVertical, Loader2 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
 import { getClients } from '../api/clients.js';
 import {
@@ -89,6 +89,7 @@ const Documents = () => {
   // Delete confirmation modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const [openMenuId, setOpenMenuId] = useState(null);
   
@@ -210,9 +211,10 @@ const Documents = () => {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!documentToDelete) return;
+    if (!documentToDelete || isDeleting) return;
 
     try {
+      setIsDeleting(true);
       await deleteDocument(documentToDelete.id);
       setSuccess('Document deleted successfully!');
       setShowDeleteModal(false);
@@ -223,12 +225,16 @@ const Documents = () => {
       setError('Failed to delete document. Please try again.');
       setShowDeleteModal(false);
       setDocumentToDelete(null);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
   const handleDeleteCancel = () => {
+    if (isDeleting) return;
     setShowDeleteModal(false);
     setDocumentToDelete(null);
+    setIsDeleting(false);
   };
 
   const handleDownload = async (docId) => {
@@ -1396,6 +1402,7 @@ const Documents = () => {
                 onClick={handleDeleteCancel}
                 variant="secondary"
                 ariaLabel="Cancel deletion"
+                disabled={isDeleting}
               >
                 Cancel
               </AccessibleButton>
@@ -1404,8 +1411,16 @@ const Documents = () => {
                 onClick={handleDeleteConfirm}
                 variant="danger"
                 ariaLabel={`Delete document ${documentToDelete.title}`}
+                disabled={isDeleting}
               >
-                Delete Document
+                {isDeleting ? (
+                  <span className="flex items-center gap-2">
+                    <Loader2 size={16} className="animate-spin" aria-hidden="true" />
+                    Deleting...
+                  </span>
+                ) : (
+                  'Delete Document'
+                )}
               </AccessibleButton>
             </div>
           </>
