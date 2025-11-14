@@ -149,12 +149,17 @@ const Documents = () => {
       setError('');
     } catch (err) {
       console.error('Error loading documents:', err);
-      const errorMessage = err?.message || err?.data?.message || 'Failed to load documents.';
-      // Only show error if it's not a rate limit error (429)
-      if (err?.response?.status !== 429) {
-      setError(errorMessage);
+      
+      if (err?.response?.status === 429 || err?.status === 429) {
+        // Rate limit - don't show error
+        setError('');
+      } else if (err?.isNetworkError) {
+        // Network error - server not running
+        setError('Unable to connect to server. Please ensure the backend server is running on http://localhost:5000');
+      } else {
+        const errorMessage = err?.message || err?.data?.message || 'Failed to load documents.';
+        setError(errorMessage);
       }
-      // On error, clear documents to show error state
       setDocuments([]);
     } finally {
       setLoading(false);

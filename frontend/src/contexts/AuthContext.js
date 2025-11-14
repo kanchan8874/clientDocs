@@ -61,8 +61,16 @@ export const AuthProvider = ({ children }) => {
       // Backend API call - user registration
       const response = await registerApi(userData);
       
-      // Response se token aur user info extract karo
-      const { token, user: newUser } = response.data;
+      // API client interceptor returns response.data
+      // Backend response: { success: true, data: { token, user } }
+      // After interceptor: { success: true, data: { token, user } }
+      const responseData = response.data || response;
+      const { token, user: newUser } = responseData;
+      
+      // Validate response structure
+      if (!token || !newUser) {
+        throw new Error('Invalid response from server. Missing token or user data.');
+      }
 
       // Token aur user info localStorage me save karo (persistent storage)
       localStorage.setItem('token', token);
@@ -75,10 +83,17 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (err) {
       // Error aayi - detailed error message extract karo
-      const errorMessage = err.message || 
-                          err.response?.data?.message || 
-                          err.response?.data?.errors?.[0]?.message ||
-                          'Registration failed';
+      let errorMessage = 'Registration failed';
+      
+      if (err?.isNetworkError) {
+        errorMessage = 'Unable to connect to server. Please ensure the backend server is running on http://localhost:5000';
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.response?.data?.errors?.[0]?.message) {
+        errorMessage = err.response.data.errors[0].message;
+      }
       
       // Error state me store karo
       setError(errorMessage);
@@ -97,8 +112,16 @@ export const AuthProvider = ({ children }) => {
       // Backend API call - user login
       const response = await loginApi(credentials);
       
-      // Response se token aur user info extract karo
-      const { token, user: loggedInUser } = response.data;
+      // API client interceptor returns response.data
+      // Backend response: { success: true, data: { token, user } }
+      // After interceptor: { success: true, data: { token, user } }
+      const responseData = response.data || response;
+      const { token, user: loggedInUser } = responseData;
+
+      // Validate response structure
+      if (!token || !loggedInUser) {
+        throw new Error('Invalid response from server. Missing token or user data.');
+      }
 
       // Token aur user info localStorage me save karo
       localStorage.setItem('token', token);
@@ -113,11 +136,15 @@ export const AuthProvider = ({ children }) => {
       return { success: true };
     } catch (err) {
       // Error aayi - detailed error message extract karo
-      // API client interceptor already extracts errorData.message
-      // err.message should contain the backend's error message
-      const errorMessage = err.message || 
-                          err.response?.data?.message || 
-                          'Login failed.';
+      let errorMessage = 'Login failed.';
+      
+      if (err?.isNetworkError) {
+        errorMessage = 'Unable to connect to server. Please ensure the backend server is running on http://localhost:5000';
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      }
       
       // Error state me store karo
       setError(errorMessage);
@@ -133,12 +160,14 @@ export const AuthProvider = ({ children }) => {
       // Backend API call - logout (optional, server ko inform karna)
       await logoutApi();
     } catch (error) {
-      // Agar API call fail ho, to bhi localStorage clear karna hai
-      // Finally block me hoga
+      // Agar API call fail ho (401, network error, etc.), to bhi continue karo
+      // Logout hamesha succeed hona chahiye, chahe API call fail ho ya na ho
+      console.warn('Logout API call failed, but continuing with local logout:', error);
     } finally {
       // Hamesha localStorage clear karo (API call success/fail dono me)
       localStorage.removeItem('token');
       localStorage.removeItem('user');
+      localStorage.removeItem('lastLogin');
       
       // State clear karo
       setUser(null);

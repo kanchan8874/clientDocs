@@ -97,6 +97,7 @@ const Clients = () => {
   const loadClients = async () => {
     try {
       setLoading(true);
+      setError('');
       const response = await getClients();
       setClients(response.data?.clients || []);
       setError('');
@@ -104,10 +105,13 @@ const Clients = () => {
       // Don't show error for rate limit (429) errors - just log it
       if (err?.response?.status === 429 || err?.status === 429) {
         console.warn('Rate limit reached. Please wait a moment and refresh.');
-        // Don't set error message for rate limits
         setError('');
+      } else if (err?.isNetworkError) {
+        // Network error - server not running or connection issue
+        setError('Unable to connect to server. Please ensure the backend server is running on http://localhost:5000');
+        console.error('Network error loading clients:', err);
       } else {
-        setError('Failed to load clients. Please try again.');
+        setError(err?.message || 'Failed to load clients. Please try again.');
         console.error('Error loading clients:', err);
       }
     } finally {

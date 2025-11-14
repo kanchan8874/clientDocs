@@ -100,8 +100,15 @@ const Dashboard = () => {
         }
         return;
       }
-      if (isMountedRef.current) {
+      
+      // Handle network errors
+      if (error?.isNetworkError) {
+        console.error('Network error loading dashboard data. Please ensure backend server is running on http://localhost:5000');
+      } else {
         console.error('Error loading dashboard data:', error);
+      }
+      
+      if (isMountedRef.current) {
         setStats(prev => ({ ...prev, loading: false }));
       }
     }
@@ -119,7 +126,13 @@ const Dashboard = () => {
                 ClientDoc Pulse
               </span>
               <h1 className="m-0 text-2xl font-semibold leading-tight tracking-tight text-text sm:text-3xl md:text-4xl">
-                Welcome back, {user?.name?.split(' ')[0] || 'User'}
+                Welcome back,{' '}
+                <span 
+                  className="inline-block max-w-[200px] sm:max-w-[300px] md:max-w-[400px] overflow-hidden text-ellipsis whitespace-nowrap align-bottom"
+                  title={user?.name || 'User'}
+                >
+                  {user?.name?.split(' ')[0] || 'User'}
+                </span>
               </h1>
               <p className="m-0 text-base leading-relaxed text-text-muted sm:text-lg">
                 Stay on top of your client relationships, shared documents, and team activity in a premium workspace crafted for focus.

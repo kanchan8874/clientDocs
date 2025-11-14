@@ -71,14 +71,21 @@ const ProfileCard = ({ user }) => {
   }, [isOpen]);
 
   const handleLogout = async () => {
-    try {
-      setIsOpen(false);
-      await logout();
-      navigate('/login');
-    } catch (error) {
-      // Even if logout fails, navigate to login for security
-      navigate('/login');
-    }
+    setIsOpen(false);
+    
+    // Clear localStorage immediately (don't wait for API)
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('lastLogin');
+    
+    // Try API logout in background (non-blocking, don't wait)
+    logout().catch((apiError) => {
+      console.warn('Logout API call failed (non-critical):', apiError);
+    });
+    
+    // Force immediate navigation to login page
+    // Using window.location.replace to prevent back button navigation
+    window.location.replace('/login');
   };
 
   const handleKeyDown = (e) => {
@@ -138,7 +145,12 @@ const ProfileCard = ({ user }) => {
         <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-white/90 bg-gradient-to-br from-accent via-primary-500 to-primary-700 text-sm font-semibold text-white shadow-soft-glow" aria-hidden="true">
           <span className="leading-none tracking-wide">{getInitials((userWithDates || user)?.name)}</span>
         </div>
-        <span className="hidden text-[0.9375rem] font-medium leading-snug text-text sm:inline">{(userWithDates || user)?.name || 'User'}</span>
+        <span 
+          className="hidden text-[0.9375rem] font-medium leading-snug text-text sm:inline max-w-[120px] md:max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap"
+          title={(userWithDates || user)?.name || 'User'}
+        >
+          {(userWithDates || user)?.name || 'User'}
+        </span>
         <ChevronDown
           size={16}
           aria-hidden="true"
@@ -160,8 +172,18 @@ const ProfileCard = ({ user }) => {
                 <span className="leading-none tracking-wide">{getInitials((userWithDates || user)?.name)}</span>
               </div>
               <div className="flex-1 min-w-0">
-                <h3 className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold leading-tight tracking-tight text-slate-900">{(userWithDates || user)?.name || 'User'}</h3>
-                <p className="m-0 mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs leading-snug text-slate-600">{(userWithDates || user)?.email || 'No email'}</p>
+                <h3 
+                  className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold leading-tight tracking-tight text-slate-900 max-w-[200px]"
+                  title={(userWithDates || user)?.name || 'User'}
+                >
+                  {(userWithDates || user)?.name || 'User'}
+                </h3>
+                <p 
+                  className="m-0 mt-0.5 overflow-hidden text-ellipsis whitespace-nowrap text-xs leading-snug text-slate-600 max-w-[200px]"
+                  title={(userWithDates || user)?.email || 'No email'}
+                >
+                  {(userWithDates || user)?.email || 'No email'}
+                </p>
               </div>
             </div>
           </div>
