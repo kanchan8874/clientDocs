@@ -141,9 +141,10 @@ const AccessibleInput = forwardRef(({
     min-h-[44px]
     transition-all duration-200 ease-out
     outline-none
-    focus:border-accent focus:ring-4 focus:ring-accent/20
+    hover:border-primary-300 hover:shadow-[0_0_0_3px_rgba(59,130,246,0.08)]
+    focus:border-accent focus:ring-4 focus:ring-primary-200/40 focus:shadow-[0_0_0_4px_rgba(59,130,246,0.12)]
     disabled:opacity-60 disabled:cursor-not-allowed
-    ${error ? 'focus:border-red-600 focus:ring-red-600/30' : ''}
+    ${error ? 'focus:border-red-600 focus:ring-red-600/30 focus:shadow-[0_0_0_4px_rgba(239,68,68,0.15)]' : ''}
   `.trim().replace(/\s+/g, ' ');
 
   return (

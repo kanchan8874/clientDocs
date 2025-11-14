@@ -465,9 +465,47 @@ export const downloadDocument = async (req, res, next) => {
     }
 
     const filePathUrl = document.file.filePath;
+    
+    // If file is stored on Cloudinary, fetch and stream it
     if (filePathUrl && /^https?:\/\//i.test(filePathUrl)) {
-      // Redirect to Cloudinary secure URL
-      return res.redirect(filePathUrl);
+      try {
+        // Fetch file from Cloudinary using native fetch
+        const fileResponse = await fetch(filePathUrl);
+        
+        if (!fileResponse.ok) {
+          return res.status(fileResponse.status).json({
+            success: false,
+            message: 'Failed to fetch file from storage'
+          });
+        }
+
+        // Get file content type
+        const contentType = fileResponse.headers.get('content-type') || document.file.fileType || 'application/octet-stream';
+        const contentLength = fileResponse.headers.get('content-length');
+        
+        // Get file buffer
+        const arrayBuffer = await fileResponse.arrayBuffer();
+        const buffer = Buffer.from(arrayBuffer);
+        
+        // Set response headers
+        res.setHeader('Content-Type', contentType);
+        res.setHeader('Content-Disposition', `attachment; filename="${document.file.originalName || 'document'}"`);
+        if (contentLength) {
+          res.setHeader('Content-Length', contentLength);
+        } else {
+          res.setHeader('Content-Length', buffer.length);
+        }
+
+        // Send file buffer to client
+        res.send(buffer);
+      } catch (fetchError) {
+        console.error('Error fetching file from Cloudinary:', fetchError);
+        return res.status(500).json({
+          success: false,
+          message: 'Failed to download file'
+        });
+      }
+      return;
     }
 
     // Local file fallback

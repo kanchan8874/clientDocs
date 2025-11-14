@@ -7,6 +7,7 @@ import { loginSchema } from "../utils/validation.js";
 import Logo from "../components/Logo.js";
 import AccessibleInput from "../components/AccessibleInput.js";
 import AccessibleButton from "../components/AccessibleButton.js";
+import Footer from "../components/Footer.js";
 
 const Login = () => {
   const { login } = useAuth();
@@ -90,8 +91,9 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-transparent px-4 py-12">
-      <div className="glass-card relative w-full max-w-[460px] overflow-hidden rounded-3xl p-10">
+    <div className="flex min-h-screen flex-col w-full bg-transparent">
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
+        <div className="relative w-full max-w-[460px] overflow-hidden rounded-3xl p-10 bg-gradient-to-br from-white via-primary-50 to-primary-100 border border-primary-200/50 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_8px_32px_rgba(59,130,246,0.15),inset_0_1px_0_rgba(255,255,255,0.8)]">
         <div className="flex justify-center mb-6">
           <Logo size="lg" />
         </div>
@@ -176,7 +178,9 @@ const Login = () => {
             Sign up here
           </Link>
         </p>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };

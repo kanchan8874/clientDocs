@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Calendar, LogOut, ChevronDown, Clock } from 'lucide-react';
+import { Mail, Calendar, LogOut, ChevronDown } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext.js';
 import { getCurrentUser } from '../api/auth.js';
 
@@ -123,37 +123,6 @@ const ProfileCard = ({ user }) => {
     return 'N/A';
   };
 
-  const getLastLogin = () => {
-    // Try to get last login from localStorage (set during login)
-    let lastLogin = localStorage.getItem('lastLogin');
-    
-    // If lastLogin doesn't exist, set current time as fallback (for existing sessions)
-    if (!lastLogin) {
-      const currentTime = new Date().toISOString();
-      localStorage.setItem('lastLogin', currentTime);
-      lastLogin = currentTime;
-    }
-    
-    if (lastLogin) {
-      try {
-        const date = new Date(lastLogin);
-        if (!isNaN(date.getTime())) {
-          // Use toLocaleString for date + time
-          return date.toLocaleString('en-US', { 
-            year: 'numeric', 
-            month: 'short', 
-            day: 'numeric',
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true
-          });
-        }
-      } catch (e) {
-        // Silently handle date parsing errors
-      }
-    }
-    return 'N/A';
-  };
 
   return (
     <div className="relative z-[1100]" ref={cardRef}>
@@ -214,15 +183,6 @@ const ProfileCard = ({ user }) => {
               <div className="flex min-w-0 flex-1 flex-col gap-0.5">
                 <span className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-slate-500">Member Since</span>
                 <span className="break-words text-sm font-medium leading-snug text-slate-900">{getJoinedDate()}</span>
-              </div>
-            </div>
-
-            {/* Last Login */}
-            <div className="flex items-start gap-2.5 rounded-xl bg-slate-50/80 px-3 py-2.5 transition-colors duration-200 hover:bg-slate-100/80">
-              <Clock size={14} className="mt-0.5 flex-shrink-0 text-accent" aria-hidden="true" />
-              <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                <span className="text-[0.65rem] font-semibold uppercase tracking-[0.08em] text-slate-500">Last Login</span>
-                <span className="break-words text-sm font-medium leading-snug text-slate-900">{getLastLogin()}</span>
               </div>
             </div>
           </div>

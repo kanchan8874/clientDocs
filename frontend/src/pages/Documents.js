@@ -13,7 +13,7 @@ import {
   shareDocument,
   downloadDocument
 } from '../api/documents.js';
-import { getUserByEmail, getAllUsers } from '../api/auth.js';
+import { getAllUsers } from '../api/auth.js';
 import { documentSchema, documentUpdateSchema } from '../utils/validation.js';
 import { createTextareaOnChange } from '../utils/textTransform.js';
 import Layout from '../components/Layout.js';
@@ -35,7 +35,6 @@ const Documents = () => {
   
   const [showUploadModal, setShowUploadModal] = useState(false);
   
-  // React Hook Form for upload
   const {
     register: registerUpload,
     handleSubmit: handleUploadSubmit,
@@ -61,7 +60,6 @@ const Documents = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingDocument, setEditingDocument] = useState(null);
   
-  // React Hook Form for edit
   const {
     register: registerEdit,
     handleSubmit: handleEditSubmit,
@@ -92,7 +90,6 @@ const Documents = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [documentToDelete, setDocumentToDelete] = useState(null);
   
-  // Menu state for document actions
   const [openMenuId, setOpenMenuId] = useState(null);
   
   const [filters, setFilters] = useState({
@@ -104,7 +101,6 @@ const Documents = () => {
     search: ''
   });
 
-  // Load data when filters change (excluding search - handled client-side)
   useEffect(() => {
     loadData();
   }, [filters.category, filters.accessLevel, filters.clientId, filters.startDate, filters.endDate]);
@@ -114,14 +110,11 @@ const Documents = () => {
       setLoading(true);
       setError('');
       
-      // Load clients and users in parallel, but handle errors separately
-      // so if one fails, the other can still succeed
       const [clientsRes, usersRes] = await Promise.allSettled([
         getClients(),
         getAllUsers()
       ]);
       
-      // Handle clients result
       if (clientsRes.status === 'fulfilled') {
         setClients(clientsRes.value.data?.clients || []);
       } else {
@@ -129,21 +122,17 @@ const Documents = () => {
         setClients([]);
       }
       
-      // Handle users result
       if (usersRes.status === 'fulfilled') {
         const usersData = usersRes.value.data?.users || usersRes.value?.users || [];
-        console.log('Loaded users:', usersData.length, usersData);
         // Filter out current user from the list
         const filteredUsers = usersData.filter(u => {
           const userId = u.id || u._id;
           return userId !== user?.id && userId?.toString() !== user?.id?.toString();
         });
         setUsers(filteredUsers);
-        console.log('Filtered users (excluding current):', filteredUsers.length, filteredUsers);
       } else {
         console.error('Failed to load users:', usersRes.reason);
         setUsers([]);
-        // Don't show error for users failure, just log it
       }
       
       const filtersToSend = {};
@@ -152,14 +141,9 @@ const Documents = () => {
       if (filters.clientId) filtersToSend.clientId = filters.clientId;
       if (filters.startDate) filtersToSend.startDate = filters.startDate;
       if (filters.endDate) filtersToSend.endDate = filters.endDate;
-      // Search is handled client-side, not sent to backend
       
       const documentsRes = await getDocuments(filtersToSend);
-      // API client interceptor returns response.data directly
-      // Backend returns: { success: true, data: { documents: [...] } }
       const docs = documentsRes?.data?.documents || documentsRes?.documents || [];
-      
-      // Store all documents (search filtering happens in render)
       setDocuments(Array.isArray(docs) ? docs : []);
       setError('');
     } catch (err) {
@@ -167,7 +151,7 @@ const Documents = () => {
       const errorMessage = err?.message || err?.data?.message || 'Failed to load documents.';
       // Only show error if it's not a rate limit error (429)
       if (err?.response?.status !== 429) {
-        setError(errorMessage);
+      setError(errorMessage);
       }
       // On error, clear documents to show error state
       setDocuments([]);
@@ -415,16 +399,16 @@ const Documents = () => {
       
       if (!selectedUser) {
         setError('Selected user not found.');
-        setSharing(false);
-        return;
-      }
+      setSharing(false);
+      return;
+    }
 
-      // Check if user is trying to share with themselves
+    // Check if user is trying to share with themselves
       if (selectedUser.id === user?.id || selectedUser._id === user?.id) {
         setError('You cannot share a document with yourself.');
-        setSharing(false);
-        return;
-      }
+      setSharing(false);
+      return;
+    }
 
       const targetUserId = selectedUser.id || selectedUser._id;
 
@@ -490,7 +474,7 @@ const Documents = () => {
       id === user?.id || id?.toString() === user?.id?.toString()
     );
   };
-
+  
   // Filter documents based on search query (client-side)
   const filterDocumentsBySearch = (docs) => {
     if (!filters.search || !filters.search.trim()) {
@@ -857,9 +841,9 @@ const Documents = () => {
                                 <Trash2 size={16} className="text-red-500" aria-hidden="true" />
                                 <span>Delete</span>
                               </button>
-                            </div>
-                          )}
                         </div>
+                          )}
+                      </div>
                       </div>
                       <div className="flex flex-col gap-0 mb-4">
                         <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
@@ -920,20 +904,20 @@ const Documents = () => {
                               <Share2 size={12} aria-hidden="true" />
                               Shared Document
                             </span>
-                          </div>
-                          <h3 
-                            className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
-                            title={doc.title}
-                            aria-label={`Document: ${doc.title}`}
-                          >
-                            {doc.title}
-                          </h3>
                         </div>
+                        <h3 
+                          className="text-lg font-semibold text-slate-900 m-0 flex-1 min-w-0 tracking-tight overflow-hidden text-ellipsis line-clamp-2 leading-snug max-h-[3.2em] break-words"
+                          title={doc.title}
+                          aria-label={`Document: ${doc.title}`}
+                        >
+                          {doc.title}
+                        </h3>
+                      </div>
                       </div>
                       <div className="flex flex-col gap-0 mb-4">
                         <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
                           <span className="font-medium text-slate-600 flex-shrink-0">Category:</span>
-                          <CategoryBadge category={doc.category} />
+                            <CategoryBadge category={doc.category} />
                         </div>
                         <div className="flex justify-between items-center text-[0.9375rem] gap-2 min-w-0 py-2.5 border-b border-slate-100">
                           <span className="font-medium text-slate-600 flex-shrink-0">Shared By:</span>

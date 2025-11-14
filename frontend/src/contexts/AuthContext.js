@@ -1,5 +1,4 @@
 import { createContext, useState, useContext, useEffect } from 'react';
-// API functions import karo
 import { login as loginApi, register as registerApi, logout as logoutApi } from '../api/auth.js';
 
 

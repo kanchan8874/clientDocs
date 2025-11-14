@@ -40,7 +40,7 @@ const Layout = ({ children }) => {
   }, [isSidebarOpen]);
 
   return (
-    <div className="relative flex min-h-screen overflow-hidden bg-surface-tint">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-surface-tint">
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.18),transparent_55%),radial-gradient(circle_at_bottom_right,rgba(14,165,233,0.12),transparent_55%)]" />
       <div className="pointer-events-none absolute inset-0 -z-10 opacity-[0.035] [background-image:url('data:image/svg+xml,%3Csvg width=%2760%27 height=%2760%27 viewBox=%270 0 60 60%27 xmlns=%27http://www.w3.org/2000/svg%27%3E%3Cg fill=%27%23a3bffa%27 fill-opacity=%270.45%27%3E%3Cpath d=%27M0 57a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm27-27a3 3 0 1 1 6 0 3 3 0 0 1-6 0zm27-27a3 3 0 1 1 6 0 3 3 0 0 1-6 0z%27/%3E%3C/g%3E%3C/svg%3E')] dark:opacity-[0.06]" />
 

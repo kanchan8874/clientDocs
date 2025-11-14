@@ -1,8 +1,5 @@
 import { z } from 'zod';
 
-
-//Frontend Validation Schemas using Zod
-// User Registration Schema
 export const registerSchema = z.object({
   name: z.string()
     .min(1, 'Full name is required.')
@@ -44,7 +41,7 @@ export const registerSchema = z.object({
     })
 });
 
-// User Login Schema
+
 export const loginSchema = z.object({
   email: z.string()
     .min(1, 'Email address is required.')

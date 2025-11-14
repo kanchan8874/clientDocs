@@ -1,7 +1,5 @@
 import apiClient from './client.js';
 
-
-
 export const register = async (userData) => {
   const response = await apiClient.post('/auth/register', userData);
   return response;
@@ -26,11 +24,6 @@ export const logout = async () => {
     // This handles cases where token is already expired or invalid
     throw error;
   }
-};
-
-export const getUserByEmail = async (email) => {
-  const response = await apiClient.get(`/auth/user/${encodeURIComponent(email)}`);
-  return response;
 };
 
 export const getAllUsers = async () => {

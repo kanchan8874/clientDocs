@@ -7,6 +7,7 @@ import { registerSchema } from "../utils/validation.js";
 import Logo from "../components/Logo.js";
 import AccessibleInput from "../components/AccessibleInput.js";
 import AccessibleButton from "../components/AccessibleButton.js";
+import Footer from "../components/Footer.js";
 
 const Register = () => {
   const { register: registerUser } = useAuth();
@@ -78,18 +79,22 @@ const Register = () => {
   };
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-transparent px-4 py-12">
-      <div className="glass-card relative w-full max-w-[460px] max-h-[90vh] overflow-y-auto rounded-3xl p-10">
-        <div className="flex justify-center mb-6">
+    <div className="flex min-h-screen flex-col w-full bg-transparent">
+    <div className="flex-1 flex items-center justify-center px-4 py-8 sm:py-10">
+      <div className="relative w-full max-w-[460px] max-h-[83vh] overflow-y-auto scrollbar-hidden rounded-3xl p-8 sm:p-9 md:p-10 bg-gradient-to-br from-white via-primary-50 to-primary-100 border border-primary-200/50 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_8px_32px_rgba(59,130,246,0.15),inset_0_1px_0_rgba(255,255,255,0.8)]">
+  
+        <div className="flex justify-center mb-5">
           <Logo size="lg" />
         </div>
+  
         <h1 className="mb-2 text-center text-[1.75rem] font-bold leading-tight tracking-tight text-text">
           Create your account
         </h1>
-        <p className="mb-6 text-center text-[0.9375rem] leading-relaxed text-text-muted">
+  
+        <p className="mb-5 text-center text-[0.9375rem] leading-relaxed text-text-muted">
           Get started with ClientDocs today.
         </p>
-
+  
         {errors.root?.message && (
           <div
             ref={errorRef}
@@ -101,7 +106,7 @@ const Register = () => {
             {errors.root.message}
           </div>
         )}
-
+  
         <form
           ref={formRef}
           onSubmit={handleSubmit(onSubmit)}
@@ -121,7 +126,7 @@ const Register = () => {
             autoComplete="name"
             helperText="Minimum 3 characters."
           />
-
+  
           <AccessibleInput
             id="register-email"
             label="Email address"
@@ -134,7 +139,7 @@ const Register = () => {
             autoComplete="email"
             maxLength={254}
           />
-
+  
           <AccessibleInput
             id="register-password"
             label="Password"
@@ -149,7 +154,7 @@ const Register = () => {
             showPasswordToggle
             maxLength={128}
           />
-
+  
           <AccessibleButton
             type="submit"
             variant="primary"
@@ -165,12 +170,11 @@ const Register = () => {
             aria-describedby={
               !canSubmit && hasAllFields ? "form-errors-summary" : undefined
             }
-            className="w-full mt-4"
+            className="w-full mt-3"
           >
             {isSubmitting ? "Creating account..." : "Create Account"}
           </AccessibleButton>
-
-          {/* Hidden summary of errors for screen readers */}
+  
           {!canSubmit && hasAllFields && hasErrors && (
             <div
               id="form-errors-summary"
@@ -178,7 +182,7 @@ const Register = () => {
               role="alert"
               aria-live="polite"
             >
-              Form has validation errors. Please correct the following: {" "}
+              Form has validation errors. Please correct the following:{" "}
               {[
                 errors.name?.message,
                 errors.email?.message,
@@ -189,8 +193,8 @@ const Register = () => {
             </div>
           )}
         </form>
-
-        <p className="mt-5 text-center text-sm leading-relaxed text-text-muted">
+  
+        <p className="mt-4 text-center text-sm leading-relaxed text-text-muted">
           Already have an account?{" "}
           <Link
             to="/login"
@@ -202,6 +206,10 @@ const Register = () => {
         </p>
       </div>
     </div>
+  
+    <Footer />
+  </div>
+  
   );
 };
 

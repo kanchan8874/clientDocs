@@ -22,7 +22,7 @@ const AccessibleButton = ({
   const variantClasses = {
     primary: disabled || loading
       ? 'bg-neutral-300 text-white shadow-none'
-      : 'bg-gradient-to-r from-accent to-primary-600 text-white shadow-soft-glow hover:shadow-surface hover:-translate-y-0.5 active:translate-y-0',
+      : 'bg-gradient-to-r from-accent to-primary-600 text-white shadow-soft-glow hover:shadow-[0_10px_30px_-5px_rgba(59,130,246,0.4),0_0_15px_rgba(59,130,246,0.2)] hover:-translate-y-0.5 active:translate-y-0',
     secondary: disabled || loading
       ? 'bg-neutral-100 text-text-muted border border-border shadow-none'
       : 'bg-white text-accent border border-border shadow-sm hover:bg-primary-50 hover:text-primary-700',
