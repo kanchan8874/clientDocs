@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
       let errorMessage = 'Registration failed';
       
       if (err?.isNetworkError) {
-        errorMessage = 'Unable to connect to server. Please ensure the backend server is running on http://localhost:5000';
+        errorMessage = 'Invalid email';
       } else if (err.message) {
         errorMessage = err.message;
       } else if (err.response?.data?.message) {
@@ -139,7 +139,7 @@ export const AuthProvider = ({ children }) => {
       let errorMessage = 'Login failed.';
       
       if (err?.isNetworkError) {
-        errorMessage = 'Unable to connect to server. Please ensure the backend server is running on http://localhost:5000';
+        errorMessage = 'Invalid email';
       } else if (err.message) {
         errorMessage = err.message;
       } else if (err.response?.data?.message) {

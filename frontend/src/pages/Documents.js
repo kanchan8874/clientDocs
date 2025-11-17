@@ -1108,6 +1108,7 @@ const Documents = () => {
             ariaLabel="Document title"
             helperText="Minimum 3 characters, maximum 100 characters."
             className="md:col-span-2"
+            maxLength={100}
           />
 
           <div>
@@ -1609,6 +1610,7 @@ const Documents = () => {
             ariaLabel="Document title"
             helperText="Minimum 3 characters, maximum 100 characters."
             className="md:col-span-2"
+            maxLength={100}
           />
 
           <div>

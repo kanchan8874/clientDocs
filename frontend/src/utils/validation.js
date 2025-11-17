@@ -18,7 +18,7 @@ export const registerSchema = z.object({
     }),
   email: z.string()
     .min(1, 'Email address is required.')
-    .max(150, 'Email address cannot exceed 150 characters.')
+    .max(254, 'Email address cannot exceed 254 characters.')
     .email('Please enter a valid email address.')
     .toLowerCase()
     .trim(),
@@ -51,7 +51,7 @@ export const loginSchema = z.object({
     .trim(),
   password: z.string()
     .min(1, 'Password is required.')
-    .max(128, 'Password cannot exceed 128 characters.')
+    .max(64, 'Password cannot exceed 64 characters.')
 });
 
 // Client Creation/Update Schema

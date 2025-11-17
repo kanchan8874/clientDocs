@@ -124,7 +124,7 @@ const Register = () => {
             placeholder="Enter your full name"
             ariaLabel="Full name"
             autoComplete="name"
-            helperText="Minimum 3 characters."
+            maxLength={50}
           />
   
           <AccessibleInput
@@ -152,7 +152,7 @@ const Register = () => {
             autoComplete="new-password"
             helperText="Minimum 8 characters with uppercase, lowercase, and number."
             showPasswordToggle
-            maxLength={128}
+            maxLength={64}
           />
   
           <AccessibleButton
@@ -201,7 +201,7 @@ const Register = () => {
             className="text-blue-500 no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-blue-700 focus:outline-none focus-visible:ring-3 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:rounded"
             aria-label="Navigate to login page"
           >
-            Sign in here
+            Sign in 
           </Link>
         </p>
       </div>

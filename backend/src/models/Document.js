@@ -6,7 +6,7 @@ const documentSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Document title is required'],
     trim: true,
-    maxlength: [100, 'Title cannot exceed 100 characters']
+    maxlength: [100, 'sTitle cannot exceed 100 character']
   },
   description: {
     type: String,

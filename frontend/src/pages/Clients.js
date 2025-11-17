@@ -444,6 +444,7 @@ const Clients = () => {
             placeholder="Enter client name"
             ariaLabel="Client name"
             helperText={`${clientName.length}/100 characters (Minimum 3, maximum 100)`}
+            maxLength={100}
           />
 
           <AccessibleInput
@@ -454,6 +455,7 @@ const Clients = () => {
             error={formErrors.email?.message}
             placeholder="client@example.com"
             ariaLabel="Client email address"
+            maxLength={254}
           />
 
           <AccessibleInput
@@ -465,6 +467,7 @@ const Clients = () => {
             placeholder="1234567890"
             ariaLabel="Client phone number"
             helperText="Enter exactly 10 digits (optional)."
+            maxLength={10}
           />
 
           <AccessibleInput
@@ -474,6 +477,7 @@ const Clients = () => {
             {...register('company')}
             placeholder="Company name"
             ariaLabel="Client company name"
+            maxLength={200}
           />
 
           <div className="md:col-span-2">

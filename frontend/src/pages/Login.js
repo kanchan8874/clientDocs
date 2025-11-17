@@ -147,7 +147,7 @@ const Login = () => {
             ariaLabel="Password"
             autoComplete="current-password"
             showPasswordToggle
-            maxLength={128}
+            maxLength={64}
           />
 
           <AccessibleButton
@@ -175,7 +175,7 @@ const Login = () => {
             className="text-blue-500 no-underline font-semibold transition-colors duration-200 cursor-pointer hover:text-blue-700 focus:outline-none focus-visible:ring-3 focus-visible:ring-blue-300 focus-visible:ring-offset-2 focus-visible:rounded"
             aria-label="Navigate to registration page"
           >
-            Sign up here
+            Sign up 
           </Link>
         </p>
         </div>
