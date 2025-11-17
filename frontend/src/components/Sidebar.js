@@ -21,18 +21,20 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   const getWrapperClasses = () => {
     const baseClasses = [
-      'fixed inset-y-0 left-0 z-[150]',
-      'flex w-64 flex-col bg-white/90 lg:w-64 xl:w-72',
+      'fixed left-0 bottom-0 z-[150]',
+      'top-14 sm:top-16 md:top-20 lg:top-0',
+      'flex w-64 flex-col bg-white lg:w-64 xl:w-72',
       'backdrop-blur-xl border-r border-border',
-      'shadow-lg',
+      'shadow-2xl lg:shadow-lg',
       'transition-transform duration-300 ease-out',
-      'focus-visible:outline-none'
+      'focus-visible:outline-none',
+      'lg:translate-x-0'
     ];
 
     if (isOpen) {
       baseClasses.push('translate-x-0');
     } else {
-      baseClasses.push('-translate-x-full lg:translate-x-0');
+      baseClasses.push('-translate-x-full');
     }
 
     return baseClasses.join(' ');
@@ -40,19 +42,19 @@ const Sidebar = ({ isOpen, onClose }) => {
 
   return (
     <aside className={getWrapperClasses()} role="navigation" aria-label="Main navigation">
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border bg-white/95 px-5 py-5 sm:px-6 sm:py-6">
+      <div className="flex items-center justify-between border-b border-border bg-white/95 px-4 sm:px-5 py-3 sm:py-4 md:py-4 lg:py-5 flex-shrink-0">
         <Logo size="md" />
         <button
           type="button"
           onClick={onClose}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-transparent text-neutral-500 transition-colors duration-200 hover:bg-primary-50 focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2 lg:hidden"
+          className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-transparent text-neutral-500 transition-colors duration-200 hover:bg-primary-50 focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2 lg:hidden"
           aria-label="Close navigation"
         >
-          <X size={18} aria-hidden="true" />
+          <X size={18} className="sm:w-5 sm:h-5" aria-hidden="true" />
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-4 py-6 scrollbar-hidden" aria-label="Primary navigation">
+      <nav className="flex-1 overflow-y-auto px-3 sm:px-4 py-4 sm:py-6 scrollbar-hidden" aria-label="Primary navigation">
         <ul className="flex flex-col gap-2" role="list">
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -69,16 +71,16 @@ const Sidebar = ({ isOpen, onClose }) => {
                   onKeyDown={(event) => handleKeyDown(event, item.path)}
                   aria-current={isActive ? 'page' : undefined}
                   aria-label={`Navigate to ${item.label}${isActive ? ' (current page)' : ''}`}
-                  className={`group flex w-full items-center gap-4 rounded-2xl border border-transparent px-4 py-3.5 text-[0.95rem] font-medium tracking-tight transition-all duration-200 focus-visible:ring-3 focus-visible:ring-accent/30 focus-visible:ring-offset-2 ${
+                  className={`group flex w-full items-center gap-3 sm:gap-4 rounded-2xl border border-transparent px-3 sm:px-4 py-3 sm:py-3.5 text-sm sm:text-[0.95rem] font-medium tracking-tight transition-all duration-200 focus-visible:ring-3 focus-visible:ring-accent/30 focus-visible:ring-offset-2 ${
                     isActive
                       ? 'bg-primary-50 text-accent shadow-sm'
                       : 'text-neutral-700 hover:bg-primary-50/70 hover:text-accent'
                   }`}
                 >
                   <Icon
-                    size={20}
+                    size={18}
+                    className={`sm:w-5 sm:h-5 ${isActive ? 'text-accent' : 'text-neutral-400 group-hover:text-accent'} flex-shrink-0`}
                     aria-hidden="true"
-                    className={`${isActive ? 'text-accent' : 'text-neutral-400 group-hover:text-accent'} flex-shrink-0`}
                   />
                   <span className="leading-tight">{item.label}</span>
                 </button>

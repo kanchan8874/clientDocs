@@ -34,9 +34,18 @@ const Layout = ({ children }) => {
 
     if (isSidebarOpen) {
       window.addEventListener('keydown', handleEscape);
+      // Lock body scroll on mobile when sidebar is open
+      if (window.innerWidth < 1024) {
+        document.body.style.overflow = 'hidden';
+      }
+    } else {
+      document.body.style.overflow = '';
     }
 
-    return () => window.removeEventListener('keydown', handleEscape);
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
   }, [isSidebarOpen]);
 
   return (
@@ -50,8 +59,9 @@ const Layout = ({ children }) => {
       {isSidebarOpen && (
         <div
           role="presentation"
-          className="fixed inset-0 z-[140] bg-neutral-900/40 backdrop-blur-sm transition-opacity duration-300 ease-out lg:hidden"
+          className="fixed top-14 sm:top-16 md:top-20 left-0 right-0 bottom-0 z-[145] bg-neutral-900/50 backdrop-blur-sm transition-opacity duration-300 ease-out lg:hidden lg:top-0"
           onClick={handleCloseSidebar}
+          aria-hidden="true"
         />
       )}
 
@@ -60,7 +70,7 @@ const Layout = ({ children }) => {
         tabIndex={-1}
         role="main"
         aria-label="Main content"
-        className="relative z-10 flex-1 px-4 pt-24 pb-[calc(6.5rem+env(safe-area-inset-bottom))] text-text transition-[margin] duration-300 ease-out focus:outline-none sm:px-6 md:px-8 lg:ml-64 lg:px-8 lg:pb-20 lg:pt-28 xl:ml-72 xl:px-6 2xl:px-8"
+        className="relative z-10 flex-1 px-3 sm:px-4 md:px-6 lg:px-8 pt-14 sm:pt-16 md:pt-20 lg:pt-28 pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-[calc(5.5rem+env(safe-area-inset-bottom))] text-text transition-[margin] duration-300 ease-out focus:outline-none lg:ml-64 lg:pb-20 xl:ml-72 xl:px-6 2xl:px-8"
       >
         <div className="mx-auto w-full max-w-[900px] md:max-w-[1000px] lg:max-w-[1100px] xl:max-w-[1200px] 2xl:max-w-[1280px]">{children}</div>
       </main>

@@ -23,18 +23,18 @@ const TopNavbar = ({ onToggleSidebar }) => {
 
   return (
     <header
-      className="fixed top-0 left-0 right-0 z-[200] flex h-16 items-center justify-between border-b border-border bg-white/90 px-3 backdrop-blur-2xl shadow-[0_14px_40px_-24px_rgba(15,23,42,0.45)] transition-all duration-300 ease-out sm:h-[4.5rem] sm:px-4 md:h-20 md:px-6 lg:left-64 lg:h-20 lg:px-10 xl:left-72 xl:px-14"
+      className="fixed top-0 left-0 right-0 z-[200] flex h-14 sm:h-16 md:h-20 items-center justify-between border-b border-border bg-white px-2 sm:px-3 md:px-4 lg:px-6 backdrop-blur-2xl shadow-[0_14px_40px_-24px_rgba(15,23,42,0.45)] transition-all duration-300 ease-out lg:left-64 lg:px-10 xl:left-72 xl:px-14"
       role="banner"
       aria-label="Site header"
     >
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
         <button
           type="button"
           onClick={onToggleSidebar}
-          className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-white text-neutral-600 transition-colors duration-200 hover:bg-primary-50 focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2 lg:hidden"
+          className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl border border-border bg-white text-neutral-600 transition-colors duration-200 hover:bg-primary-50 focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2 lg:hidden"
           aria-label="Toggle navigation"
         >
-          <Menu size={20} aria-hidden="true" />
+          <Menu size={18} className="sm:w-5 sm:h-5" aria-hidden="true" />
         </button>
         <div
           onClick={handleLogoClick}
@@ -42,13 +42,13 @@ const TopNavbar = ({ onToggleSidebar }) => {
           role="button"
           tabIndex={0}
           aria-label="Go to dashboard"
-          className="flex min-h-[44px] min-w-[44px] cursor-pointer items-center justify-center rounded-2xl border border-transparent p-2 transition-all duration-300 hover:bg-card-gradient focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2"
+          className="flex min-h-[40px] min-w-[40px] sm:min-h-[44px] sm:min-w-[44px] cursor-pointer items-center justify-center rounded-2xl border border-transparent p-1.5 sm:p-2 transition-all duration-300 hover:bg-card-gradient focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2"
         >
           <Logo size="lg" showText={false} />
         </div>
       </div>
 
-      <div className="flex items-center gap-3 sm:gap-4" role="toolbar" aria-label="User actions">
+      <div className="flex items-center gap-2 sm:gap-3 md:gap-4" role="toolbar" aria-label="User actions">
         <NotificationBell />
         <ProfileCard user={user} />
       </div>

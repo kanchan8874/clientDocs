@@ -129,16 +129,16 @@ const AccessibleModal = ({
     >
       <div className={`
         relative flex w-full flex-col overflow-x-hidden overflow-y-auto rounded-3xl border border-border bg-white/95 scrollbar-hidden
-        ${title ? 'p-6 sm:p-7 lg:p-8' : 'p-5 sm:p-6 lg:p-7'}
-        max-h-[85vh] sm:max-h-[80vh] md:max-h-[75vh] lg:max-h-[70vh]
+        ${title ? 'p-4 sm:p-6 md:p-7 lg:p-8' : 'p-4 sm:p-5 md:p-6 lg:p-7'}
+        max-h-[90vh] sm:max-h-[85vh] md:max-h-[80vh] lg:max-h-[75vh] xl:max-h-[70vh]
         shadow-surface backdrop-blur-sm outline-none
         animate-[slide-up-fade_0.3s_cubic-bezier(0.4,0,0.2,1)]
         ${sizeClasses[size] || sizeClasses.md}
       `.trim().replace(/\s+/g, ' ')}>
         {(title || onClose) && (
-          <div className="mb-6 flex items-start justify-between border-b border-border pb-4">
+          <div className="mb-4 sm:mb-6 flex items-start justify-between border-b border-border pb-3 sm:pb-4">
             {title && (
-              <h2 id="modal-title" className="m-0 text-2xl font-semibold leading-tight text-text">
+              <h2 id="modal-title" className="m-0 text-lg sm:text-xl md:text-2xl font-semibold leading-tight text-text pr-2">
                 {title}
               </h2>
             )}

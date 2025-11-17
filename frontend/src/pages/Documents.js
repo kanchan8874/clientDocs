@@ -594,19 +594,20 @@ const Documents = () => {
       )}
 
       <section className="max-w-[1400px] mx-auto" aria-label="Documents management">
-        <header className="flex justify-between items-start mb-8">
-          <div>
-            <h1 className="text-3xl font-semibold text-slate-900 m-0 mb-2 tracking-tight">Documents</h1>
-            <p className="text-base text-slate-600 m-0">Manage and organize your client documents.</p>
+        <header className="flex flex-col sm:flex-row justify-between items-start gap-4 sm:gap-0 mb-6 sm:mb-8">
+          <div className="space-y-1 sm:space-y-2">
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-900 m-0 tracking-tight">Documents</h1>
+            <p className="text-xs sm:text-sm md:text-base text-slate-600 m-0">Manage and organize your client documents.</p>
           </div>
           <AccessibleButton
             onClick={handleOpenUploadModal}
             variant="primary"
             ariaLabel="Upload new document"
-            icon={<Upload size={20} aria-hidden="true" />}
+            icon={<Upload size={18} className="sm:w-5 sm:h-5" aria-hidden="true" />}
             iconPosition="left"
+            className="w-full sm:w-auto"
           >
-            Upload Document
+            <span className="text-xs sm:text-[0.9375rem]">Upload Document</span>
           </AccessibleButton>
         </header>
 
@@ -622,9 +623,9 @@ const Documents = () => {
         )}
 
         {/* Filters */}
-        <div className="surface-card p-6 mb-8">
-          <div className="relative mb-4">
-            <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 transform text-slate-500" />
+        <div className="surface-card p-4 sm:p-6 mb-6 sm:mb-8">
+          <div className="relative mb-3 sm:mb-4">
+            <Search size={18} className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 transform text-slate-500 sm:w-5 sm:h-5" />
             <input 
               type="text" 
               placeholder="Search documents..." 
@@ -633,11 +634,11 @@ const Documents = () => {
                 const searchValue = e.target.value;
                 setFilters({...filters, search: searchValue});
               }}
-              className="w-full rounded-md border border-slate-200 bg-white pl-12 pr-4 py-3.5 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full rounded-md border border-slate-200 bg-white pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3.5 text-sm sm:text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             />
           </div>
-          <div className="flex gap-4 flex-wrap items-center">
-            <div className="min-w-[160px]">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 flex-wrap items-stretch sm:items-center">
+            <div className="w-full sm:min-w-[160px] sm:w-auto">
               <SearchableDropdown
                 id="filter-category"
                 label=""
@@ -657,7 +658,7 @@ const Documents = () => {
                 className=""
               />
             </div>
-            <div className="min-w-[160px]">
+            <div className="w-full sm:min-w-[160px] sm:w-auto">
               <SearchableDropdown
                 id="filter-access"
                 label=""
@@ -676,7 +677,7 @@ const Documents = () => {
                 className=""
               />
             </div>
-            <div className="min-w-[180px]">
+            <div className="w-full sm:min-w-[180px] sm:w-auto">
               <SearchableDropdown
                 id="filter-client"
                 label=""
@@ -698,7 +699,7 @@ const Documents = () => {
               name="startDate" 
               value={filters.startDate} 
               onChange={handleFilterChange} 
-              className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full sm:w-auto rounded-xl border border-slate-200 bg-white px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="Start Date"
             />
             <input 
@@ -706,12 +707,12 @@ const Documents = () => {
               name="endDate" 
               value={filters.endDate} 
               onChange={handleFilterChange} 
-              className="rounded-xl border border-slate-200 bg-white px-4 py-3 text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full sm:w-auto rounded-xl border border-slate-200 bg-white px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-[0.9375rem] font-sans text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               placeholder="End Date"
             />
             <button 
               onClick={() => setFilters({ category: '', accessLevel: '', clientId: '', startDate: '', endDate: '', search: '' })} 
-              className="rounded-xl border border-slate-200 bg-white px-6 py-3 text-[0.9375rem] font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="w-full sm:w-auto rounded-xl border border-slate-200 bg-white px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-[0.9375rem] font-medium text-slate-600 transition-all duration-200 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
             >
               Clear Filters
             </button>
@@ -762,12 +763,12 @@ const Documents = () => {
             {ownedDocs.length > 0 && (
               <section className="mb-8" aria-label="My documents" role="region">
                 <h2 className="text-xl font-semibold text-slate-900 mb-5 tracking-tight">My Documents ({ownedDocs.length})</h2>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6" role="list" aria-label="My documents list">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-4 sm:gap-6" role="list" aria-label="My documents list">
                   {ownedDocs.map(doc => (
                     <article 
                       key={doc._id}
                       role="listitem"
-                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
+                      className="surface-card p-4 sm:p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
                     >
                       <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-blue-50" aria-hidden="true">
@@ -898,12 +899,12 @@ const Documents = () => {
             {sharedDocs.length > 0 && (
               <section className="mb-8" aria-label="Shared documents" role="region">
                 <h2 className="text-xl font-semibold text-slate-900 mb-5 tracking-tight">Shared With Me ({sharedDocs.length})</h2>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6" role="list" aria-label="Shared documents list">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-4 sm:gap-6" role="list" aria-label="Shared documents list">
                   {sharedDocs.map(doc => (
                     <article 
                       key={doc._id}
                       role="listitem"
-                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
+                      className="surface-card p-4 sm:p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
                     >
                       <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-blue-50 text-blue-600" aria-hidden="true">
@@ -1000,12 +1001,12 @@ const Documents = () => {
             {publicDocs.length > 0 && (
               <section className="mb-8" aria-label="Public documents" role="region">
                 <h2 className="text-xl font-semibold text-slate-900 mb-5 tracking-tight">Public Documents ({publicDocs.length})</h2>
-                <div className="grid grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-6" role="list" aria-label="Public documents list">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[repeat(auto-fill,minmax(300px,1fr))] xl:grid-cols-[repeat(auto-fill,minmax(360px,1fr))] gap-4 sm:gap-6" role="list" aria-label="Public documents list">
                   {publicDocs.map(doc => (
                     <article 
                       key={doc._id}
                       role="listitem"
-                      className="surface-card p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
+                      className="surface-card p-4 sm:p-6 transition-all duration-200 hover:-translate-y-0.5 min-h-[280px] flex flex-col"
                     >
                       <div className="flex items-center gap-3 mb-5 pb-5 border-b border-slate-200 min-w-0">
                         <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md bg-green-50 text-green-600" aria-hidden="true">
@@ -1096,7 +1097,7 @@ const Documents = () => {
         ariaLabel="Upload document form"
         size="md"
       >
-        <form onSubmit={handleUploadSubmit(onUploadSubmit)} className="grid gap-4 md:grid-cols-2" noValidate>
+        <form onSubmit={handleUploadSubmit(onUploadSubmit)} className="grid gap-3 sm:gap-4 md:grid-cols-2" noValidate>
           <AccessibleInput
             id="doc-title"
             label="Title"
@@ -1598,7 +1599,7 @@ const Documents = () => {
         ariaLabel="Edit document form"
         size="md"
       >
-        <form onSubmit={handleEditSubmit(onEditSubmit)} className="grid gap-4 md:grid-cols-2" noValidate>
+        <form onSubmit={handleEditSubmit(onEditSubmit)} className="grid gap-3 sm:gap-4 md:grid-cols-2" noValidate>
           <AccessibleInput
             id="edit-title"
             label="Title"

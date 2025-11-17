@@ -92,15 +92,15 @@ const Login = () => {
 
   return (
     <div className="flex min-h-screen flex-col w-full bg-transparent">
-      <div className="flex-1 flex items-center justify-center px-4 py-12">
-        <div className="relative w-full max-w-[460px] overflow-hidden rounded-3xl p-10 bg-gradient-to-br from-white via-primary-50 to-primary-100 border border-primary-200/50 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_8px_32px_rgba(59,130,246,0.15),inset_0_1px_0_rgba(255,255,255,0.8)]">
-        <div className="flex justify-center mb-6">
+      <div className="flex-1 flex items-center justify-center px-4 py-6 sm:py-8 md:py-12">
+        <div className="relative w-full max-w-[460px] overflow-hidden rounded-3xl p-6 sm:p-8 md:p-10 bg-gradient-to-br from-white via-primary-50 to-primary-100 border border-primary-200/50 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_8px_32px_rgba(59,130,246,0.15),inset_0_1px_0_rgba(255,255,255,0.8)]">
+        <div className="flex justify-center mb-4 sm:mb-6">
           <Logo size="lg" />
         </div>
-        <h1 className="mb-2 text-center text-[1.75rem] font-bold leading-tight tracking-tight text-text">
+        <h1 className="mb-2 text-center text-xl sm:text-2xl md:text-[1.75rem] font-bold leading-tight tracking-tight text-text">
           Welcome back
         </h1>
-        <p className="mb-8 text-center text-[0.9375rem] leading-relaxed text-text-muted">
+        <p className="mb-6 sm:mb-8 text-center text-sm sm:text-[0.9375rem] leading-relaxed text-text-muted">
           Sign in to your account to continue.
         </p>
 
@@ -119,7 +119,7 @@ const Login = () => {
         <form
           ref={formRef}
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-5"
+          className="flex flex-col gap-4 sm:gap-5"
           aria-label="Login form"
           noValidate
         >
@@ -168,7 +168,7 @@ const Login = () => {
           </AccessibleButton>
         </form>
 
-        <p className="mt-6 text-center text-sm leading-relaxed text-text-muted">
+        <p className="mt-4 sm:mt-6 text-center text-xs sm:text-sm leading-relaxed text-text-muted">
           Don't have an account?{" "}
           <Link
             to="/register"

@@ -80,18 +80,18 @@ const Register = () => {
 
   return (
     <div className="flex min-h-screen flex-col w-full bg-transparent">
-    <div className="flex-1 flex items-center justify-center px-4 py-8 sm:py-10">
-      <div className="relative w-full max-w-[460px] max-h-[83vh] overflow-y-auto scrollbar-hidden rounded-3xl p-8 sm:p-9 md:p-10 bg-gradient-to-br from-white via-primary-50 to-primary-100 border border-primary-200/50 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_8px_32px_rgba(59,130,246,0.15),inset_0_1px_0_rgba(255,255,255,0.8)]">
+    <div className="flex-1 flex items-center justify-center px-4 py-6 sm:py-8 md:py-10">
+      <div className="relative w-full max-w-[460px] max-h-[90vh] sm:max-h-[83vh] overflow-y-auto scrollbar-hidden rounded-3xl p-6 sm:p-8 md:p-10 bg-gradient-to-br from-white via-primary-50 to-primary-100 border border-primary-200/50 shadow-[0_0_0_1px_rgba(59,130,246,0.1),0_8px_32px_rgba(59,130,246,0.15),inset_0_1px_0_rgba(255,255,255,0.8)]">
   
-        <div className="flex justify-center mb-5">
+        <div className="flex justify-center mb-4 sm:mb-5">
           <Logo size="lg" />
         </div>
   
-        <h1 className="mb-2 text-center text-[1.75rem] font-bold leading-tight tracking-tight text-text">
+        <h1 className="mb-2 text-center text-xl sm:text-2xl md:text-[1.75rem] font-bold leading-tight tracking-tight text-text">
           Create your account
         </h1>
   
-        <p className="mb-5 text-center text-[0.9375rem] leading-relaxed text-text-muted">
+        <p className="mb-4 sm:mb-5 text-center text-sm sm:text-[0.9375rem] leading-relaxed text-text-muted">
           Get started with ClientDocs today.
         </p>
   
@@ -110,7 +110,7 @@ const Register = () => {
         <form
           ref={formRef}
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
+          className="flex flex-col gap-3 sm:gap-4"
           aria-label="Registration form"
           noValidate
         >
@@ -194,7 +194,7 @@ const Register = () => {
           )}
         </form>
   
-        <p className="mt-4 text-center text-sm leading-relaxed text-text-muted">
+        <p className="mt-3 sm:mt-4 text-center text-xs sm:text-sm leading-relaxed text-text-muted">
           Already have an account?{" "}
           <Link
             to="/login"

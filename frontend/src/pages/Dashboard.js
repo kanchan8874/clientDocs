@@ -117,28 +117,28 @@ const Dashboard = () => {
   return (
     <Layout>
       <section className="space-y-8 md:space-y-10 lg:space-y-12" aria-label="Dashboard overview">
-        <header className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-primary-50 via-white to-primary-100 p-8 shadow-soft-glow sm:p-10">
+        <header className="relative overflow-hidden rounded-[28px] bg-gradient-to-br from-primary-50 via-white to-primary-100 p-6 sm:p-8 md:p-10 shadow-soft-glow">
           <div className="pointer-events-none absolute -top-14 right-10 h-44 w-44 rounded-full bg-accent/10 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-16 left-12 h-56 w-56 rounded-full bg-info/10 blur-3xl" />
-          <div className="relative z-10 flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl space-y-3">
-              <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-accent shadow-xs">
+          <div className="relative z-10 flex flex-col gap-6 md:gap-8 md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl space-y-2 sm:space-y-3">
+              <span className="inline-flex items-center gap-2 rounded-full bg-white/70 px-3 py-1.5 sm:px-4 sm:py-2 text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-accent shadow-xs">
                 ClientDoc Pulse
               </span>
-              <h1 className="m-0 text-2xl font-semibold leading-tight tracking-tight text-text sm:text-3xl md:text-4xl">
+              <h1 className="m-0 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold leading-tight tracking-tight text-text">
                 Welcome back,{' '}
                 <span 
-                  className="inline-block max-w-[200px] sm:max-w-[300px] md:max-w-[400px] overflow-hidden text-ellipsis whitespace-nowrap align-bottom"
+                  className="inline-block max-w-[120px] xs:max-w-[160px] sm:max-w-[200px] md:max-w-[300px] lg:max-w-[400px] overflow-hidden text-ellipsis whitespace-nowrap align-bottom"
                   title={user?.name || 'User'}
                 >
                   {user?.name?.split(' ')[0] || 'User'}
                 </span>
               </h1>
-              <p className="m-0 text-base leading-relaxed text-text-muted sm:text-lg">
+              <p className="m-0 text-sm sm:text-base md:text-lg leading-relaxed text-text-muted">
                 Stay on top of your client relationships, shared documents, and team activity in a premium workspace crafted for focus.
               </p>
             </div>
-            <div className="space-y-3 rounded-3xl bg-white/80 p-5 shadow-md backdrop-blur-sm sm:min-w-[220px]">
+            <div className="space-y-3 rounded-3xl bg-white/80 p-4 sm:p-5 shadow-md backdrop-blur-sm sm:min-w-[220px] w-full sm:w-auto">
               <div className="flex items-center justify-between text-sm font-medium text-text-subtle">
                 <span>Clients</span>
                 <span className="text-lg font-semibold text-text">{stats.loading ? '...' : stats.totalClients}</span>
@@ -149,10 +149,10 @@ const Dashboard = () => {
               </div>
               <button
                 onClick={() => navigate('/documents')}
-                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-accent to-primary-600 px-4 py-3 text-sm font-semibold text-white shadow-soft-glow transition-all duration-200 hover:shadow-surface-strong focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2"
+                className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-accent to-primary-600 px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold text-white shadow-soft-glow transition-all duration-200 hover:shadow-surface-strong focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-accent/40 focus-visible:ring-offset-2"
               >
                 Upload document
-                <ArrowRight size={16} aria-hidden="true" />
+                <ArrowRight size={14} className="sm:w-4 sm:h-4" aria-hidden="true" />
               </button>
             </div>
           </div>
@@ -175,18 +175,18 @@ const Dashboard = () => {
               }
             }}
           >
-            <div className="flex items-center gap-5">
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-accent transition-transform duration-300 group-hover:scale-110">
-                <Users size={26} aria-hidden="true" />
+            <div className="flex items-center gap-3 sm:gap-5">
+              <div className="flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-accent transition-transform duration-300 group-hover:scale-110">
+                <Users size={22} className="sm:w-[26px] sm:h-[26px]" aria-hidden="true" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="mb-1 text-sm font-medium uppercase tracking-wider text-text-subtle">Total clients</p>
-                <p className="mb-0 text-3xl font-semibold leading-none tracking-tight text-text">
+                <p className="mb-1 text-xs sm:text-sm font-medium uppercase tracking-wider text-text-subtle">Total clients</p>
+                <p className="mb-0 text-2xl sm:text-3xl font-semibold leading-none tracking-tight text-text">
                   {stats.loading ? '...' : stats.totalClients}
                 </p>
               </div>
               <div className="flex items-center justify-center">
-                <TrendingUp size={18} className="text-accent" aria-hidden="true" />
+                <TrendingUp size={16} className="sm:w-[18px] sm:h-[18px] text-accent" aria-hidden="true" />
               </div>
             </div>
           </button>
@@ -203,18 +203,18 @@ const Dashboard = () => {
               }
             }}
           >
-            <div className="flex items-center gap-5">
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-success-light text-success transition-transform duration-300 group-hover:scale-110">
-                <FileText size={26} aria-hidden="true" />
+            <div className="flex items-center gap-3 sm:gap-5">
+              <div className="flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-success-light text-success transition-transform duration-300 group-hover:scale-110">
+                <FileText size={22} className="sm:w-[26px] sm:h-[26px]" aria-hidden="true" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="mb-1 text-sm font-medium uppercase tracking-wider text-text-subtle">Total documents</p>
-                <p className="mb-0 text-3xl font-semibold leading-none tracking-tight text-text">
+                <p className="mb-1 text-xs sm:text-sm font-medium uppercase tracking-wider text-text-subtle">Total documents</p>
+                <p className="mb-0 text-2xl sm:text-3xl font-semibold leading-none tracking-tight text-text">
                   {stats.loading ? '...' : stats.totalDocuments}
                 </p>
               </div>
               <div className="flex items-center justify-center">
-                <TrendingUp size={18} className="text-success" aria-hidden="true" />
+                <TrendingUp size={16} className="sm:w-[18px] sm:h-[18px] text-success" aria-hidden="true" />
               </div>
             </div>
           </button>
@@ -224,69 +224,69 @@ const Dashboard = () => {
             role="status"
             aria-label={`Shared documents: ${stats.loading ? 'loading' : documents.filter(isSharedWithMe).length}`}
           >
-            <div className="flex items-center gap-5">
-              <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-warning-light text-warning">
-                <Share2 size={26} aria-hidden="true" />
+            <div className="flex items-center gap-3 sm:gap-5">
+              <div className="flex h-12 w-12 sm:h-14 sm:w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-warning-light text-warning">
+                <Share2 size={22} className="sm:w-[26px] sm:h-[26px]" aria-hidden="true" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="mb-1 text-sm font-medium uppercase tracking-wider text-text-subtle">Shared with you</p>
-                <p className="mb-0 text-3xl font-semibold leading-none tracking-tight text-text">
+                <p className="mb-1 text-xs sm:text-sm font-medium uppercase tracking-wider text-text-subtle">Shared with you</p>
+                <p className="mb-0 text-2xl sm:text-3xl font-semibold leading-none tracking-tight text-text">
                   {stats.loading ? '...' : documents.filter(isSharedWithMe).length}
                 </p>
               </div>
               <div className="flex items-center justify-center">
-                <TrendingUp size={18} className="text-warning" aria-hidden="true" />
+                <TrendingUp size={16} className="sm:w-[18px] sm:h-[18px] text-warning" aria-hidden="true" />
               </div>
             </div>
           </div>
         </section>
 
         <section aria-label="Quick actions" role="region">
-          <h2 className="text-[1.375rem] font-semibold leading-tight tracking-tight text-text">Quick actions</h2>
-          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <h2 className="text-lg sm:text-xl md:text-[1.375rem] font-semibold leading-tight tracking-tight text-text">Quick actions</h2>
+          <div className="mt-4 sm:mt-6 grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
             <button
               onClick={() => navigate('/clients')}
-              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/90 via-primary-50 to-white p-6 text-left shadow-md backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-surface"
+              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/90 via-primary-50 to-white p-4 sm:p-6 text-left shadow-md backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-surface"
             >
               <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-accent/10 blur-2xl" />
-              <div className="relative z-10 flex items-center gap-5">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/15 text-accent transition-transform duration-300 group-hover:scale-110">
-                  <Plus size={24} aria-hidden="true" />
+              <div className="relative z-10 flex items-center gap-3 sm:gap-5">
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-accent/15 text-accent transition-transform duration-300 group-hover:scale-110">
+                  <Plus size={20} className="sm:w-6 sm:h-6" aria-hidden="true" />
                 </div>
-                <div className="flex-1">
-                  <div className="mb-1 text-base font-semibold text-text">Add client</div>
-                  <div className="text-sm text-text-muted">Create a new client profile instantly.</div>
+                <div className="flex-1 min-w-0">
+                  <div className="mb-1 text-sm sm:text-base font-semibold text-text">Add client</div>
+                  <div className="text-xs sm:text-sm text-text-muted">Create a new client profile instantly.</div>
                 </div>
               </div>
             </button>
 
             <button
               onClick={() => navigate('/documents')}
-              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/90 via-primary-50 to-white p-6 text-left shadow-md backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-surface"
+              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-white/90 via-primary-50 to-white p-4 sm:p-6 text-left shadow-md backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-surface"
             >
               <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-success-light blur-2xl" />
-              <div className="relative z-10 flex items-center gap-5">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-success-light text-success transition-transform duration-300 group-hover:scale-110">
-                  <Upload size={24} aria-hidden="true" />
+              <div className="relative z-10 flex items-center gap-3 sm:gap-5">
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-success-light text-success transition-transform duration-300 group-hover:scale-110">
+                  <Upload size={20} className="sm:w-6 sm:h-6" aria-hidden="true" />
                 </div>
-                <div className="flex-1">
-                  <div className="mb-1 text-base font-semibold text-text">Upload document</div>
-                  <div className="text-sm text-text-muted">Add files and organize with a single click.</div>
+                <div className="flex-1 min-w-0">
+                  <div className="mb-1 text-sm sm:text-base font-semibold text-text">Upload document</div>
+                  <div className="text-xs sm:text-sm text-text-muted">Add files and organize with a single click.</div>
                 </div>
               </div>
             </button>
 
             <button
               onClick={() => navigate('/documents')}
-              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent to-primary-600 p-6 text-left text-white shadow-soft-glow transition-all duration-300 hover:-translate-y-1 hover:shadow-surface-strong"
+              className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent to-primary-600 p-4 sm:p-6 text-left text-white shadow-soft-glow transition-all duration-300 hover:-translate-y-1 hover:shadow-surface-strong"
             >
-              <div className="relative z-10 flex items-center gap-5">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white transition-transform duration-300 group-hover:scale-110">
-                  <ArrowRight size={24} aria-hidden="true" />
+              <div className="relative z-10 flex items-center gap-3 sm:gap-5">
+                <div className="flex h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-white/15 text-white transition-transform duration-300 group-hover:scale-110">
+                  <ArrowRight size={20} className="sm:w-6 sm:h-6" aria-hidden="true" />
                 </div>
-                <div className="flex-1">
-                  <div className="mb-1 text-base font-semibold">Browse workspace</div>
-                  <div className="text-sm text-white/80">Jump into your full document library.</div>
+                <div className="flex-1 min-w-0">
+                  <div className="mb-1 text-sm sm:text-base font-semibold">Browse workspace</div>
+                  <div className="text-xs sm:text-sm text-white/80">Jump into your full document library.</div>
                 </div>
               </div>
             </button>

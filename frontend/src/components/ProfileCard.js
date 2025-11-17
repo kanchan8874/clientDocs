@@ -140,13 +140,13 @@ const ProfileCard = ({ user }) => {
         aria-label={`User menu for ${(userWithDates || user)?.name || 'User'}`}
         aria-expanded={isOpen}
         aria-haspopup="true"
-        className="flex min-h-11 items-center gap-3 rounded-2xl border border-border/70 bg-white px-4 py-2 text-[0.9375rem] font-medium text-neutral-800 transition-all duration-200 hover:border-accent hover:bg-primary-50 focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/35 focus-visible:ring-offset-2"
+        className="flex min-h-9 sm:min-h-10 md:min-h-11 items-center gap-2 sm:gap-3 rounded-2xl border border-border/70 bg-white px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 text-xs sm:text-sm md:text-[0.9375rem] font-medium text-neutral-800 transition-all duration-200 hover:border-accent hover:bg-primary-50 focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/35 focus-visible:ring-offset-2"
       >
-        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-white/90 bg-gradient-to-br from-accent via-primary-500 to-primary-700 text-sm font-semibold text-white shadow-soft-glow" aria-hidden="true">
+        <div className="flex h-8 w-8 sm:h-9 sm:w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-white/90 bg-gradient-to-br from-accent via-primary-500 to-primary-700 text-xs sm:text-sm font-semibold text-white shadow-soft-glow" aria-hidden="true">
           <span className="leading-none tracking-wide">{getInitials((userWithDates || user)?.name)}</span>
         </div>
         <span 
-          className="hidden text-[0.9375rem] font-medium leading-snug text-text sm:inline max-w-[120px] md:max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap"
+          className="hidden text-xs sm:text-sm md:text-[0.9375rem] font-medium leading-snug text-text sm:inline max-w-[100px] md:max-w-[120px] lg:max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap"
           title={(userWithDates || user)?.name || 'User'}
         >
           {(userWithDates || user)?.name || 'User'}

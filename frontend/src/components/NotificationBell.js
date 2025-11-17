@@ -206,9 +206,9 @@ const NotificationBell = () => {
         aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
         aria-expanded={showDropdown}
         aria-haspopup="true"
-        className="relative flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full border border-border bg-white text-neutral-400 transition-all duration-200 hover:border-accent hover:text-accent focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/35 focus-visible:ring-offset-2"
+        className="relative flex h-9 min-h-9 w-9 min-w-9 sm:h-10 sm:min-h-10 sm:w-10 sm:min-w-10 items-center justify-center rounded-full border border-border bg-white text-neutral-400 transition-all duration-200 hover:border-accent hover:text-accent focus:outline-none focus-visible:ring-3 focus-visible:ring-accent/35 focus-visible:ring-offset-2"
       >
-        <Bell size={18} aria-hidden="true" />
+        <Bell size={16} className="sm:w-[18px] sm:h-[18px]" aria-hidden="true" />
         {unreadCount > 0 && (
           <span
             className="absolute -top-1 -right-1 z-10 flex h-5 min-w-5 items-center justify-center rounded-full border-2 border-white bg-red-600 text-xs font-semibold text-white shadow-lg"

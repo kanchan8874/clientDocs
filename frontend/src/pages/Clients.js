@@ -229,19 +229,20 @@ const Clients = () => {
     <Layout>
       {/* Content */}
       <section className="mx-auto max-w-[1400px]" aria-label="Clients management">
-        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div className="space-y-2">
-            <h1 className="m-0 text-2xl font-semibold tracking-tight text-text sm:text-3xl">Clients</h1>
-            <p className="m-0 text-sm text-text-muted sm:text-base">Manage your client relationships and information.</p>
+        <header className="mb-6 sm:mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="space-y-1 sm:space-y-2">
+            <h1 className="m-0 text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-text">Clients</h1>
+            <p className="m-0 text-xs sm:text-sm md:text-base text-text-muted">Manage your client relationships and information.</p>
           </div>
           <AccessibleButton
             onClick={() => handleOpenModal()}
             variant="primary"
             ariaLabel="Add new client"
-            icon={<Plus size={20} aria-hidden="true" />}
+            icon={<Plus size={18} className="sm:w-5 sm:h-5" aria-hidden="true" />}
             iconPosition="left"
+            className="w-full sm:w-auto"
           >
-            Add New Client
+            <span className="text-xs sm:text-[0.9375rem]">Add New Client</span>
           </AccessibleButton>
         </header>
 
@@ -289,12 +290,12 @@ const Clients = () => {
             </AccessibleButton>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3" role="list" aria-label="Client list">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 xl:grid-cols-3" role="list" aria-label="Client list">
             {clients.map((client) => (
               <article
                 key={client._id}
                 role="listitem"
-                className="surface-card rounded-3xl bg-white/90 p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-surface backdrop-blur-sm"
+                className="surface-card rounded-3xl bg-white/90 p-4 sm:p-6 shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-surface backdrop-blur-sm"
               >
                 <div className="mb-5 flex min-w-0 items-center gap-3 border-b border-border pb-5">
                   <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-accent/12 text-accent" aria-hidden="true">
@@ -433,7 +434,7 @@ const Clients = () => {
         ariaLabel={editingClient ? 'Edit client form' : 'Add new client form'}
         size="md"
       >
-        <form onSubmit={handleFormSubmit(onSubmit)} className="grid gap-5 md:grid-cols-2" noValidate>
+        <form onSubmit={handleFormSubmit(onSubmit)} className="grid gap-4 sm:gap-5 md:grid-cols-2" noValidate>
           <AccessibleInput
             id="client-name"
             label="Client Name"
